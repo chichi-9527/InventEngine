@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Invent\2D\2DComponent\Invnet2DComponent.h" />
+    <ClInclude Include="src\Invent\2D\IObject2D.h" />
+    <ClInclude Include="src\Invent\2D\ISquare2dActor.h" />
+    <ClInclude Include="src\Invent\IBase\IBindEvent.h" />
+    <ClInclude Include="src\Invent\IBase\IBaseEventFunction.h" />
+    <ClInclude Include="src\Invent\IBase\IComponentManagement.h" />
+    <ClInclude Include="src\Invent\IBase\IController.h" />
+    <ClInclude Include="src\Invent\IBase\IEventLayer.h" />
+    <ClInclude Include="src\Invent\IBase\IBaseLevel.h" />
+    <ClInclude Include="src\Invent\3D\IObject.h" />
+    <ClInclude Include="src\Invent\IBase\IGameInstance.h" />
+    <ClInclude Include="src\Invent\IBase\IObjectBase.h" />
+    <ClInclude Include="src\Invent\IBase\IWindow.h" />
+    <ClInclude Include="src\Glad\glad\glad.h" />
+    <ClInclude Include="src\Glad\KHR\khrplatform.h" />
+    <ClInclude Include="src\Invent\IComponent\InvnetComponent.h" />
+    <ClInclude Include="src\Invent\ILog.h" />
+    <ClInclude Include="src\Invent\IEpch.h" />
+    <ClInclude Include="src\Invent\Invent.h" />
+    <ClInclude Include="src\Invent\Renderer\IBuffer.h" />
+    <ClInclude Include="src\Invent\Renderer\IRenderer.h" />
+    <ClInclude Include="src\Invent\Renderer\IRendererCommand.h" />
+    <ClInclude Include="src\Invent\Renderer\IVertexArray.h" />
+    <ClInclude Include="src\Invent\Shader\IShader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Invent\2D\IObject2D.cpp" />
+    <ClCompile Include="src\Invent\2D\ISquare2dActor.cpp" />
+    <ClCompile Include="src\Invent\IBase\IBindEvent.cpp" />
+    <ClCompile Include="src\Invent\IBase\IBaseEventFunction.cpp" />
+    <ClCompile Include="src\Invent\IBase\IComponentManagement.cpp" />
+    <ClCompile Include="src\Invent\IBase\IController.cpp" />
+    <ClCompile Include="src\Invent\IBase\IEventLayer.cpp" />
+    <ClCompile Include="src\Invent\IBase\IBaseLevel.cpp" />
+    <ClCompile Include="src\Invent\3D\IObject.cpp" />
+    <ClCompile Include="src\Invent\IBase\IGameInstance.cpp" />
+    <ClCompile Include="src\Invent\IBase\IObjectBase.cpp" />
+    <ClCompile Include="src\Invent\IBase\IWindow.cpp" />
+    <ClCompile Include="src\Glad\glad.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\Invent\ILog.cpp" />
+    <ClCompile Include="src\Invent\IEpch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\Invent\Invent.cpp" />
+    <ClCompile Include="src\Invent\Renderer\IBuffer.cpp" />
+    <ClCompile Include="src\Invent\Renderer\IRenderer.cpp" />
+    <ClCompile Include="src\Invent\Renderer\IRendererCommand.cpp" />
+    <ClCompile Include="src\Invent\Renderer\IVertexArray.cpp" />
+    <ClCompile Include="src\Invent\Shader\IShader.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Readme.md">
+      <SubType>
+      </SubType>
+    </None>
+    <None Include="src\Invent\Shader\OpenGLShaders\default_Square_2d.fs" />
+    <None Include="src\Invent\Shader\OpenGLShaders\default_Square_2d.vs" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{b5297c73-4f1e-4fd1-9079-9c3523f7e239}</ProjectGuid>
+    <RootNamespace>InventEngine</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)\bin\$(Platform)-$(Configuration)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)\bin-int\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\Glfw34\include;$(SolutionDir)\boost1_87_0\include;$(SolutionDir)\Imgui;$(SolutionDir)\StbImage;$(SolutionDir)\Glm1.0.1</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)\Glfw34\lib;$(SolutionDir)\boost1_87_0\lib</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)\bin\$(Platform)-$(Configuration)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)\bin-int\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\Glfw34\include;$(SolutionDir)\boost1_87_0\include;$(SolutionDir)\Imgui;$(SolutionDir)\StbImage;$(SolutionDir)\Glm1.0.1</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)\Glfw34\lib;$(SolutionDir)\boost1_87_0\lib</LibraryPath>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>USE_OPENGL;WATCH_LOG;_WIN32_WINNT=0x0A00;USE_BOOST;INVENT_USE_WINDOWS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>IEpch.h</PrecompiledHeaderFile>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)\InventEngine\src\Invent;$(SolutionDir)\InventEngine\src\Glad</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>USE_OPENGL;WATCH_LOG;_WIN32_WINNT=0x0A00;USE_BOOST;INVENT_USE_WINDOWS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>IEpch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\InventEngine\src\Invent;$(SolutionDir)\InventEngine\src\Glad</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
