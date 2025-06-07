@@ -14,6 +14,9 @@
     <ClInclude Include="src\Invent\2D\2DComponent\Invnet2DComponent.h" />
     <ClInclude Include="src\Invent\2D\IObject2D.h" />
     <ClInclude Include="src\Invent\2D\ISquare2dActor.h" />
+    <ClInclude Include="src\Invent\2D\ISquare2dPawn.h" />
+    <ClInclude Include="src\Invent\IBase\IBaseActor.h" />
+    <ClInclude Include="src\Invent\IBase\IBasePawnControl.h" />
     <ClInclude Include="src\Invent\IBase\IBindEvent.h" />
     <ClInclude Include="src\Invent\IBase\IBaseEventFunction.h" />
     <ClInclude Include="src\Invent\IBase\IComponentManagement.h" />
@@ -39,6 +42,8 @@
   <ItemGroup>
     <ClCompile Include="src\Invent\2D\IObject2D.cpp" />
     <ClCompile Include="src\Invent\2D\ISquare2dActor.cpp" />
+    <ClCompile Include="src\Invent\2D\ISquare2dPawn.cpp" />
+    <ClCompile Include="src\Invent\IBase\IBasePawnControl.cpp" />
     <ClCompile Include="src\Invent\IBase\IBindEvent.cpp" />
     <ClCompile Include="src\Invent\IBase\IBaseEventFunction.cpp" />
     <ClCompile Include="src\Invent\IBase\IComponentManagement.cpp" />

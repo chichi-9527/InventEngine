@@ -87,6 +87,15 @@
     <ClInclude Include="src\Invent\Renderer\IRenderer.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Invent\2D\ISquare2dPawn.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Invent\IBase\IBasePawnControl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Invent\IBase\IBaseActor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\Invent.cpp">
@@ -150,6 +159,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Invent\Renderer\IRenderer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\2D\ISquare2dPawn.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\IBase\IBasePawnControl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

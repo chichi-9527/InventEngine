@@ -1,5 +1,7 @@
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\2D\IObject2D.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IObject2D.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\2D\ISquare2dActor.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\ISquare2dActor.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Invent\2D\ISquare2dPawn.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\ISquare2dPawn.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IBasePawnControl.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IBasePawnControl.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IBindEvent.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IBindEvent.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IBaseEventFunction.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IBaseEventFunction.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IComponentManagement.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IComponentManagement.obj
