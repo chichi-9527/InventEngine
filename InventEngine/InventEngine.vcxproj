@@ -38,6 +38,7 @@
     <ClInclude Include="src\Invent\Renderer\IRenderer.h" />
     <ClInclude Include="src\Invent\Renderer\IRendererCommand.h" />
     <ClInclude Include="src\Invent\Renderer\IVertexArray.h" />
+    <ClInclude Include="src\Invent\Shader\IDefaultShader.h" />
     <ClInclude Include="src\Invent\Shader\IShader.h" />
   </ItemGroup>
   <ItemGroup>

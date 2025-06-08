@@ -48,15 +48,20 @@ namespace INVENT
 		static IShaderManagement& Instance();
 
 		IShader* Load(const std::string& vertexPath, const std::string& fragmentPath);
-		IShader* Load(const std::string& name, std::string& vertexSrc, const std::string& fragmentSrc);
+		IShader* Load(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 
 		IShader* Get(const std::string& name);
+
+		static IShader* GetDefaultSquare2DShader();
 
 	private:
 		IShaderManagement() = default;
 
 	private:
 		std::unordered_map<std::string, IShader*> _shaders;
+
+	private:
+
 
 	};
 

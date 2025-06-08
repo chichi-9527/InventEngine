@@ -1,6 +1,8 @@
 #include "IEpch.h"
 #include "IShader.h"
 
+#include "IDefaultShader.h"
+
 namespace INVENT
 {
 	void IShader::Bind()
@@ -36,6 +38,8 @@ namespace INVENT
 	{
 		std::ifstream ifs(file_path.c_str());
 		std::string content((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
+
+		INVENT_LOG_DEBUG(content);
 
 		file_content = content;
 	}
@@ -102,7 +106,7 @@ namespace INVENT
 		return shader;
 	}
 
-	IShader* IShaderManagement::Load(const std::string& name, std::string& vertexSrc, const std::string& fragmentSrc)
+	IShader* IShaderManagement::Load(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
 	{
 		IShader* shader = Get(name);
 		if (shader)
@@ -118,6 +122,12 @@ namespace INVENT
 		if (_shaders.find(name) != _shaders.end())
 			return _shaders[name];
 		return nullptr;
+	}
+
+	IShader* IShaderManagement::GetDefaultSquare2DShader()
+	{
+		static INVENT::IShader* _default_square_2d = INVENT::IShaderManagement::Instance().Load("DefaultSquare2D", std::string(IDefaultShader::DefaultSquare2DVertexShader), std::string(IDefaultShader::DefaultSquare2DFragmentShader));
+		return _default_square_2d;
 	}
 
 	IShaderManagement::~IShaderManagement()
