@@ -1,6 +1,8 @@
 #ifndef _IBASEPAWNCONTROL_
 #define _IBASEPAWNCONTROL_
 
+#include <glm/glm.hpp>
+
 namespace INVENT
 {
 	class IBasePawnControl2D
@@ -9,8 +11,16 @@ namespace INVENT
 		IBasePawnControl2D() = default;
 		virtual ~IBasePawnControl2D() = default;
 
-		void SetMoveSpeed(float speed) { MoveSpeed = speed; }
-		float GetMoveSpeed() { return MoveSpeed; }
+		void SetMoveSpeed(float speed) { _move_speed = speed; }
+		float GetMoveSpeed() { return _move_speed; }
+
+		void SetForwardVector(const glm::vec3& forward) { _forward = forward; }
+		const glm::vec3& GetForwardVector() const { return _forward; }
+		glm::vec3 GetForwardVector() { return _forward; }
+
+		void SetUpVector(const glm::vec3& up) { _up = up; }
+		const glm::vec3& GetUpVector() const { return _up; }
+		glm::vec3 GetUpVector() { return _up; }
 
 		virtual void MoveUp() = 0;
 		virtual void MoveDown() = 0;
@@ -18,7 +28,10 @@ namespace INVENT
 		virtual void MoveRight() = 0;
 
 	private:
-		float MoveSpeed = 0.0f;
+		glm::vec3 _forward = { 0.0f,0.0f,0.0f };
+		glm::vec3 _up = { 0.0f,0.0f,0.0f };
+
+		float _move_speed = 0.0f;
 	};
 
 	class IBasePawnControl : public IBasePawnControl2D

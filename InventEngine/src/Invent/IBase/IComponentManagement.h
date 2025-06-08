@@ -95,7 +95,7 @@ namespace INVENT
 			{
 				if (_component_managements[i] == component)
 				{
-					INVENT_LOG_INFO(std::string("REMOVE COMPONENT MANAGEMENT ") + std::to_string((long)component));
+					// INVENT_LOG_INFO("REMOVE COMPONENT MANAGEMENT ID: ");
 					delete _vec[i];
 					_vec.erase(_vec.begin() + i);
 					_component_managements.erase(_component_managements.begin() + i);

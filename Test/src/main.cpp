@@ -4,6 +4,7 @@
 
 #include <iostream>
 
+
 class MyGameInstance : public INVENT::IGameInstance<MyGameInstance>
 {
 	INVENT_GAMEINSTANCE(MyGameInstance)
@@ -14,7 +15,12 @@ public:
 
 	virtual void Begin() override
 	{
-		
+		static INVENT::IShader* _default_square_2d = INVENT::IShaderManagement::Instance().Load("./OpenGLShaders/IXBX_backpack_shader.vs", "./OpenGLShaders/IXBX_backpack_shader.fs");
+
+
+		INVENT::ISquare2dPawn* pawn = new INVENT::ISquare2dPawn;
+		pawn->SetShader(_default_square_2d);
+		std::cout << pawn->GetColor().r << "\n";
 	}
 
 	virtual void Update(float delta) override
@@ -35,8 +41,10 @@ class MyWindow : public INVENT::IWindow
 {
 public:
 	MyWindow()
+		: IWindow()
 	{
 		this->SetGameInstance(std::static_pointer_cast<INVENT::IBaseGameInstance>(MyGameInstance::GetGameInstancePtr()));
+
 	}
 
 	virtual ~MyWindow()

@@ -96,6 +96,9 @@
     <ClInclude Include="src\Invent\IBase\IBaseActor.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Invent\ITexture\ITexture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\Invent.cpp">
@@ -167,10 +170,14 @@
     <ClCompile Include="src\Invent\IBase\IBasePawnControl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\Invent\IBase\IBaseActor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\ITexture\ITexture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md" />
-    <None Include="src\Invent\Shader\OpenGLShaders\default_Square_2d.fs" />
-    <None Include="src\Invent\Shader\OpenGLShaders\default_Square_2d.vs" />
   </ItemGroup>
 </Project>

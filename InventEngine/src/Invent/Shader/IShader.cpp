@@ -34,11 +34,13 @@ namespace INVENT
 
 	void IShader::ReadFile(const std::string & file_path, std::string& file_content)
 	{
-		std::ifstream ifs(file_path);
-		file_content = std::string((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
+		std::ifstream ifs(file_path.c_str());
+		std::string content((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
+
+		file_content = content;
 	}
 
-	IShader::IShader(std::string& vertexSrc, const std::string& fragmentSrc)
+	IShader::IShader(const std::string& vertexSrc, const std::string& fragmentSrc)
 	{
 #ifdef USE_OPENGL
 		_shader_program = glCreateProgram();
@@ -129,8 +131,5 @@ namespace INVENT
 			}
 		}
 	}
-
-	IShader* IShaderManagement::_default_square_2d = IShaderManagement::Instance().Load("./OpenGLShaders/default_Square_2d.vs", "./OpenGLShaders/default_Square_2d.fs");
-
 
 }

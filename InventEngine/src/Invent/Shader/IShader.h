@@ -30,7 +30,7 @@ namespace INVENT
 
 
 	private:
-		IShader(std::string& vertexSrc, const std::string& fragmentSrc);
+		IShader(const std::string& vertexSrc, const std::string& fragmentSrc);
 
 		static void ReadFile(const std::string& file_path, std::string& file_content);
 
@@ -52,15 +52,11 @@ namespace INVENT
 
 		IShader* Get(const std::string& name);
 
-		static IShader* GetDefaultSquare2DShader() { return _default_square_2d; }
-
 	private:
 		IShaderManagement() = default;
 
 	private:
 		std::unordered_map<std::string, IShader*> _shaders;
-
-		static IShader* _default_square_2d;
 
 	};
 

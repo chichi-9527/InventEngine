@@ -14,6 +14,9 @@ namespace INVENT
 		virtual ~ISquare2dPawn();
 
 		virtual void MoveUp() override;
+		virtual void MoveDown() override;
+		virtual void MoveLeft() override;
+		virtual void MoveRight() override;
 	};
 
 }

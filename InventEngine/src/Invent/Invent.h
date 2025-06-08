@@ -13,7 +13,7 @@
 
 #include "3D/IObject.h"
 
-#include "2D/IObject2D.h"
+#include "2D/ISquare2dPawn.h"
 
 
 

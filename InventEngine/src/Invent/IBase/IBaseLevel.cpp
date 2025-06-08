@@ -1,5 +1,6 @@
 #include "IEpch.h"
 #include "IBaseLevel.h"
+#include "IBaseActor.h"
 
 namespace INVENT
 {

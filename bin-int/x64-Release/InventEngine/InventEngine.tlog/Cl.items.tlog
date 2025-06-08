@@ -1,6 +1,7 @@
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\2D\IObject2D.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IObject2D.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\2D\ISquare2dActor.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\ISquare2dActor.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\2D\ISquare2dPawn.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\ISquare2dPawn.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IBaseActor.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IBaseActor.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IBasePawnControl.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IBasePawnControl.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IBindEvent.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IBindEvent.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IBaseEventFunction.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IBaseEventFunction.obj
@@ -16,6 +17,7 @@ D:\projects\CProjects\InventEngine\InventEngine\src\Glad\glad.c;D:\projects\CPro
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\ILog.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\ILog.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IEpch.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IEpch.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Invent.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\Invent.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Invent\ITexture\ITexture.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\ITexture.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IBuffer.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IBuffer.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IRenderer.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IRenderer.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IRendererCommand.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IRendererCommand.obj

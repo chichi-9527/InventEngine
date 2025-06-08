@@ -27,6 +27,8 @@ namespace INVENT
 		void SetRotation(float rotation);
 		float GetRotation();
 
+		void SetShader(IShader* shader) { _shader = shader; }
+
 	private:
 		glm::vec4 _color = { 1.0f, 1.0f,1.0f,1.0f }; // white
 		IShader* _shader;

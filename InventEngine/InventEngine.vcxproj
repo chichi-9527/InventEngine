@@ -33,6 +33,7 @@
     <ClInclude Include="src\Invent\ILog.h" />
     <ClInclude Include="src\Invent\IEpch.h" />
     <ClInclude Include="src\Invent\Invent.h" />
+    <ClInclude Include="src\Invent\ITexture\ITexture.h" />
     <ClInclude Include="src\Invent\Renderer\IBuffer.h" />
     <ClInclude Include="src\Invent\Renderer\IRenderer.h" />
     <ClInclude Include="src\Invent\Renderer\IRendererCommand.h" />
@@ -43,6 +44,7 @@
     <ClCompile Include="src\Invent\2D\IObject2D.cpp" />
     <ClCompile Include="src\Invent\2D\ISquare2dActor.cpp" />
     <ClCompile Include="src\Invent\2D\ISquare2dPawn.cpp" />
+    <ClCompile Include="src\Invent\IBase\IBaseActor.cpp" />
     <ClCompile Include="src\Invent\IBase\IBasePawnControl.cpp" />
     <ClCompile Include="src\Invent\IBase\IBindEvent.cpp" />
     <ClCompile Include="src\Invent\IBase\IBaseEventFunction.cpp" />
@@ -64,6 +66,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Invent\Invent.cpp" />
+    <ClCompile Include="src\Invent\ITexture\ITexture.cpp" />
     <ClCompile Include="src\Invent\Renderer\IBuffer.cpp" />
     <ClCompile Include="src\Invent\Renderer\IRenderer.cpp" />
     <ClCompile Include="src\Invent\Renderer\IRendererCommand.cpp" />
@@ -75,8 +78,6 @@
       <SubType>
       </SubType>
     </None>
-    <None Include="src\Invent\Shader\OpenGLShaders\default_Square_2d.fs" />
-    <None Include="src\Invent\Shader\OpenGLShaders\default_Square_2d.vs" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
