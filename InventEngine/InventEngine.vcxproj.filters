@@ -102,6 +102,9 @@
     <ClInclude Include="src\Invent\Shader\IDefaultShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\StbImage\stb_image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\Invent.cpp">

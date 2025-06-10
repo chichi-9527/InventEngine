@@ -11,10 +11,13 @@ namespace INVENT
 
 	void IRenderer::Shutdown()
 	{}
+
 	void IRenderer::BeginRender()
 	{}
+
 	void IRenderer::EndRender()
 	{}
+
 	void IRenderer::Submit()
 	{}
 }

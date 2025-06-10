@@ -4,6 +4,8 @@
 #include <functional>
 #include <mutex>
 
+#include "ILog.h"
+
 namespace INVENT
 {
 	template<typename... Args>
@@ -42,8 +44,8 @@ namespace INVENT
 				}
 				catch (const std::exception& e)
 				{
-					//TODO ERROR LOG
-					//std::cerr << "Exception in event handler: " << e.what() << std::endl;
+					ILog::Instance().IERROR("Exception in event handler: ");
+					ILog::Instance().IERROR(e.what());
 				}
 			}
 		}

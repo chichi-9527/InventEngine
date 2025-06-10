@@ -3,6 +3,8 @@
 
 #include "IDefaultShader.h"
 
+#include <filesystem>
+
 namespace INVENT
 {
 	void IShader::Bind()
@@ -85,7 +87,9 @@ namespace INVENT
 
 	IShader* IShaderManagement::Load(const std::string& vertexPath, const std::string& fragmentPath)
 	{
-		std::string name = vertexPath.substr(vertexPath.find_last_of("/\\"), vertexPath.find_last_of('.'));
+		auto startcount = vertexPath.find_last_of("/\\") + 1;
+		auto lastcount = vertexPath.find_last_of('.');
+		std::string name = vertexPath.substr(startcount, lastcount - startcount);
 		if (name.empty())
 		{
 			INVENT_LOG_WARNING("name is empty");

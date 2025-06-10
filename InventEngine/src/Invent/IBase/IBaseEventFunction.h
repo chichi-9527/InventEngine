@@ -8,8 +8,8 @@ namespace INVENT
 	public:
 		friend class IEventLayer;
 
-		IBaseEventFunction();
-		virtual ~IBaseEventFunction();
+		IBaseEventFunction() = default;
+		virtual ~IBaseEventFunction() = default;
 
 	protected:
 		virtual void EVENT_KEY_SPACE(float delta);

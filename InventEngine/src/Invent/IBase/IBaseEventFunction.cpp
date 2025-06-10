@@ -3,15 +3,6 @@
 
 namespace INVENT
 {
-	IBaseEventFunction::IBaseEventFunction()
-	{
-
-	}
-
-	IBaseEventFunction::~IBaseEventFunction()
-	{
-
-	}
 
 	void IBaseEventFunction::EVENT_KEY_SPACE(float delta)
 	{}

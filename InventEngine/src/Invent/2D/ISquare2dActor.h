@@ -7,6 +7,8 @@
 
 #include "IBase/IBaseActor.h"
 
+#include "ITexture/ITexture.h"
+
 namespace INVENT
 {
 	class ISquare2dActor : public IObject2D , IBaseActor
@@ -28,8 +30,11 @@ namespace INVENT
 		float GetRotation();
 
 		void SetShader(IShader* shader) { _shader = shader; }
+		const IShader* GetShader() { return _shader; }
 
 	private:
+		ITexture2D* _texture = nullptr;
+
 		glm::vec4 _color = { 1.0f, 1.0f,1.0f,1.0f }; // white
 		IShader* _shader;
 	};

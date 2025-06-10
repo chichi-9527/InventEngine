@@ -6,9 +6,11 @@
 #include "IComponentManagement.h"
 #include "IComponent/InvnetComponent.h"
 
+#include "IBaseEventFunction.h"
+
 namespace INVENT
 {
-	class IBaseActor 
+	class IBaseActor : public IBaseEventFunction
 	{
 	public:
 		IBaseActor() = default;

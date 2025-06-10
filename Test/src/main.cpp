@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+#include <filesystem>
+
 
 class MyGameInstance : public INVENT::IGameInstance<MyGameInstance>
 {
@@ -17,6 +19,10 @@ public:
 	{
 		INVENT::ISquare2dPawn* pawn = new INVENT::ISquare2dPawn;
 		std::cout << pawn->GetColor().r << "\n";
+
+		std::cout << std::filesystem::current_path() << "\n";
+
+		auto tex = INVENT::ITexture2DManagement::Instance().CreateTexture("./Assets/Textures/test.png");
 	}
 
 	virtual void Update(float delta) override
