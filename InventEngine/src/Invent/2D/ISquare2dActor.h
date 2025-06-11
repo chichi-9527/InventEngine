@@ -32,6 +32,8 @@ namespace INVENT
 		void SetShader(IShader* shader) { _shader = shader; }
 		const IShader* GetShader() { return _shader; }
 
+		void SetTexture();
+
 	private:
 		ITexture2D* _texture = nullptr;
 

@@ -19,6 +19,7 @@
     <ClInclude Include="src\Invent\IBase\IBasePawnControl.h" />
     <ClInclude Include="src\Invent\IBase\IBindEvent.h" />
     <ClInclude Include="src\Invent\IBase\IBaseEventFunction.h" />
+    <ClInclude Include="src\Invent\IBase\ICamera.h" />
     <ClInclude Include="src\Invent\IBase\IComponentManagement.h" />
     <ClInclude Include="src\Invent\IBase\IController.h" />
     <ClInclude Include="src\Invent\IBase\IEventLayer.h" />
@@ -50,6 +51,7 @@
     <ClCompile Include="src\Invent\IBase\IBasePawnControl.cpp" />
     <ClCompile Include="src\Invent\IBase\IBindEvent.cpp" />
     <ClCompile Include="src\Invent\IBase\IBaseEventFunction.cpp" />
+    <ClCompile Include="src\Invent\IBase\ICamera.cpp" />
     <ClCompile Include="src\Invent\IBase\IComponentManagement.cpp" />
     <ClCompile Include="src\Invent\IBase\IController.cpp" />
     <ClCompile Include="src\Invent\IBase\IEventLayer.cpp" />

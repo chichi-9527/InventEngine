@@ -5,6 +5,7 @@ D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IBaseActor.cpp;
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IBasePawnControl.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IBasePawnControl.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IBindEvent.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IBindEvent.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IBaseEventFunction.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IBaseEventFunction.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\ICamera.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\ICamera.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IComponentManagement.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IComponentManagement.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IController.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IController.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IEventLayer.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IEventLayer.obj

@@ -1,4 +1,4 @@
-#include "IEpch.h"
+﻿#include "IEpch.h"
 #include "IBaseLevel.h"
 #include "IBaseActor.h"
 
@@ -7,14 +7,11 @@ namespace INVENT
 
 	IBaseLevel::IBaseLevel()
 		: ObjectEventLayer(nullptr)
-		, UIEventLayer(nullptr)
 		, _window_size({ 0.0f, 0.0f })
 		, _clear_color_vec({ 0.2f,0.2f,0.2f,1.0f })
 	{
-		ObjectEventLayer = CreateLayer();
+		ObjectEventLayer = CreateLayer<IEventLayer>();
 		this->SetAllEventReturn(false);
-		
-		UIEventLayer = CreateLayer();
 
 		AddLayer(ObjectEventLayer);
 		AddLayer(this);
@@ -28,6 +25,15 @@ namespace INVENT
 			{
 				delete layer;
 				layer = nullptr;
+			}
+		}
+
+		for (auto actor : _actors)
+		{
+			if (actor)
+			{
+				delete actor;
+				actor = nullptr;
 			}
 		}
 	}
@@ -48,6 +54,44 @@ namespace INVENT
 	void IBaseLevel::SetClearColor(glm::vec4 color)
 	{
 		_clear_color_vec = color;
+	}
+
+	void IBaseLevel::DeleteActor(const IBaseActor* actor)
+	{
+		// 删除 _actors 中的元素
+		auto iter = std::find(_actors.begin(), _actors.end(), actor);
+		if (iter != _actors.end())
+		{
+			delete* iter;
+			*iter = _actors.back();
+			_actors.pop_back();
+		}
+
+		// 删除 _square_2d_actors 中的元素
+		EraseSquare2dActor((ISquare2dActor*)actor);
+
+		// 删除其他记录实例类中的元素
+
+	}
+
+	void IBaseLevel::AddActor(IBaseActor* actor)
+	{
+		_actors.push_back(actor);
+	}
+
+	void IBaseLevel::AddSquare2dActor(ISquare2dActor * actor)
+	{
+		_square_2d_actors.push_back(actor);
+	}
+
+	void IBaseLevel::EraseSquare2dActor(ISquare2dActor* actor)
+	{
+		auto iter = std::find(_square_2d_actors.begin(), _square_2d_actors.end(), actor);
+		if (iter != _square_2d_actors.end())
+		{
+			*iter = _square_2d_actors.back();
+			_actors.pop_back();
+		}
 	}
 
 	void IBaseLevel::_clear()
@@ -86,12 +130,6 @@ namespace INVENT
 
 	}
 
-	IEventLayer* IBaseLevel::CreateLayer()
-	{
-		IEventLayer* layer = new IEventLayer;
-		layers.push_back(layer);
-		return layer;
-	}
 
 	void IBaseLevel::EraseLayer(IEventLayer* layer)
 	{

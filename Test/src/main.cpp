@@ -39,6 +39,34 @@ private:
 	MyGameInstance() = default;
 };
 
+class MyActor : public INVENT::ISquare2dPawn 
+{
+
+};
+
+class MyActor2
+{
+
+};
+
+class MyLevel : public INVENT::IBaseLevel 
+{
+public:
+	MyLevel()
+		: IBaseLevel()
+	{
+		auto act = this->CreateActor<MyActor>();
+		auto act2 = this->CreateActor<MyActor2>();
+	}
+
+	virtual ~MyLevel()
+	{
+
+	}
+
+
+};
+
 class MyWindow : public INVENT::IWindow
 {
 public:
@@ -46,6 +74,8 @@ public:
 		: IWindow()
 	{
 		this->SetGameInstance(std::static_pointer_cast<INVENT::IBaseGameInstance>(MyGameInstance::GetGameInstancePtr()));
+
+		this->SetLevel(new MyLevel);
 
 	}
 
