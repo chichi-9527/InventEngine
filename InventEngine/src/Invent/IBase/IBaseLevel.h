@@ -4,6 +4,8 @@
 #include "IEventLayer.h"
 
 #include "IBaseActor.h"
+#include "IController.h"
+
 #include "2D/ISquare2dActor.h"
 
 #include "ILog.h"
@@ -24,6 +26,22 @@ namespace INVENT
 		virtual ~IBaseLevel();
 
 		virtual void Update(float delta);
+
+		// need Inherited from IControllerBase
+		// and auto SetController if inherited
+		template<typename T, typename ...Args>
+		std::shared_ptr<T> CreateControllerPtr(Args&&... args)
+		{
+			std::shared_ptr<T> controller = std::make_shared<T>(std::forward<Args>(args)...);
+			if (std::is_base_of_v<IControllerBase, T>)
+			{
+				SetController(controller);
+			}
+			return controller;
+		}
+
+		void SetController(std::shared_ptr<IControllerBase> controller);
+		std::shared_ptr<IControllerBase> GetController() { return _controller_ptr; }
 
 	protected:
 		void SetClearColor(float red, float green, float blue, float alpha);
@@ -103,6 +121,8 @@ namespace INVENT
 		std::vector<IBaseActor*> _actors;
 		// 以下实例数组为记录可渲染实例，不需要释放
 		std::vector<ISquare2dActor*> _square_2d_actors;
+
+		std::shared_ptr<IControllerBase> _controller_ptr;
 
 		glm::vec2 _window_size;
 

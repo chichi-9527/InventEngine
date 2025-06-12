@@ -3,6 +3,8 @@
 
 #include "Renderer/IRenderer.h"
 
+#include "IEngine.h"
+
 
 namespace INVENT
 {
@@ -16,6 +18,8 @@ namespace INVENT
 		{
 			iwindow->Width = width;
 			iwindow->Height = height;
+
+			iwindow->_window_size_change();
 		}
 	}
 
@@ -295,6 +299,8 @@ namespace INVENT
 		_create();
 		_default_level = new IBaseLevel;
 		Level = _default_level;
+
+		IEngine::InstancePtr()->SetIWindow(this);
 	}
 
 	IWindow::~IWindow()
@@ -304,7 +310,6 @@ namespace INVENT
 		_default_level = nullptr;
 		glfwTerminate();
 	}
-
 
 	// ----------------------Start--------------------------------------
 	void IWindow::Start()
@@ -346,6 +351,11 @@ namespace INVENT
 
 		_game_instance_ptr->End();
 		IRenderer::Shutdown();
+	}
+
+	void IWindow::SetWindowSize(unsigned int width, unsigned int height)
+	{
+		glfwSetWindowSize(Window, (int)width, (int)height);
 	}
 
 	void IWindow::Close()

@@ -15,6 +15,7 @@ D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IGameInstance.c
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IObjectBase.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IObjectBase.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IWindow.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IWindow.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Glad\glad.c;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\glad.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IEngine.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IEngine.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\ILog.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\ILog.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IEpch.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IEpch.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Invent.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\Invent.obj

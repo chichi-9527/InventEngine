@@ -43,6 +43,19 @@ namespace INVENT
 		
 	}
 
+	void IBaseLevel::SetController(std::shared_ptr<IControllerBase> controller)
+	{
+		if (_controller_ptr)
+		{
+			this->EraseLayer(_controller_ptr.get());
+		}
+		_controller_ptr = controller;
+		if (_controller_ptr)
+		{
+			this->AddLayer(_controller_ptr.get());
+		}
+	}
+
 	void IBaseLevel::SetClearColor(float red, float green, float blue, float alpha)
 	{
 		_clear_color_vec.r = red;

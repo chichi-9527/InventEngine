@@ -12,8 +12,6 @@ class MyGameInstance : public INVENT::IGameInstance<MyGameInstance>
 	INVENT_GAMEINSTANCE(MyGameInstance)
 public:
 	virtual ~MyGameInstance(){}
-	MyGameInstance(const MyGameInstance&) = delete;
-	MyGameInstance& operator=(const MyGameInstance&) = delete;
 
 	virtual void Begin() override
 	{
@@ -34,9 +32,6 @@ public:
 	{
 		
 	}
-
-private:
-	MyGameInstance() = default;
 };
 
 class MyActor : public INVENT::ISquare2dPawn 
@@ -70,8 +65,8 @@ public:
 class MyWindow : public INVENT::IWindow
 {
 public:
-	MyWindow()
-		: IWindow()
+	MyWindow(unsigned int width = 800, unsigned int height = 600, std::string title = "title")
+		: IWindow(width, height, title)
 	{
 		this->SetGameInstance(std::static_pointer_cast<INVENT::IBaseGameInstance>(MyGameInstance::GetGameInstancePtr()));
 

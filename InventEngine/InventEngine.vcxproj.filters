@@ -108,6 +108,9 @@
     <ClInclude Include="src\Invent\IBase\ICamera.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Invent\IEngine.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\Invent.cpp">
@@ -186,6 +189,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Invent\IBase\ICamera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\IEngine.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
