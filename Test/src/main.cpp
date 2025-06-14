@@ -52,6 +52,29 @@ public:
 	{
 		auto act = this->CreateActor<MyActor>();
 		auto act2 = this->CreateActor<MyActor2>();
+
+		camera = new INVENT::ICamera();
+	}
+
+	virtual bool PRESS_EVENT_KEY_1() override
+	{
+		std::cout << "camera forward.x: "
+			<< camera->GetForwardVector().x
+			<< "; camera forward.y: "
+			<< camera->GetForwardVector().y
+			<< "; camera forward.z: "
+			<< camera->GetForwardVector().z << "\n";
+
+		camera->TurnUpWithAngle(45.0f);
+
+		std::cout << "camera forward.x: "
+			<< camera->GetForwardVector().x
+			<< "; camera forward.y: "
+			<< camera->GetForwardVector().y
+			<< "; camera forward.z: "
+			<< camera->GetForwardVector().z << "\n";
+
+		return false;
 	}
 
 	virtual ~MyLevel()
@@ -59,6 +82,8 @@ public:
 
 	}
 
+private:
+	INVENT::ICamera* camera;
 
 };
 

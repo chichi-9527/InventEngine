@@ -5,6 +5,7 @@
 
 #include "IBaseActor.h"
 #include "IController.h"
+#include "ICamera.h"
 
 #include "2D/ISquare2dActor.h"
 
@@ -89,6 +90,7 @@ namespace INVENT
 
 			if (!std::is_base_of_v<ISquare2dActor, T>)
 				_square_2d_actors.push_back((ISquare2dActor*)actor);
+			// else if()
 
 			return actor;
 		}

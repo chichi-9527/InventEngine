@@ -33,6 +33,17 @@ namespace INVENT
 			: RelativePosition(position){}
 	};
 
+	struct RotationComponent
+	{
+		glm::vec3 Rotation;
+
+		RotationComponent() = default;
+		RotationComponent(const RotationComponent&) = default;
+		RotationComponent(const glm::vec3& rotation)
+			: Rotation(rotation)
+		{}
+	};
+
 
 }
 

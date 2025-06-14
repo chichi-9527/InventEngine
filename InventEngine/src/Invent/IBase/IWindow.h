@@ -19,8 +19,9 @@ namespace INVENT
 
 		void SetWindowSize(unsigned int width, unsigned int height);
 
-		unsigned int GetWidth() { return Width; }
-		unsigned int GetHeight() { return Height; }
+		unsigned int GetWidth() const { return Width; }
+		unsigned int GetHeight() const { return Height; }
+		float GetWindowAspect() const { return (float)Width / (float)Height; }
 
 		friend void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 		friend void register_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);

@@ -3,8 +3,6 @@
 
 #include "ILog.h"
 
-#include "IEngine.h"
-
 #include "IBase/IWindow.h"
 #include "IBase/IEventLayer.h"
 #include "IBase/IBaseLevel.h"
@@ -17,8 +15,7 @@
 
 #include "2D/ISquare2dPawn.h"
 
-
-
+#include "IEngine.h"
 
 #endif // !_INVENT_
 

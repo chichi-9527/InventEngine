@@ -3,6 +3,7 @@
 
 namespace INVENT
 {
+	std::unique_ptr<IRenderer::SceneData> IRenderer::_sceme_data = std::make_unique<IRenderer::SceneData>();
 
 	void IRenderer::Init()
 	{
@@ -12,8 +13,10 @@ namespace INVENT
 	void IRenderer::Shutdown()
 	{}
 
-	void IRenderer::BeginRender()
-	{}
+	void IRenderer::BeginRender(const ICamera* camera)
+	{
+	
+	}
 
 	void IRenderer::EndRender()
 	{}

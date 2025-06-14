@@ -22,10 +22,10 @@ namespace INVENT
 		const glm::vec3& GetUpVector() const { return _up; }
 		glm::vec3 GetUpVector() { return _up; }
 
-		virtual void MoveUp() = 0;
-		virtual void MoveDown() = 0;
-		virtual void MoveLeft() = 0;
-		virtual void MoveRight() = 0;
+		virtual void MoveUp(float delta) = 0;
+		virtual void MoveDown(float delta) = 0;
+		virtual void MoveLeft(float delta) = 0;
+		virtual void MoveRight(float delta) = 0;
 
 	private:
 		glm::vec3 _forward = { 0.0f,0.0f,0.0f };
@@ -40,8 +40,8 @@ namespace INVENT
 		IBasePawnControl() = default;
 		virtual ~IBasePawnControl() = default;
 
-		virtual void MoveForward() = 0;
-		virtual void MoveBackward() = 0;
+		virtual void MoveForward(float delta) = 0;
+		virtual void MoveBackward(float delta) = 0;
 
 	};
 }

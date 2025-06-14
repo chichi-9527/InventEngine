@@ -46,4 +46,14 @@ namespace INVENT
 		return false;
 	}
 
+	void IObjectBase::SetWorldPosition(const glm::vec3& position)
+	{
+		GetComponent<WorldPositionComponent>()->WorldPosition = position;
+	}
+
+	const glm::vec3& IObjectBase::GetWorldPosition()
+	{
+		return GetComponent<WorldPositionComponent>()->WorldPosition;
+	}
+
 }

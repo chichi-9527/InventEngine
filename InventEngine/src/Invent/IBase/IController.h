@@ -29,11 +29,13 @@ namespace INVENT
 
 	};
 
-	class IController2D : public IControllerBase
+	class IPlayerController2D : public IControllerBase
 	{
 	public:
-		IController2D();
-		virtual ~IController2D();
+		IPlayerController2D();
+		virtual ~IPlayerController2D();
+
+		void UseDefaultController(bool is_default = true) { _is_default = is_default; }
 
 		void SetSceneCamera(ICamera* camera) { _scene_camera = camera; }
 		const ICamera* GetSceneCamera() const { return _scene_camera; }
@@ -48,12 +50,19 @@ namespace INVENT
 		const IBasePawnControl2D* Get2DPlayerController(size_t index) const;
 		IBasePawnControl2D* Get2DPlayerController(size_t index);
 
+		virtual bool EVENT_KEY_W(float delta) override;
+		virtual bool EVENT_KEY_A(float delta) override;
+		virtual bool EVENT_KEY_S(float delta) override;
+		virtual bool EVENT_KEY_D(float delta) override;
+
 	private:
 		std::vector<IBasePawnControl2D*> _pawns;
 
 		size_t _control_player_index;
 
 		ICamera* _scene_camera;
+
+		bool _is_default = true;
 	};
 
 }

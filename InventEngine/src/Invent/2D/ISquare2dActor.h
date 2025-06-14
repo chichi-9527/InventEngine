@@ -6,12 +6,13 @@
 #include "Shader/IShader.h"
 
 #include "IBase/IBaseActor.h"
+#include "IBase/ICamera.h"
 
 #include "ITexture/ITexture.h"
 
 namespace INVENT
 {
-	class ISquare2dActor : public IObject2D , IBaseActor
+	class ISquare2dActor : public IObject2D ,public IBaseActor
 	{
 	public:
 		ISquare2dActor();

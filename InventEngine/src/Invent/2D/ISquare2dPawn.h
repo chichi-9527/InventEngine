@@ -7,16 +7,16 @@
 namespace INVENT
 {
 
-	class ISquare2dPawn : public ISquare2dActor, IBasePawnControl2D
+	class ISquare2dPawn : public ISquare2dActor,public IBasePawnControl2D
 	{
 	public:
 		ISquare2dPawn();
 		virtual ~ISquare2dPawn();
 
-		virtual void MoveUp() override;
-		virtual void MoveDown() override;
-		virtual void MoveLeft() override;
-		virtual void MoveRight() override;
+		virtual void MoveUp(float delta) override;
+		virtual void MoveDown(float delta) override;
+		virtual void MoveLeft(float delta) override;
+		virtual void MoveRight(float delta) override;
 	};
 
 }

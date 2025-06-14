@@ -3,11 +3,11 @@
 
 #include <memory>
 
-//#include "IBase/IWindow.h"
+#include "IBase/IWindow.h"
 
 namespace INVENT
 {
-	class IWindow;
+	// class IWindow;
 	class IEngine 
 	{
 		friend class IWindow;

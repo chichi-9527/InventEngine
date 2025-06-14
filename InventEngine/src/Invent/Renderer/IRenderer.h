@@ -3,6 +3,10 @@
 
 #include "IRendererCommand.h"
 
+#include "IBase/ICamera.h"
+
+#include <memory>
+
 namespace INVENT
 {
 	class IRenderer 
@@ -11,13 +15,18 @@ namespace INVENT
 		static void Init();
 		static void Shutdown();
 
-		static void BeginRender();
+		static void BeginRender(const ICamera* camera);
 		static void EndRender();
 
 		static void Submit();
 
 	private:
+		struct SceneData
+		{
+			glm::mat4 ViewProjectionMatrix;
+		};
 
+		static std::unique_ptr<SceneData> _sceme_data;
 	};
 }
 

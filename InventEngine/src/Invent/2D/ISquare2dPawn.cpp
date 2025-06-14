@@ -12,15 +12,15 @@ namespace INVENT
 	ISquare2dPawn::~ISquare2dPawn()
 	{}
 
-	void ISquare2dPawn::MoveUp()
+	void ISquare2dPawn::MoveUp(float delta)
 	{}
 
-	void ISquare2dPawn::MoveDown()
+	void ISquare2dPawn::MoveDown(float delta)
 	{}
 
-	void ISquare2dPawn::MoveLeft()
+	void ISquare2dPawn::MoveLeft(float delta)
 	{}
 
-	void ISquare2dPawn::MoveRight()
+	void ISquare2dPawn::MoveRight(float delta)
 	{}
 }
