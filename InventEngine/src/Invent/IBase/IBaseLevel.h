@@ -88,7 +88,7 @@ namespace INVENT
 			T* actor = new T;
 			_actors.push_back((IBaseActor*)actor);
 
-			if (!std::is_base_of_v<ISquare2dActor, T>)
+			if (std::is_base_of_v<ISquare2dActor, T>)
 				_square_2d_actors.push_back((ISquare2dActor*)actor);
 			// else if()
 

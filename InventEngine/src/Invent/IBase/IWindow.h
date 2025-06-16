@@ -4,6 +4,9 @@
 #include "IBaseLevel.h"
 #include "IGameInstance.h"
 
+#include "Renderer/IRenderer.h"
+#include "Renderer/IRenderer2D.h"
+
 #include <string>
 #include <GLFW/glfw3.h>
 
@@ -31,7 +34,15 @@ namespace INVENT
 
 		void SetLevel(IBaseLevel* level);
 
+		// 异步
+		// CreateLevel
+
+		// 设置加载时的场景/关卡
+		// Set
+
 		void SetGameInstance(std::shared_ptr<IBaseGameInstance> game_instance_ptr);
+
+		static void Render(IBaseLevel* level);
 
 	protected:
 		IBaseLevel* Level;

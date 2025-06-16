@@ -14,7 +14,14 @@ namespace INVENT
 
 	}
 
-	void ITexture2D::Bind(unsigned int slot)
+	void ITexture2D::Bind() const
+	{
+#ifdef USE_OPENGL
+		glBindTexture(GL_TEXTURE_2D, _texture_id);
+#endif // USE_OPENGL
+	}
+
+	void ITexture2D::BindUnit(unsigned int slot) const
 	{
 #ifdef USE_OPENGL
 		glBindTextureUnit(slot, _texture_id);
@@ -41,8 +48,10 @@ namespace INVENT
 #endif // USE_OPENGL
 	}
 
-	ITexture2D::ITexture2D(const std::string& path)
+	ITexture2D::ITexture2D(const std::string& name, const std::string& path)
 	{
+		_name = name;
+
 		int width = 0, height = 0, channels = 0;
 		stbi_set_flip_vertically_on_load(1);
 
@@ -121,8 +130,30 @@ namespace INVENT
 		ITexture2D* texture = GetTexture(name);
 		if (texture)
 			return texture;
-		texture = new ITexture2D(path);
+		texture = new ITexture2D(name, path);
 		return texture;
+	}
+
+	ITexture2DManagement::TextureID ITexture2DManagement::CreateTextureDynamic(const std::string& path)
+	{
+		auto startcount = path.find_last_of("/\\") + 1;
+		auto lastcount = path.find_last_of('.');
+		std::string name = path.substr(startcount, lastcount - startcount);
+		for (size_t i = 0; i < _vector_textrues.size(); ++i)
+		{
+			if (name == _vector_textrues[i]->Name())
+				return i;
+		}
+
+		size_t id = _vector_textrues.size();
+		_vector_textrues.push_back(nullptr);
+		std::thread create_texture([this, &path, &name, id]() {
+			auto texture = this->CreateTexture(name, path);
+			std::lock_guard<std::mutex> lock(_mutex);
+			this->_vector_textrues[id] = texture;
+			});
+		create_texture.detach();
+		return id;
 	}
 
 	ITexture2D* ITexture2DManagement::CreateWhiteTexture()
@@ -146,5 +177,10 @@ namespace INVENT
 	{
 		static ITexture2D* white_texture = ITexture2DManagement::Instance().CreateWhiteTexture();
 		return white_texture;
+	}
+
+	ITexture2DManagement::ITexture2DManagement()
+	{
+		_vector_textrues.push_back(nullptr);
 	}
 }

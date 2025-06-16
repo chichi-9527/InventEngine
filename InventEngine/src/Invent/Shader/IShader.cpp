@@ -7,34 +7,44 @@
 
 namespace INVENT
 {
-	void IShader::Bind()
+	void IShader::Bind() const
 	{
 #ifdef USE_OPENGL
 		glUseProgram(_shader_program);
 #endif // USE_OPENGL
 	}
 
-	void IShader::UnBind()
+	void IShader::UnBind() const
 	{
 #ifdef USE_OPENGL
 		glUseProgram(0);
 #endif // USE_OPENGL
 	}
 
-	void IShader::SetInt(const std::string & name, int value)
+	void IShader::SetInt(const std::string & name, int value) const
 	{}
-	void IShader::SetIntArray(const std::string & name, int* values, unsigned int count)
+
+	void IShader::SetIntArray(const std::string & name, int* values, unsigned int count) const
 	{}
-	void IShader::SetFloat(const std::string & name, float value)
+
+	void IShader::SetFloat(const std::string & name, float value) const
 	{}
-	void IShader::SetFloat2(const std::string & name, const glm::vec2 & value)
+
+	void IShader::SetFloat2(const std::string & name, const glm::vec2 & value) const
 	{}
-	void IShader::SetFloat3(const std::string & name, const glm::vec3 & value)
+
+	void IShader::SetFloat3(const std::string & name, const glm::vec3 & value) const
 	{}
-	void IShader::SetFloat4(const std::string & name, const glm::vec4 & value)
+
+	void IShader::SetFloat4(const std::string & name, const glm::vec4 & value) const
 	{}
-	void IShader::SetMat4(const std::string & name, const glm::mat4 & value)
-	{}
+
+	void IShader::SetMat4(const std::string & name, const glm::mat4 & value) const
+	{
+#ifdef USE_OPENGL
+		glUniformMatrix4fv(glGetUniformLocation(_shader_program, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+#endif // USE_OPENGL
+	}
 
 	void IShader::ReadFile(const std::string & file_path, std::string& file_content)
 	{

@@ -15,16 +15,16 @@ namespace INVENT
 	public:
 		~IShader() = default;
 
-		void Bind();
-		void UnBind();
+		void Bind() const;
+		void UnBind() const;
 
-		void SetInt(const std::string& name, int value);
-		void SetIntArray(const std::string& name, int* values, unsigned int count);
-		void SetFloat(const std::string& name, float value);
-		void SetFloat2(const std::string& name, const glm::vec2& value);
-		void SetFloat3(const std::string& name, const glm::vec3& value);
-		void SetFloat4(const std::string& name, const glm::vec4& value);
-		void SetMat4(const std::string& name, const glm::mat4& value);
+		void SetInt(const std::string& name, int value) const;
+		void SetIntArray(const std::string& name, int* values, unsigned int count) const;
+		void SetFloat(const std::string& name, float value) const;
+		void SetFloat2(const std::string& name, const glm::vec2& value) const;
+		void SetFloat3(const std::string& name, const glm::vec3& value) const;
+		void SetFloat4(const std::string& name, const glm::vec4& value) const;
+		void SetMat4(const std::string& name, const glm::mat4& value) const;
 
 		const std::string& Name() const { return _name; }
 

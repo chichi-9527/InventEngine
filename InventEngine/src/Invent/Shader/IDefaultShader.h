@@ -7,6 +7,10 @@ namespace INVENT
 	{
 		friend class IShaderManagement;
 
+//layout(std140, binding = 0) uniform Camera
+//{
+//	mat4 u_ViewProjection;
+//};
 
 		// Default 2D square shader
 		constexpr static const char* DefaultSquare2DVertexShader = R"(
@@ -17,10 +21,7 @@ layout(location = 1) in vec4 a_Color;
 layout(location = 2) in vec2 a_TexCoord;
 layout(location = 3) in float a_TexIndex;
 
-layout(std140, binding = 0) uniform Camera
-{
-	mat4 u_ViewProjection;
-};
+uniform mat4 u_ViewProjection;
 
 struct VertexOutput
 {

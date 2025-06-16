@@ -36,12 +36,13 @@ public:
 
 class MyActor : public INVENT::ISquare2dPawn 
 {
-
-};
-
-class MyActor2
-{
-
+public:
+	MyActor()
+		: INVENT::ISquare2dPawn()
+	{
+		this->SetColor({ 0.5f, 0.4f,0.3f,1.0f });
+		this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("./Assets/Textures/test.png"));
+	}
 };
 
 class MyLevel : public INVENT::IBaseLevel 
@@ -51,7 +52,6 @@ public:
 		: IBaseLevel()
 	{
 		auto act = this->CreateActor<MyActor>();
-		auto act2 = this->CreateActor<MyActor2>();
 
 		camera = new INVENT::ICamera();
 	}

@@ -22,6 +22,8 @@ D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Invent.cpp;D:\project
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\ITexture\ITexture.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\ITexture.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IBuffer.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IBuffer.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IRenderer.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IRenderer.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IRenderer2D.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IRenderer2D.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IRendererCommand.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IRendererCommand.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IUniformBuffer.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IUniformBuffer.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IVertexArray.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IVertexArray.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Shader\IShader.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IShader.obj

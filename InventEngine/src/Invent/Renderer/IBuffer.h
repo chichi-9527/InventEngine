@@ -102,6 +102,9 @@ namespace INVENT
 		const IBufferLayout& GetLayout() const { return _layout; }
 		void SetLayout(const IBufferLayout& layout) { _layout = layout; }
 
+		static std::shared_ptr<IVertexBuffer> CreatePtr(unsigned int size);
+		static std::shared_ptr<IVertexBuffer> CreatePtr(float* vertices, unsigned int size);
+
 	private:
 		unsigned int _vbo = 0;
 		IBufferLayout _layout;
@@ -118,6 +121,8 @@ namespace INVENT
 		void UnBind() const;
 
 		unsigned int GetCount() const { return _count; }
+
+		static std::shared_ptr<IIndexBuffer> CreatePtr(unsigned int* indices, unsigned int count);
 
 	private:
 		unsigned int _ebo = 0;

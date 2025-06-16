@@ -97,4 +97,9 @@ namespace INVENT
 
 	}
 
+	std::shared_ptr<IVertexArray> IVertexArray::CreatePtr()
+	{
+		return std::make_shared<IVertexArray>();
+	}
+
 }

@@ -25,6 +25,11 @@ namespace INVENT
 		// p_far: 远裁剪面距离
 		void SetProjection(float fov = 45.0f, float p_near = 0.1f, float p_far = 100.0f);
 
+		virtual void SetWorldPosition(const glm::vec3& position) override;
+
+		// 注意 forward 和 up 的关系
+		void SetForwardUpVector(const glm::vec3& forward, const glm::vec3& up);
+
 		const glm::mat4& GetProjectionMatrix() const { return _projection_matrix; }
 		const glm::mat4& GetViewMatrix() const { return _view_matrix; }
 		const glm::mat4& GetViewProjectionMatrix() const { return _view_projection_matrix; }
@@ -52,6 +57,8 @@ namespace INVENT
 		virtual void TurnRightWithAngle(float angle);
 		virtual void TurnClockwiseWithAngle(float angle);
 		virtual void TurnCounterclockwiseWithAngle(float angle);
+
+		void RecalculateViewMatrix();
 
 	private:
 		glm::mat4 _projection_matrix;

@@ -12,7 +12,7 @@ namespace INVENT
 		virtual ~IBasePawnControl2D() = default;
 
 		void SetMoveSpeed(float speed) { _move_speed = speed; }
-		float GetMoveSpeed() { return _move_speed; }
+		float GetMoveSpeed() const { return _move_speed; }
 
 		void SetForwardVector(const glm::vec3& forward) { _forward = forward; }
 		const glm::vec3& GetForwardVector() const { return _forward; }

@@ -38,7 +38,9 @@
     <ClInclude Include="src\Invent\ITexture\ITexture.h" />
     <ClInclude Include="src\Invent\Renderer\IBuffer.h" />
     <ClInclude Include="src\Invent\Renderer\IRenderer.h" />
+    <ClInclude Include="src\Invent\Renderer\IRenderer2D.h" />
     <ClInclude Include="src\Invent\Renderer\IRendererCommand.h" />
+    <ClInclude Include="src\Invent\Renderer\IUniformBuffer.h" />
     <ClInclude Include="src\Invent\Renderer\IVertexArray.h" />
     <ClInclude Include="src\Invent\Shader\IDefaultShader.h" />
     <ClInclude Include="src\Invent\Shader\IShader.h" />
@@ -75,7 +77,9 @@
     <ClCompile Include="src\Invent\ITexture\ITexture.cpp" />
     <ClCompile Include="src\Invent\Renderer\IBuffer.cpp" />
     <ClCompile Include="src\Invent\Renderer\IRenderer.cpp" />
+    <ClCompile Include="src\Invent\Renderer\IRenderer2D.cpp" />
     <ClCompile Include="src\Invent\Renderer\IRendererCommand.cpp" />
+    <ClCompile Include="src\Invent\Renderer\IUniformBuffer.cpp" />
     <ClCompile Include="src\Invent\Renderer\IVertexArray.cpp" />
     <ClCompile Include="src\Invent\Shader\IShader.cpp" />
   </ItemGroup>

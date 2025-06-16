@@ -18,6 +18,8 @@ namespace INVENT
 		this->SetForwardVector({ 0.0f,0.0f,-1.0f });
 		this->SetUpVector({ 0.0f,1.0f,0.0f });
 
+		RecalculateViewMatrix();
+
 		this->SetMoveSpeed(0.001f);
 	}
 
@@ -27,7 +29,20 @@ namespace INVENT
 	void ICamera::SetProjection(float fov, float p_near, float p_far)
 	{
 		_projection_matrix = glm::perspective(glm::radians(fov), IEngine::InstancePtr()->GetIWindow()->GetWindowAspect(), p_near, p_far);
+		_view_projection_matrix = _projection_matrix * _view_matrix;
+	}
 
+	void ICamera::SetWorldPosition(const glm::vec3& position)
+	{
+		IObjectBase::SetWorldPosition(position);
+		RecalculateViewMatrix();
+	}
+
+	void ICamera::SetForwardUpVector(const glm::vec3& forward, const glm::vec3& up)
+	{
+		this->SetForwardVector(forward);
+		this->SetUpVector(up);
+		RecalculateViewMatrix();
 	}
 
 	void ICamera::MoveForward(float delta)
@@ -107,8 +122,7 @@ namespace INVENT
 		glm::vec3 right_vector = glm::cross(this->GetForwardVector(), this->GetUpVector());
 		glm::vec4 rotated_forward_vector = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::normalize(right_vector)) * glm::vec4(this->GetForwardVector(), 1.0f);
 		glm::vec4 rotated_up_vector = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::normalize(right_vector)) * glm::vec4(this->GetUpVector(), 1.0f);
-		this->SetForwardVector(glm::vec3(rotated_forward_vector));
-		this->SetUpVector(glm::vec3(rotated_up_vector));
+		this->SetForwardUpVector(glm::vec3(rotated_forward_vector), glm::vec3(rotated_up_vector));
 	}
 
 	void ICamera::TurnDownWithAngle(float angle)
@@ -116,32 +130,42 @@ namespace INVENT
 		glm::vec3 left_vector = glm::cross(this->GetUpVector(), this->GetForwardVector());
 		glm::vec4 rotated_forward_vector = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::normalize(left_vector)) * glm::vec4(this->GetForwardVector(), 1.0f);
 		glm::vec4 rotated_up_vector = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::normalize(left_vector)) * glm::vec4(this->GetUpVector(), 1.0f);
-		this->SetForwardVector(glm::vec3(rotated_forward_vector));
-		this->SetUpVector(glm::vec3(rotated_up_vector));
+		this->SetForwardUpVector(glm::vec3(rotated_forward_vector), glm::vec3(rotated_up_vector));
 	}
 
 	void ICamera::TurnLeftWithAngle(float angle)
 	{
 		glm::vec4 rotated_forward_vector = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::normalize(this->GetUpVector())) * glm::vec4(this->GetForwardVector(), 1.0f);
 		this->SetForwardVector(glm::vec3(rotated_forward_vector));
+		RecalculateViewMatrix();
 	}
 
 	void ICamera::TurnRightWithAngle(float angle)
 	{
 		glm::vec4 rotated_forward_vector = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::normalize(-this->GetUpVector())) * glm::vec4(this->GetForwardVector(), 1.0f);
 		this->SetForwardVector(glm::vec3(rotated_forward_vector));
+		RecalculateViewMatrix();
 	}
 
 	void ICamera::TurnClockwiseWithAngle(float angle)
 	{
 		glm::vec4 rotated_up_vector = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::normalize(-this->GetForwardVector())) * glm::vec4(this->GetUpVector(), 1.0f);
 		this->SetUpVector(rotated_up_vector);
+		RecalculateViewMatrix();
 	}
 
 	void ICamera::TurnCounterclockwiseWithAngle(float angle)
 	{
 		glm::vec4 rotated_up_vector = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::normalize(this->GetForwardVector())) * glm::vec4(this->GetUpVector(), 1.0f);
 		this->SetUpVector(rotated_up_vector);
+		RecalculateViewMatrix();
+	}
+
+	void ICamera::RecalculateViewMatrix()
+	{
+		auto& position = this->GetWorldPosition();
+		_view_matrix = glm::lookAt(position, position + this->GetForwardVector(), this->GetUpVector());
+		_view_projection_matrix = _projection_matrix * _view_matrix;
 	}
 
 }

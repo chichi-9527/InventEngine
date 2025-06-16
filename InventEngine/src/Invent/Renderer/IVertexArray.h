@@ -24,6 +24,8 @@ namespace INVENT
 		const std::vector<std::shared_ptr<IVertexBuffer>>& GetVertexBuffers() const { return _vertex_buffers; }
 		const std::shared_ptr<IIndexBuffer> GetIndexBuffer() const { return _index_buffer; }
 
+		static std::shared_ptr<IVertexArray> CreatePtr();
+
 	private:
 		unsigned int _vao = 0;
 		unsigned int _vertex_buffer_index = 0;

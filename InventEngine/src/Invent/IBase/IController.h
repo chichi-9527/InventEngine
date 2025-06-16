@@ -14,7 +14,8 @@ namespace INVENT
 		IControllerBase();
 		virtual ~IControllerBase() = default;
 
-
+		virtual void  SetSceneCamera(ICamera* camera) = 0;
+		virtual const ICamera* GetSceneCamera() const = 0;
 	};
 
 	class IController : public IControllerBase
@@ -37,8 +38,8 @@ namespace INVENT
 
 		void UseDefaultController(bool is_default = true) { _is_default = is_default; }
 
-		void SetSceneCamera(ICamera* camera) { _scene_camera = camera; }
-		const ICamera* GetSceneCamera() const { return _scene_camera; }
+		virtual void SetSceneCamera(ICamera* camera) override { _scene_camera = camera; }
+		virtual const ICamera* GetSceneCamera() const override { return _scene_camera; }
 
 		void AddPlayer(IBasePawnControl2D* pawn);
 		void ErasePlayer(IBasePawnControl2D* pawn);

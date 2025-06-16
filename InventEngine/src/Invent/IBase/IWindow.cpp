@@ -335,7 +335,7 @@ namespace INVENT
 			///////////////////////////////////////////////////////////
 			///////////// Render Begin
 
-
+			IWindow::Render(Level);
 
 			///////////// Render End
 			//////////////////////////////////////////////////////////
@@ -372,6 +372,55 @@ namespace INVENT
 	void IWindow::SetGameInstance(std::shared_ptr<IBaseGameInstance> game_instance_ptr)
 	{
 		_game_instance_ptr = game_instance_ptr;
+	}
+
+	// debug
+	struct quad_vertex {
+		glm::vec3 Position;
+		glm::vec4 Color;
+		glm::vec2 TexCoord;
+		float TexIndex;
+	};
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////  渲染
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	void IWindow::Render(IBaseLevel* level)
+	{
+		IRenderer::BeginRender(level->GetController() ? level->GetController()->GetSceneCamera() : nullptr);
+		auto shader = level->_square_2d_actors[0]->GetShader();
+		auto vertex_array = IVertexArray::CreatePtr();
+		
+		unsigned int indices[] = { 0,1,2,2,3,0 };
+		auto index_buffer = IIndexBuffer::CreatePtr(indices, 6);
+		vertex_array->SetIndexBuffer(index_buffer);
+		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+		auto q_vertexs = new quad_vertex[4];
+		glm::vec3 quad_position[4];
+		quad_position[0] = { -0.5f, -0.5f, 0.0f };
+		quad_position[1] = { 0.5f, -0.5f, 0.0f };
+		quad_position[2] = { 0.5f, 0.5f, 0.0f };
+		quad_position[3] = { -0.5f, 0.5f, 0.0f };
+		for (size_t i = 0; i < 4; ++i)
+		{
+			q_vertexs[i].Position = level->_square_2d_actors[0]->GetWorldPosition() + quad_position[i];
+			q_vertexs[i].Color = level->_square_2d_actors[0]->GetColor();
+			q_vertexs[i].TexCoord = textureCoords[i];
+			q_vertexs[i].TexIndex = 1;
+		}
+		level->_square_2d_actors[0]->GetTexture()->BindUnit(1);
+		auto vertex_buffer = IVertexBuffer::CreatePtr((float*)q_vertexs, 4 * sizeof(quad_vertex));
+		vertex_buffer->SetLayout({
+			{IShaderDataType::Float3, "a_Position"},
+			{IShaderDataType::Float4, "a_Color"},
+			{IShaderDataType::Float2, "a_TexCoord"},
+			{IShaderDataType::Float, "a_TexIndex"}
+			});
+		vertex_array->AddVertexBuffer(vertex_buffer);
+
+		IRenderer::Submit(shader, vertex_array);
+		IRenderer::EndRender();
+		delete[] q_vertexs;
 	}
 
 	void IWindow::_create()

@@ -72,6 +72,16 @@ namespace INVENT
 #endif // USE_OPENGL
 	}
 
+	std::shared_ptr<IVertexBuffer> IVertexBuffer::CreatePtr(unsigned int size)
+	{
+		return std::make_shared<IVertexBuffer>(size);
+	}
+
+	std::shared_ptr<IVertexBuffer> IVertexBuffer::CreatePtr(float* vertices, unsigned int size)
+	{
+		return std::make_shared<IVertexBuffer>(vertices, size);
+	}
+
 	/// <summary>
 	/// //////////////////////////////////////////////////////////////////////
 	/// </summary>
@@ -107,6 +117,11 @@ namespace INVENT
 #ifdef USE_OPENGL
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 #endif // USE_OPENGL
+	}
+
+	std::shared_ptr<IIndexBuffer> IIndexBuffer::CreatePtr(unsigned int* indices, unsigned int count)
+	{
+		return std::make_shared<IIndexBuffer>(indices, count);
 	}
 
 }

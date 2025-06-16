@@ -33,12 +33,17 @@ namespace INVENT
 		void SetShader(IShader* shader) { _shader = shader; }
 		const IShader* GetShader() { return _shader; }
 
-		void SetTexture();
+		void SetTexture(ITexture2D* texture) { _texture = texture; }
+		const ITexture2D* GetTexture() const { return _texture; }
+		void SetTextureID(ITexture2DManagement::TextureID id) { _texture_id = id; }
+		ITexture2DManagement::TextureID GetTextureID() const { return _texture_id; }
 
 	private:
-		ITexture2D* _texture = nullptr;
+		glm::vec4 _color;
 
-		glm::vec4 _color = { 1.0f, 1.0f,1.0f,1.0f }; // white
+		ITexture2DManagement::TextureID _texture_id;
+
+		ITexture2D* _texture;
 		IShader* _shader;
 	};
 }
