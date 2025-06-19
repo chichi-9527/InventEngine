@@ -19,8 +19,6 @@ namespace INVENT
 		IObjectBase();
 		virtual ~IObjectBase();
 
-		static IComponentManagement& GetCompomemtManagement();
-
 		void AddTag(const std::string& tag);
 		void DeleteTag(const std::string& tag);
 		const std::vector<std::string>& GetTags();
@@ -33,34 +31,33 @@ namespace INVENT
 		T& AddComponent(Args&&... args)
 		{
 			INVENT_ASSERT(!HasComponent<T>(), "obj already has component!\n");
-			return IObjectBase::GetCompomemtManagement().Emplace<T>(_entity, std::forward<Args>(args)...);
+			return ITools::IDefaultComponentManagement::GetCompomemtManagement().Emplace<T>(_entity, std::forward<Args>(args)...);
 		}
 
 		template<typename T>
 		T* GetComponent()
 		{
 			INVENT_ASSERT(HasComponent<T>(), "obj does not have component!\n");
-			return IObjectBase::GetCompomemtManagement().Get<T>(_entity);
+			return ITools::IDefaultComponentManagement::GetCompomemtManagement().Get<T>(_entity);
 		}
 
 		template<typename T>
 		bool HasComponent()
 		{
-			return IObjectBase::GetCompomemtManagement().Has<T>(_entity);
+			return ITools::IDefaultComponentManagement::GetCompomemtManagement().Has<T>(_entity);
 		}
 
 		template<typename T>
 		void RemoveComponent()
 		{
 			INVENT_ASSERT(HasComponent<T>(), "obj does not have component!\n");
-			IObjectBase::GetCompomemtManagement().Remove<T>(_entity);
+			ITools::IDefaultComponentManagement::GetCompomemtManagement().Remove<T>(_entity);
 		}
 
 	protected:
 		std::vector<std::string> Tags;
 
 	private:
-		static IComponentManagement _component_management;
 
 		IComponentManagement::Entity _entity;
 	};

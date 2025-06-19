@@ -9,6 +9,8 @@
 
 #include <memory>
 
+#include <type_traits>
+
 namespace INVENT
 {
 	struct IBool
@@ -196,7 +198,15 @@ namespace INVENT
 		std::unordered_set< std::shared_ptr<IBaseComponentManagementArray>> _b_arr_set;
 	};
 
-
+	namespace ITools
+	{
+		class IDefaultComponentManagement 
+		{
+		public:
+			static IComponentManagement& GetCompomemtManagement();
+		};
+		
+	}
 
 }
 

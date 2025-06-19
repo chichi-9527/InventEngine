@@ -43,6 +43,11 @@ public:
 		this->SetColor({ 0.5f, 0.4f,0.3f,1.0f });
 		this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("./Assets/Textures/test.png"));
 	}
+
+	virtual void Update(float delta) override
+	{
+		this->SetWorldPosition(this->GetWorldPosition() + delta * glm::vec3(0.01f, 0.0f, 0.0f));
+	}
 };
 
 class MyLevel : public INVENT::IBaseLevel 

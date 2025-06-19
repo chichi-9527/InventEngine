@@ -12,6 +12,7 @@
 #include "ILog.h"
 
 #include <vector>
+#include <mutex>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
@@ -86,10 +87,18 @@ namespace INVENT
 			}
 
 			T* actor = new T;
-			_actors.push_back((IBaseActor*)actor);
 
-			if (std::is_base_of_v<ISquare2dActor, T>)
-				_square_2d_actors.push_back((ISquare2dActor*)actor);
+			std::thread th([this, actor]() {
+				AddActor((IBaseActor*)actor);
+				
+				if (std::is_base_of_v<ISquare2dActor, T>)
+					AddSquare2dActor((ISquare2dActor*)actor);
+				});
+
+			th.detach();
+
+			/*if (std::is_base_of_v<ISquare2dActor, T>)
+				_square_2d_actors.push_back((ISquare2dActor*)actor);*/
 			// else if()
 
 			return actor;
@@ -129,6 +138,8 @@ namespace INVENT
 		glm::vec2 _window_size;
 
 		glm::vec4 _clear_color_vec;
+
+		std::mutex _mutex;
 
 
 	};

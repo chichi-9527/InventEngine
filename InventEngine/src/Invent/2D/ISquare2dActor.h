@@ -1,18 +1,17 @@
 #ifndef _ISQUARE2DACTOR_
 #define _ISQUARE2DACTOR_
 
-#include "IObject2D.h"
+#include "IActor2D.h"
 
 #include "Shader/IShader.h"
 
-#include "IBase/IBaseActor.h"
 #include "IBase/ICamera.h"
 
 #include "ITexture/ITexture.h"
 
 namespace INVENT
 {
-	class ISquare2dActor : public IObject2D ,public IBaseActor
+	class ISquare2dActor : public IActor2D
 	{
 	public:
 		ISquare2dActor();
@@ -35,7 +34,7 @@ namespace INVENT
 
 		void SetTexture(ITexture2D* texture) { _texture = texture; }
 		const ITexture2D* GetTexture() const { return _texture; }
-		void SetTextureID(ITexture2DManagement::TextureID id) { _texture_id = id; }
+		void SetTextureID(ITexture2DManagement::TextureID id) { _texture = nullptr; _texture_id = id; }
 		ITexture2DManagement::TextureID GetTextureID() const { return _texture_id; }
 
 	private:

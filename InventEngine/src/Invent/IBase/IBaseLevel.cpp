@@ -40,7 +40,10 @@ namespace INVENT
 
 	void IBaseLevel::Update(float delta)
 	{
-		
+		for (auto actor : _actors)
+		{
+			if (actor) actor->Update(delta);
+		}
 	}
 
 	void IBaseLevel::SetController(std::shared_ptr<IControllerBase> controller)
@@ -89,11 +92,13 @@ namespace INVENT
 
 	void IBaseLevel::AddActor(IBaseActor* actor)
 	{
+		std::lock_guard<std::mutex> lock(_mutex);
 		_actors.push_back(actor);
 	}
 
 	void IBaseLevel::AddSquare2dActor(ISquare2dActor * actor)
 	{
+		std::lock_guard<std::mutex> lock(_mutex);
 		_square_2d_actors.push_back(actor);
 	}
 
@@ -103,6 +108,7 @@ namespace INVENT
 		if (iter != _square_2d_actors.end())
 		{
 			*iter = _square_2d_actors.back();
+			std::lock_guard<std::mutex> lock(_mutex);
 			_actors.pop_back();
 		}
 	}

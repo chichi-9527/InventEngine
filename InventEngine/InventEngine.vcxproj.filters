@@ -117,6 +117,15 @@
     <ClInclude Include="src\Invent\Renderer\IUniformBuffer.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Invent\2D\IActor2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Invent\IComponent\IAbilitySystemComponent\IAbilitySystemComponent.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Invent\IComponent\IAbilitySystemComponent\IGameplayAbilitySystem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\Invent.cpp">
@@ -204,6 +213,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Invent\Renderer\IUniformBuffer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\2D\IActor2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\IComponent\IAbilitySystemComponent\IAbilitySystemComponent.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\IComponent\IAbilitySystemComponent\IGameplayAbilitySystem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

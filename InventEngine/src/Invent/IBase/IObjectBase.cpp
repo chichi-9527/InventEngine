@@ -3,20 +3,18 @@
 
 namespace INVENT
 {
-	IComponentManagement IObjectBase::_component_management;
 
 	IObjectBase::IObjectBase()
 	{
-		_entity = IObjectBase::GetCompomemtManagement().Create();
+		_entity = ITools::IDefaultComponentManagement::GetCompomemtManagement().Create();
 
 		AddComponent<WorldPositionComponent>(glm::vec3{ 0.0f });
 	}
-	IObjectBase::~IObjectBase()
-	{}
 
-	IComponentManagement& IObjectBase::GetCompomemtManagement()
+	IObjectBase::~IObjectBase()
 	{
-		return _component_management;
+		RemoveComponent<WorldPositionComponent>();
+		ITools::IDefaultComponentManagement::GetCompomemtManagement().Remove(_entity);
 	}
 
 	void IObjectBase::AddTag(const std::string& tag)

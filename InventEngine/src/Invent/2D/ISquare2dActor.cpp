@@ -4,7 +4,7 @@
 namespace INVENT
 {
 	ISquare2dActor::ISquare2dActor()
-		: IObject2D()
+		: IActor2D()
 		, _color({ 1.0f, 1.0f,1.0f,1.0f }) // white
 		, _texture_id(0)
 		, _texture(nullptr)
@@ -17,7 +17,10 @@ namespace INVENT
 	}
 
 	ISquare2dActor::~ISquare2dActor()
-	{}
+	{
+		RemoveComponent<Scale2DComponent>();
+		RemoveComponent<Rotation2DComponent>();
+	}
 
 	void ISquare2dActor::SetPosition(const glm::vec3 & position)
 	{

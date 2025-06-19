@@ -328,6 +328,8 @@ namespace INVENT
 			delta_time = current_frame - last_frame;
 			last_frame = current_frame;
 
+			INVENT_LOG_DEBUG(std::to_string(delta_time));
+
 			Level->_clear_color();
 			Level->_clear();
 			Level->Update(delta_time);

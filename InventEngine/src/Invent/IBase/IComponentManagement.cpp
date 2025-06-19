@@ -34,4 +34,14 @@ namespace INVENT
 	{
 		_handles[t] = 0;
 	}
+
+	namespace ITools
+	{
+		IComponentManagement& IDefaultComponentManagement::GetCompomemtManagement()
+		{
+			static IComponentManagement component_management;
+			return component_management;
+		}
+	}
+
 }

@@ -7,7 +7,8 @@ namespace INVENT
 	{
 		for (auto comp : _action_components)
 		{
-			comp->Update(delta);
+			if (comp)
+				comp->Update(delta);
 		}
 	}
 
