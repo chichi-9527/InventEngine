@@ -138,6 +138,15 @@ int main()
 	MyWindow window;
 	window.Start();
 
+	/*INVENT::IThreadPool pool(2, 2);
+	pool.Start();
+	auto back = pool.Submit(0, [](int a, int b) -> int {
+		std::cout << a + b << "\n";
+		return b - a;
+		}, 1, 2);
+
+	std::cout << back.get() << "\n";*/
+
 	/*INVENT::IComponentManagement icm;
 	auto h = icm.Create();
 	icm.Emplace< MyStruct>(h, false);

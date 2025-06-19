@@ -48,6 +48,7 @@
     <ClInclude Include="src\Invent\Shader\IDefaultShader.h" />
     <ClInclude Include="src\Invent\Shader\IShader.h" />
     <ClInclude Include="src\StbImage\stb_image.h" />
+    <ClInclude Include="src\Invent\ThreadPool\IThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\2D\IActor2D.cpp" />
@@ -91,6 +92,10 @@
     <ClCompile Include="src\Invent\Renderer\IUniformBuffer.cpp" />
     <ClCompile Include="src\Invent\Renderer\IVertexArray.cpp" />
     <ClCompile Include="src\Invent\Shader\IShader.cpp" />
+    <ClCompile Include="src\Invent\ThreadPool\IThreadPool.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md">
@@ -157,7 +162,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>IEpch.h</PrecompiledHeaderFile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)\InventEngine\src\Invent;$(SolutionDir)\InventEngine\src\Glad;$(SolutionDir)\InventEngine\src\StbImage</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\InventEngine\src\Invent;$(SolutionDir)\InventEngine\src\Glad;$(SolutionDir)\InventEngine\src\StbImage;$(SolutionDir)\InventEngine\src\ThreadPool</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -177,7 +182,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>IEpch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\InventEngine\src\Invent;$(SolutionDir)\InventEngine\src\Glad;$(SolutionDir)\InventEngine\src\StbImage</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\InventEngine\src\Invent;$(SolutionDir)\InventEngine\src\Glad;$(SolutionDir)\InventEngine\src\StbImage;$(SolutionDir)\InventEngine\src\ThreadPool</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -12,6 +12,12 @@ namespace INVENT
 
 		~IAbilitySystemComponent();
 
+		// give ability
+		// try activate ability
+		// try activate ability by tag
+
+		// give ability and activate once
+
 
 	};
 }

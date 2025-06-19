@@ -30,3 +30,4 @@ D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IRendererCom
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IUniformBuffer.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IUniformBuffer.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IVertexArray.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IVertexArray.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Shader\IShader.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IShader.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Invent\ThreadPool\IThreadPool.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IThreadPool.obj

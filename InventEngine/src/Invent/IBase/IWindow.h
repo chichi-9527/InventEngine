@@ -4,6 +4,8 @@
 #include "IBaseLevel.h"
 #include "IGameInstance.h"
 
+#include "ThreadPool/IThreadPool.h"
+
 #include "Renderer/IRenderer.h"
 #include "Renderer/IRenderer2D.h"
 

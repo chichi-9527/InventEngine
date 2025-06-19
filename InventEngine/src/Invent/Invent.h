@@ -3,6 +3,8 @@
 
 #include "ILog.h"
 
+#include "ThreadPool/IThreadPool.h"
+
 #include "IBase/IWindow.h"
 #include "IBase/IEventLayer.h"
 #include "IBase/IBaseLevel.h"
