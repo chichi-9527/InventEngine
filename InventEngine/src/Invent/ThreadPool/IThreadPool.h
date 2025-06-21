@@ -26,6 +26,13 @@ namespace INVENT
 
 		void Start();
 
+		// 线程数量只能在未 Start 时设置
+		void SetThreadNum(unsigned int thread_num);
+		// 优先级数量只能在未 Start 时设置, 设置前指定的任务顺序不会改变
+		void SetPriorityNum(unsigned int priority_num);
+		// 线程数量和优先级数量只能在未 Start 时设置
+		void SetThreadPriorityNum(unsigned int thread_num, unsigned int priority_num);
+
 		const std::atomic_bool& IsShutdown() const { return _is_shutdown; }
 		void Shutdown();
 
@@ -59,6 +66,16 @@ namespace INVENT
 			bool Empty() { std::lock_guard<std::mutex> lock(_mutex); return _queue.empty(); }
 			int Size() { std::lock_guard<std::mutex> lock(_mutex); return _queue.size(); }
 			void Emplace(const T& t) { std::lock_guard<std::mutex> lock(_mutex); _queue.emplace(t); }
+
+			void Emplace(IFunctionQueue<T>* func_queue) 
+			{
+				while (!func_queue->_queue.empty())
+				{
+					this->_queue.push(func_queue->_queue.front());
+					func_queue->_queue.pop();
+				}
+			}
+
 			bool Front(T& t)
 			{
 				std::lock_guard<std::mutex> lock(_mutex);
@@ -80,10 +97,12 @@ namespace INVENT
 		std::mutex _mutex;
 		std::condition_variable _lock;
 
+		std::atomic_bool _is_shutdown;
+
 		unsigned int _thread_num;
 		unsigned int _priority_num;
 
-		std::atomic_bool _is_shutdown;
+		bool _is_start;
 	};
 
 	class IThreadWork

@@ -301,6 +301,8 @@ namespace INVENT
 		Level = _default_level;
 
 		IEngine::InstancePtr()->SetIWindow(this);
+
+		_threadpool = new IThreadPool();
 	}
 
 	IWindow::~IWindow()
@@ -308,6 +310,10 @@ namespace INVENT
 		if (_default_level)
 			delete _default_level;
 		_default_level = nullptr;
+
+		if (_threadpool) delete _threadpool;
+		_threadpool = nullptr;
+
 		glfwTerminate();
 	}
 

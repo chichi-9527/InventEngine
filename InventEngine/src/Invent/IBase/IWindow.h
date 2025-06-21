@@ -28,11 +28,18 @@ namespace INVENT
 		unsigned int GetHeight() const { return Height; }
 		float GetWindowAspect() const { return (float)Width / (float)Height; }
 
+		IThreadPool* GetThreadPool() { return _threadpool; }
+
 		friend void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 		friend void register_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
-	protected:
 		void Close();
+
+	protected:
+		// default num {1,1} only set num before thread start
+		void SetThreadPoolThreadNumAndPriorityNum(unsigned int t_num, unsigned int p_num) { _threadpool->SetThreadPriorityNum(t_num, p_num); }
+		void StartThreadPool() { _threadpool->Start(); }
+		void ShutdownThreadPool() { _threadpool->Shutdown(); }
 
 		void SetLevel(IBaseLevel* level);
 
@@ -56,6 +63,8 @@ namespace INVENT
 		GLFWwindow* Window;
 	private:
 		std::shared_ptr<IBaseGameInstance> _game_instance_ptr;
+
+		IThreadPool* _threadpool;
 
 		IBaseLevel* _default_level;
 

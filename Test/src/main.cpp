@@ -138,14 +138,20 @@ int main()
 	MyWindow window;
 	window.Start();
 
-	/*INVENT::IThreadPool pool(2, 2);
+	/*INVENT::IThreadPool pool(2, 3);
+	auto back1 = pool.Submit(2, [](int a, int b) -> int {
+		std::cout << b + a << "\n";
+		return b + a;
+		}, 1, 2);
+	pool.SetThreadPriorityNum(1, 2);
 	pool.Start();
-	auto back = pool.Submit(0, [](int a, int b) -> int {
-		std::cout << a + b << "\n";
+	auto back2 = pool.Submit(0, [](int a, int b) -> int {
+		std::cout << b - a << "\n";
 		return b - a;
 		}, 1, 2);
 
-	std::cout << back.get() << "\n";*/
+	std::cout << back1.get() << "\n";
+	std::cout << back2.get() << "\n";*/
 
 	/*INVENT::IComponentManagement icm;
 	auto h = icm.Create();
