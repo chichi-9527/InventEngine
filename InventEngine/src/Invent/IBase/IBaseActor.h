@@ -3,8 +3,7 @@
 
 #include <vector>
 
-#include "IComponentManagement.h"
-#include "IComponent/InvnetComponent.h"
+#include "IComponent/InventComponent.h"
 
 #include "IBaseEventFunction.h"
 

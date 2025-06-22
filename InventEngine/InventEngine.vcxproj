@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Invent\2D\2DComponent\Invnet2DComponent.h" />
+    <ClInclude Include="src\Invent\2D\2DComponent\Invent2DComponent.h" />
     <ClInclude Include="src\Invent\2D\IActor2D.h" />
     <ClInclude Include="src\Invent\2D\IObject2D.h" />
     <ClInclude Include="src\Invent\2D\ISquare2dActor.h" />
@@ -33,7 +33,7 @@
     <ClInclude Include="src\Glad\KHR\khrplatform.h" />
     <ClInclude Include="src\Invent\IComponent\IAbilitySystemComponent\IAbilitySystemComponent.h" />
     <ClInclude Include="src\Invent\IComponent\IAbilitySystemComponent\IGameplayAbilitySystem.h" />
-    <ClInclude Include="src\Invent\IComponent\InvnetComponent.h" />
+    <ClInclude Include="src\Invent\IComponent\InventComponent.h" />
     <ClInclude Include="src\Invent\IEngine.h" />
     <ClInclude Include="src\Invent\ILog.h" />
     <ClInclude Include="src\Invent\IEpch.h" />

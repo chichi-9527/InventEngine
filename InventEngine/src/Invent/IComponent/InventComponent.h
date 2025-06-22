@@ -44,6 +44,17 @@ namespace INVENT
 		{}
 	};
 
+	struct WorldRotationComponent
+	{
+		glm::vec3 Rotation;
+
+		WorldRotationComponent() = default;
+		WorldRotationComponent(const WorldRotationComponent&) = default;
+		WorldRotationComponent(const glm::vec3& rotation)
+			: Rotation(rotation)
+		{}
+	};
+
 
 }
 

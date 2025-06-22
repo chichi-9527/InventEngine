@@ -120,7 +120,7 @@ namespace INVENT
 #endif // USE_OPENGL
 	}
 
-	void IBaseLevel::_clear_color()
+	void IBaseLevel::_clear_color() const
 	{
 #ifdef USE_OPENGL
 		glClearColor(_clear_color_vec.r, _clear_color_vec.g, _clear_color_vec.b, _clear_color_vec.a);

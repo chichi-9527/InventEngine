@@ -22,18 +22,18 @@ namespace INVENT
 
 		void Start();
 
-		void SetWindowSize(unsigned int width, unsigned int height);
+		void SetWindowSize(unsigned int width, unsigned int height) const;
 
 		unsigned int GetWidth() const { return Width; }
 		unsigned int GetHeight() const { return Height; }
 		float GetWindowAspect() const { return (float)Width / (float)Height; }
 
-		IThreadPool* GetThreadPool() { return _threadpool; }
+		IThreadPool* GetThreadPool() const { return _threadpool; }
 
 		friend void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 		friend void register_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
-		void Close();
+		void Close() const;
 
 	protected:
 		// default num {1,1} only set num before thread start

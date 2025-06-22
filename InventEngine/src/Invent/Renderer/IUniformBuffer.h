@@ -12,7 +12,7 @@ namespace INVENT
 		IUniformBuffer(unsigned int size, unsigned int binding);
 		~IUniformBuffer();
 
-		void SetData(const void* data, unsigned int size, unsigned int offset = 0);
+		void SetData(const void* data, unsigned int size, unsigned int offset = 0) const;
 
 		static std::shared_ptr<IUniformBuffer> CreatePtr(unsigned int size, unsigned int binding);
 

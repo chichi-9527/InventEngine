@@ -1,6 +1,8 @@
 #include "IEpch.h"
 #include "ITexture.h"
 
+#include "IEngine.h"
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -32,7 +34,11 @@ namespace INVENT
 		: _width(1)
 		, _height(1)
 	{
-		unsigned int white = 0xffffffff;
+		_texture_breakup.is_valid = false;
+		_name = "DefaultWhiteTexture";
+
+		unsigned int _color_white = 0xffffffff;
+
 #ifdef USE_OPENGL
 		glCreateTextures(GL_TEXTURE_2D, 1, &_texture_id);
 
@@ -44,13 +50,15 @@ namespace INVENT
 		glTextureParameteri(_texture_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(_texture_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-		glTextureSubImage2D(_texture_id, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, (void*)white);
+		glTextureSubImage2D(_texture_id, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, (void*)&_color_white);
 #endif // USE_OPENGL
 	}
 
-	ITexture2D::ITexture2D(const std::string& name, const std::string& path)
+	ITexture2D::ITexture2D(const std::string& name, const std::string& path, const _UInt2& breakup)
 	{
 		_name = name;
+		_texture_breakup = breakup;
+		if (_texture_breakup.IsZore()) _texture_breakup.is_valid = false;
 
 		int width = 0, height = 0, channels = 0;
 		stbi_set_flip_vertically_on_load(1);
@@ -112,7 +120,7 @@ namespace INVENT
 		return management;
 	}
 
-	ITexture2D* ITexture2DManagement::CreateTexture(const std::string& path)
+	ITexture2D* ITexture2DManagement::CreateTexture(const std::string& path, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
 	{
 		auto startcount = path.find_last_of("/\\") + 1;
 		auto lastcount = path.find_last_of('.');
@@ -122,19 +130,19 @@ namespace INVENT
 			INVENT_LOG_WARNING("name is empty");
 		}
 		
-		return CreateTexture(name, path);
+		return CreateTexture(name, path, tex_break_width_num, tex_break_height_num);
 	}
 
-	ITexture2D* ITexture2DManagement::CreateTexture(const std::string& name, const std::string& path)
+	ITexture2D* ITexture2DManagement::CreateTexture(const std::string& name, const std::string& path, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
 	{
 		ITexture2D* texture = GetTexture(name);
 		if (texture)
 			return texture;
-		texture = new ITexture2D(name, path);
+		texture = new ITexture2D(name, path, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
 		return texture;
 	}
 
-	ITexture2DManagement::TextureID ITexture2DManagement::CreateTextureDynamic(const std::string& path)
+	ITexture2DManagement::TextureID ITexture2DManagement::CreateTextureDynamic(const std::string& path, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
 	{
 		auto startcount = path.find_last_of("/\\") + 1;
 		auto lastcount = path.find_last_of('.');
@@ -145,14 +153,18 @@ namespace INVENT
 				return i;
 		}
 
+		return CreateTextureDynamic(name, path, tex_break_width_num, tex_break_height_num);
+	}
+
+	ITexture2DManagement::TextureID ITexture2DManagement::CreateTextureDynamic(const std::string& name, const std::string& path, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
+	{
 		size_t id = _vector_textrues.size();
 		_vector_textrues.push_back(nullptr);
-		std::thread create_texture([this, &path, &name, id]() {
-			auto texture = this->CreateTexture(name, path);
+		IEngine::InstancePtr()->GetIWindow()->GetThreadPool()->Submit(0, [this, &path, &name, tex_break_width_num, tex_break_height_num, id]() {
+			auto texture = this->CreateTexture(name, path, tex_break_width_num, tex_break_height_num);
 			std::lock_guard<std::mutex> lock(_mutex);
 			this->_vector_textrues[id] = texture;
 			});
-		create_texture.detach();
 		return id;
 	}
 

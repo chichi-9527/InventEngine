@@ -138,6 +138,8 @@ int main()
 	MyWindow window;
 	window.Start();
 
+	INVENT::IEngine::InstancePtr()->GetIWindow();
+
 	/*INVENT::IThreadPool pool(2, 3);
 	auto back1 = pool.Submit(2, [](int a, int b) -> int {
 		std::cout << b + a << "\n";

@@ -19,7 +19,7 @@ namespace INVENT
 #endif // USE_OPENGL
 	}
 
-	void IUniformBuffer::SetData(const void* data, unsigned int size, unsigned int offset)
+	void IUniformBuffer::SetData(const void* data, unsigned int size, unsigned int offset) const
 	{
 #ifdef USE_OPENGL
 		glNamedBufferSubData(_ubo, offset, size, data);

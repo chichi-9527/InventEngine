@@ -14,7 +14,7 @@ namespace INVENT
 	public:
 		static std::shared_ptr<IEngine> InstancePtr();
 
-		const IWindow* GetIWindow() { return _iwindow; }
+		const IWindow* GetIWindow() const { return _iwindow; }
 
 	private:
 		void SetIWindow(IWindow* window);

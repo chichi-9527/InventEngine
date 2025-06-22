@@ -2,6 +2,7 @@
 #include "IWindow.h"
 
 #include "Renderer/IRenderer.h"
+#include "Renderer/IRenderer2D.h"
 
 #include "IEngine.h"
 
@@ -361,12 +362,12 @@ namespace INVENT
 		IRenderer::Shutdown();
 	}
 
-	void IWindow::SetWindowSize(unsigned int width, unsigned int height)
+	void IWindow::SetWindowSize(unsigned int width, unsigned int height) const
 	{
 		glfwSetWindowSize(Window, (int)width, (int)height);
 	}
 
-	void IWindow::Close()
+	void IWindow::Close() const
 	{
 		glfwSetWindowShouldClose(Window, true);
 	}
@@ -395,7 +396,14 @@ namespace INVENT
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	void IWindow::Render(IBaseLevel* level)
 	{
-		IRenderer::BeginRender(level->GetController() ? level->GetController()->GetSceneCamera() : nullptr);
+		IRenderer2D::BeginRender(level->GetController() ? level->GetController()->GetSceneCamera() : nullptr);
+		for (auto square_actor : level->_square_2d_actors)
+		{
+			IRenderer2D::DrawSquare(square_actor);
+		}
+		IRenderer2D::EndRender();
+
+		/*IRenderer::BeginRender(level->GetController() ? level->GetController()->GetSceneCamera() : nullptr);
 		auto shader = level->_square_2d_actors[0]->GetShader();
 		auto vertex_array = IVertexArray::CreatePtr();
 		
@@ -428,7 +436,7 @@ namespace INVENT
 
 		IRenderer::Submit(shader, vertex_array);
 		IRenderer::EndRender();
-		delete[] q_vertexs;
+		delete[] q_vertexs;*/
 	}
 
 	void IWindow::_create()

@@ -14,8 +14,8 @@ namespace INVENT
 	////////////////////////////////////////////////////////////////////////////////////////////
 
 	IThreadPool::IThreadPool(unsigned int thread_num, unsigned int priority_num)
-		: _thread_num(thread_num)
-		, _priority_num(priority_num)
+		: _thread_num(thread_num ? thread_num : 1)
+		, _priority_num(priority_num ? priority_num : 1)
 		, _is_shutdown(false)
 		, _is_start(false)
 	{

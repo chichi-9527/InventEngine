@@ -2,7 +2,6 @@
 #define _IOBJECT2D_
 
 #include "IBase/IObjectBase.h"
-#include "2DComponent/Invnet2DComponent.h"
 
 namespace INVENT
 {

@@ -116,7 +116,7 @@ namespace INVENT
 		// clear opengl buffer
 		void _clear();
 
-		void _clear_color();
+		void _clear_color() const;
 
 	protected:
 		IEventLayer* ObjectEventLayer;

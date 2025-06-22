@@ -1,7 +1,7 @@
 #ifndef _INVENT2DCOMPONENT_
 #define _INVENT2DCOMPONENT_
 
-#include "IComponent/InvnetComponent.h"
+#include "IComponent/InventComponent.h"
 
 #include <glm/glm.hpp>
 

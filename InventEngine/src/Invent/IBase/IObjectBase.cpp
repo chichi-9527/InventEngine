@@ -1,6 +1,8 @@
 #include "IEpch.h"
 #include "IObjectBase.h"
 
+#include "IComponent/InventComponent.h"
+
 namespace INVENT
 {
 

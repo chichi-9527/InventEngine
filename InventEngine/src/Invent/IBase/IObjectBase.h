@@ -8,7 +8,6 @@
 
 #include "IComponentManagement.h"
 #include "ILog.h"
-#include "IComponent/InvnetComponent.h"
 
 namespace INVENT
 {
