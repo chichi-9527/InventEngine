@@ -18,6 +18,7 @@ namespace INVENT
 		this->SetForwardVector({ 0.0f,0.0f,-1.0f });
 		this->SetUpVector({ 0.0f,1.0f,0.0f });
 
+		SetProjection();
 		RecalculateViewMatrix();
 
 		this->SetMoveSpeed(0.001f);
@@ -30,6 +31,11 @@ namespace INVENT
 	{
 		_projection_matrix = glm::perspective(glm::radians(fov), IEngine::InstancePtr()->GetIWindow()->GetWindowAspect(), p_near, p_far);
 		_view_projection_matrix = _projection_matrix * _view_matrix;
+	}
+
+	void ICamera::UpdateWindowAspect()
+	{
+		SetProjection(_fov, _near, _far);
 	}
 
 	void ICamera::SetWorldPosition(const glm::vec3& position)

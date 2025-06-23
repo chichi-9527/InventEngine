@@ -4,13 +4,13 @@
 namespace INVENT
 {
 
-	IControllerBase::IControllerBase()
+	IPlayerControllerBase::IPlayerControllerBase()
 	{
 		this->SetAllEventReturn(false);
 	}
 
 	IController::IController()
-		: IControllerBase()
+		: IPlayerControllerBase()
 	{}
 	IController::~IController()
 	{}
@@ -19,7 +19,7 @@ namespace INVENT
 
 
 	IPlayerController2D::IPlayerController2D()
-		: IControllerBase()
+		: IPlayerControllerBase()
 		, _scene_camera(nullptr)
 		, _control_player_index(0)
 	{}
@@ -27,6 +27,16 @@ namespace INVENT
 	IPlayerController2D::~IPlayerController2D()
 	{
 
+	}
+
+	void IPlayerController2D::SetSceneCamera(ICamera* camera)
+	{
+		if (camera)
+		{
+			camera->UpdateWindowAspect();
+			_scene_camera = camera;
+		}
+		
 	}
 
 	void IPlayerController2D::AddPlayer(IBasePawnControl2D * pawn)

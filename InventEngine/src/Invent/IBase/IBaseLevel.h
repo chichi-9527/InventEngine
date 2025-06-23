@@ -9,6 +9,8 @@
 
 #include "2D/ISquare2dActor.h"
 
+#include "ThreadPool/IThreadPool.h"
+
 #include "ILog.h"
 
 #include <vector>
@@ -29,21 +31,28 @@ namespace INVENT
 
 		virtual void Update(float delta);
 
-		// need Inherited from IControllerBase
+		// need Inherited from IPlayerControllerBase
 		// and auto SetController if inherited
 		template<typename T, typename ...Args>
 		std::shared_ptr<T> CreateControllerPtr(Args&&... args)
 		{
-			std::shared_ptr<T> controller = std::make_shared<T>(std::forward<Args>(args)...);
-			if (std::is_base_of_v<IControllerBase, T>)
+			std::shared_ptr<T> controller;
+			if (std::is_base_of_v<IPlayerControllerBase, T>)
 			{
+				controller = std::make_shared<T>(std::forward<Args>(args)...);
 				SetController(controller);
 			}
 			return controller;
 		}
 
-		void SetController(std::shared_ptr<IControllerBase> controller);
-		std::shared_ptr<IControllerBase> GetController() { return _controller_ptr; }
+		void SetController(std::shared_ptr<IPlayerControllerBase> controller);
+		std::shared_ptr<IPlayerControllerBase> GetController() { return _controller_ptr; }
+
+		template<typename T>
+		std::shared_ptr<T> GetController() 
+		{ 
+			return std::static_pointer_cast<T>(_controller_ptr);
+		}
 
 	protected:
 		void SetClearColor(float red, float green, float blue, float alpha);
@@ -76,6 +85,8 @@ namespace INVENT
 		// must Inherited from IBaseActor
 		// Instances will render if they inherit from the following base classes:
 		// <ISquare2dActor> 
+		// Instances will find Collision and Physics Components if they inherit from the following base classes:
+		// <IActor2D> 
 		template<typename T>
 		T* CreateActor()
 		{
@@ -88,14 +99,12 @@ namespace INVENT
 
 			T* actor = new T;
 
-			std::thread th([this, actor]() {
+			GetIWindowThreadPool()->Submit(0, [this, actor]() {
 				AddActor((IBaseActor*)actor);
-				
+
 				if (std::is_base_of_v<ISquare2dActor, T>)
 					AddSquare2dActor((ISquare2dActor*)actor);
 				});
-
-			th.detach();
 
 			/*if (std::is_base_of_v<ISquare2dActor, T>)
 				_square_2d_actors.push_back((ISquare2dActor*)actor);*/
@@ -111,6 +120,8 @@ namespace INVENT
 		// will render ,不会自动释放，谨慎使用
 		void AddSquare2dActor(ISquare2dActor* actor);
 		void EraseSquare2dActor(ISquare2dActor* actor);
+
+		IThreadPool* GetIWindowThreadPool();
 
 	private:
 		// clear opengl buffer
@@ -133,7 +144,7 @@ namespace INVENT
 		// 以下实例数组为记录可渲染实例，不需要释放
 		std::vector<ISquare2dActor*> _square_2d_actors;
 
-		std::shared_ptr<IControllerBase> _controller_ptr;
+		std::shared_ptr<IPlayerControllerBase> _controller_ptr;
 
 		glm::vec2 _window_size;
 

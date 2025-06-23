@@ -312,7 +312,7 @@ namespace INVENT
 			delete _default_level;
 		_default_level = nullptr;
 
-		if (_threadpool) delete _threadpool;
+		if (_threadpool) _threadpool->Shutdown(); delete _threadpool;
 		_threadpool = nullptr;
 
 		glfwTerminate();
@@ -486,6 +486,10 @@ namespace INVENT
 	void IWindow::_window_size_change()
 	{
 		Level->_window_size = { (float)Width , (float)Height };
+		if (Level->GetController())
+		{
+			Level->GetController()->UpdateCameraWindowAspect();
+		}
 	}
 
 #define CALLEVENT(GLFW_KEY, EVENT_FUNC_NAME)	if (glfwGetKey(Window, GLFW_KEY) == (GLFW_PRESS | GLFW_RELEASE)){	\

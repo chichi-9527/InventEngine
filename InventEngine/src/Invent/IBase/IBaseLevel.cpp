@@ -2,6 +2,8 @@
 #include "IBaseLevel.h"
 #include "IBaseActor.h"
 
+#include "IEngine.h"
+
 namespace INVENT
 {
 
@@ -46,7 +48,7 @@ namespace INVENT
 		}
 	}
 
-	void IBaseLevel::SetController(std::shared_ptr<IControllerBase> controller)
+	void IBaseLevel::SetController(std::shared_ptr<IPlayerControllerBase> controller)
 	{
 		if (_controller_ptr)
 		{
@@ -111,6 +113,11 @@ namespace INVENT
 			std::lock_guard<std::mutex> lock(_mutex);
 			_actors.pop_back();
 		}
+	}
+
+	IThreadPool* IBaseLevel::GetIWindowThreadPool()
+	{
+		return IEngine::InstancePtr()->GetIWindow()->GetThreadPool();
 	}
 
 	void IBaseLevel::_clear()

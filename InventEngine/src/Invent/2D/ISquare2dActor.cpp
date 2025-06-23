@@ -29,7 +29,7 @@ namespace INVENT
 		RemoveComponent<WorldRotationComponent>();
 	}
 
-	void ISquare2dActor::SetPosition(const glm::vec3 & position)
+	/*void ISquare2dActor::SetPosition(const glm::vec3 & position)
 	{
 		auto world_position = this->GetComponent<WorldPositionComponent>();
 		if (world_position)
@@ -41,7 +41,7 @@ namespace INVENT
 	const glm::vec3& ISquare2dActor::GetPosition()
 	{
 		return this->GetComponent<WorldPositionComponent>()->WorldPosition;
-	}
+	}*/
 
 	void ISquare2dActor::SetScale(const glm::vec2& scale)
 	{

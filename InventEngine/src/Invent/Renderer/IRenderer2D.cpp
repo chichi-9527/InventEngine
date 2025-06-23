@@ -176,12 +176,14 @@ namespace INVENT
 
 	void IRenderer2D::DrawSquare(ISquare2dActor* actor)
 	{
+		//if (!actor) return;
+
 		if (renderer2d_data.SquareShader != actor->GetShader())
 		{
 			INVENT_LOG_WARNING(std::string("actor's shader is not default shader ,you need use youself renderer. ShaderName: ") + actor->GetShader()->Name()); return;
 		}
 
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), actor->GetPosition());
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), actor->GetWorldPosition());
 		auto& rotation = actor->GetWorldRotation();
 		if (rotation.x)
 			transform *= glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), { 1.0f, 0.0f, 0.0f });

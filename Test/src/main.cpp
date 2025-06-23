@@ -34,6 +34,16 @@ public:
 	}
 };
 
+class MyController : public INVENT::IPlayerController2D 
+{
+public:
+	MyController()
+		: INVENT::IPlayerController2D()
+	{}
+	virtual ~MyController(){}
+
+};
+
 class MyActor : public INVENT::ISquare2dPawn 
 {
 public:
@@ -42,11 +52,13 @@ public:
 	{
 		this->SetColor({ 0.5f, 0.4f,0.3f,1.0f });
 		this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("./Assets/Textures/test.png"));
+
+		this->SetMoveSpeed(1.0f);
 	}
 
 	virtual void Update(float delta) override
 	{
-		this->SetWorldPosition(this->GetWorldPosition() + delta * glm::vec3(0.01f, 0.0f, 0.0f));
+		//this->SetWorldPosition(this->GetWorldPosition() + delta * glm::vec3(0.01f, 0.0f, 0.0f));
 	}
 };
 
@@ -59,6 +71,11 @@ public:
 		auto act = this->CreateActor<MyActor>();
 
 		camera = new INVENT::ICamera();
+		camera->SetWorldPosition({ 0.0f,0.0f,3.0f });
+
+		this->CreateControllerPtr<MyController>()->SetSceneCamera(camera);
+		this->GetController<MyController>()->AddPlayer(act);
+
 	}
 
 	virtual bool PRESS_EVENT_KEY_1() override
@@ -70,7 +87,7 @@ public:
 			<< "; camera forward.z: "
 			<< camera->GetForwardVector().z << "\n";
 
-		camera->TurnUpWithAngle(45.0f);
+		camera->TurnUpWithAngle(90.0f);
 
 		std::cout << "camera forward.x: "
 			<< camera->GetForwardVector().x
@@ -102,6 +119,7 @@ public:
 
 		this->SetLevel(new MyLevel);
 
+		this->StartThreadPool();
 	}
 
 	virtual ~MyWindow()

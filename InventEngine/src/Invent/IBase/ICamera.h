@@ -25,6 +25,8 @@ namespace INVENT
 		// p_far: 远裁剪面距离
 		void SetProjection(float fov = 45.0f, float p_near = 0.1f, float p_far = 100.0f);
 
+		void UpdateWindowAspect();
+
 		virtual void SetWorldPosition(const glm::vec3& position) override;
 
 		// 注意 forward 和 up 的关系
@@ -66,6 +68,10 @@ namespace INVENT
 		glm::mat4 _view_projection_matrix;
 
 		glm::vec3 _world_up;
+
+		float _fov = 45.0f;
+		float _near = 0.1f;
+		float _far = 100.0f;
 
 		float _rotation_speed;
 	};

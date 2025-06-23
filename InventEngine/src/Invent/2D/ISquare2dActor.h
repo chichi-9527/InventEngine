@@ -20,8 +20,8 @@ namespace INVENT
 		void SetColor(const glm::vec4& color) { _color = color; }
 		const glm::vec4& GetColor() const { return _color; }
 
-		void SetPosition(const glm::vec3& position);
-		const glm::vec3& GetPosition();
+		/*void SetPosition(const glm::vec3& position);
+		const glm::vec3& GetPosition();*/
 
 		void SetScale(const glm::vec2& scale);
 		const glm::vec2& GetScale();

@@ -8,17 +8,18 @@
 namespace INVENT
 {
 
-	class IControllerBase : public IEventLayer 
+	class IPlayerControllerBase : public IEventLayer 
 	{
 	public:
-		IControllerBase();
-		virtual ~IControllerBase() = default;
+		IPlayerControllerBase();
+		virtual ~IPlayerControllerBase() = default;
 
 		virtual void  SetSceneCamera(ICamera* camera) = 0;
 		virtual const ICamera* GetSceneCamera() const = 0;
+		virtual void UpdateCameraWindowAspect() const = 0;
 	};
 
-	class IController : public IControllerBase
+	class IController : public IPlayerControllerBase
 	{
 	public:
 		IController();
@@ -30,7 +31,7 @@ namespace INVENT
 
 	};
 
-	class IPlayerController2D : public IControllerBase
+	class IPlayerController2D : public IPlayerControllerBase
 	{
 	public:
 		IPlayerController2D();
@@ -38,8 +39,9 @@ namespace INVENT
 
 		void UseDefaultController(bool is_default = true) { _is_default = is_default; }
 
-		virtual void SetSceneCamera(ICamera* camera) override { _scene_camera = camera; }
+		virtual void SetSceneCamera(ICamera* camera) override;
 		virtual const ICamera* GetSceneCamera() const override { return _scene_camera; }
+		virtual void UpdateCameraWindowAspect() const override { if (_scene_camera) _scene_camera->UpdateWindowAspect(); }
 
 		void AddPlayer(IBasePawnControl2D* pawn);
 		void ErasePlayer(IBasePawnControl2D* pawn);
