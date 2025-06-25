@@ -17,6 +17,8 @@
 
 #include "2D/ISquare2dPawn.h"
 
+#include "IPhysicsCollision/ICollisionDetection.h"
+
 #include "IEngine.h"
 
 #endif // !_INVENT_

@@ -24,7 +24,7 @@ namespace INVENT
 		bool FindTag(const std::string& tag);
 
 		virtual void SetWorldPosition(const glm::vec3& position);
-		const glm::vec3& GetWorldPosition();
+		virtual const glm::vec3& GetWorldPosition();
 
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args)

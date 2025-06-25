@@ -2,6 +2,10 @@
 
 #include "Invent/Invent.h"
 
+#include <glm/glm.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp>
+
 #include <iostream>
 
 #include <filesystem>
@@ -54,6 +58,8 @@ public:
 		this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("./Assets/Textures/test.png"));
 
 		this->SetMoveSpeed(1.0f);
+
+		this->SetScale({ 0.1f,0.1f });
 	}
 
 	virtual void Update(float delta) override
@@ -69,32 +75,24 @@ public:
 		: IBaseLevel()
 	{
 		auto act = this->CreateActor<MyActor>();
+		auto act2 = this->CreateActor<MyActor>();
+		act2->SetWorldPosition({ 0.1f,0.0f,-0.1f });
 
 		camera = new INVENT::ICamera();
 		camera->SetWorldPosition({ 0.0f,0.0f,3.0f });
 
 		this->CreateControllerPtr<MyController>()->SetSceneCamera(camera);
 		this->GetController<MyController>()->AddPlayer(act);
+		this->GetController<MyController>()->AddPlayer(act2);
 
 	}
 
 	virtual bool PRESS_EVENT_KEY_1() override
 	{
-		std::cout << "camera forward.x: "
-			<< camera->GetForwardVector().x
-			<< "; camera forward.y: "
-			<< camera->GetForwardVector().y
-			<< "; camera forward.z: "
-			<< camera->GetForwardVector().z << "\n";
+		this->GetController<MyController>()->SetControlPlayerIndex(this->GetController<MyController>()->GetControlPlayerIndex() == 0 ? 1 : 0);
 
-		camera->TurnUpWithAngle(90.0f);
-
-		std::cout << "camera forward.x: "
-			<< camera->GetForwardVector().x
-			<< "; camera forward.y: "
-			<< camera->GetForwardVector().y
-			<< "; camera forward.z: "
-			<< camera->GetForwardVector().z << "\n";
+		//auto actor = this->GetController<MyController>()->Get2DPlayerController<MyActor>(0);
+		//actor->SetScale({ 1.0f,0.1f });
 
 		return false;
 	}
@@ -153,10 +151,21 @@ public:
 
 int main()
 {
-	MyWindow window;
+	/*MyWindow window;
 	window.Start();
 
-	INVENT::IEngine::InstancePtr()->GetIWindow();
+	INVENT::IEngine::InstancePtr()->GetIWindow();*/
+
+	INVENT::ICollisionDetection::LineSegment line_s1({ 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f }, 0.0f, 0.0f);
+	INVENT::ICollisionDetection::LineSegment line_s2({ 1.0f,0.0f,0.0f }, { -1.0f,1.0f,0.0f }, 0.0f, 0.0f);
+
+	glm::vec3 p1{}, p2{};
+
+	auto dist = INVENT::ICollisionDetection::TwoLineSegmentMinDistance(line_s1, line_s2, p1, p2);
+
+	std::cout << "distance : " << dist
+		<< " p1 : " << glm::to_string(p1)
+		<< " p2 : " << glm::to_string(p2) << "\n";
 
 	/*INVENT::IThreadPool pool(2, 3);
 	auto back1 = pool.Submit(2, [](int a, int b) -> int {

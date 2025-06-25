@@ -45,6 +45,8 @@ namespace INVENT
 		void BindUnit(unsigned int slot = 0) const;
 		const std::string& Name() const { return _name; }
 
+		void SetBreakNum(unsigned int w, unsigned int h);
+		void SetBreakNum(const _UInt2& break_num);
 		const _UInt2& GetBreakNum() const { return _texture_breakup; }
 		const unsigned int& GetBreakWNum() const { return _texture_breakup.width; }
 		const unsigned int& GetBreakHNum() const { return _texture_breakup.height; }

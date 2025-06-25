@@ -30,6 +30,22 @@ namespace INVENT
 #endif // USE_OPENGL
 	}
 
+	void ITexture2D::SetBreakNum(unsigned int w, unsigned int h)
+	{
+		if (w == 0 || h == 0)
+			_texture_breakup.is_valid = false; return;
+		_texture_breakup.width = w;
+		_texture_breakup.height = h;
+		_texture_breakup.is_valid = true;
+	}
+
+	void ITexture2D::SetBreakNum(const _UInt2 & break_num)
+	{
+		if(break_num.IsZore() || !break_num.is_valid)
+			_texture_breakup.is_valid = false; return;
+		_texture_breakup = break_num;
+	}
+
 	ITexture2D::ITexture2D()
 		: _width(1)
 		, _height(1)

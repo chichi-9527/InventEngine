@@ -60,6 +60,8 @@ namespace INVENT
 		virtual void TurnClockwiseWithAngle(float angle);
 		virtual void TurnCounterclockwiseWithAngle(float angle);
 
+	private:
+
 		void RecalculateViewMatrix();
 
 	private:

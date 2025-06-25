@@ -38,6 +38,8 @@
     <ClInclude Include="src\Invent\ILog.h" />
     <ClInclude Include="src\Invent\IEpch.h" />
     <ClInclude Include="src\Invent\Invent.h" />
+    <ClInclude Include="src\Invent\IPhysicsCollision\ICollider.h" />
+    <ClInclude Include="src\Invent\IPhysicsCollision\ICollisionDetection.h" />
     <ClInclude Include="src\Invent\ITexture\ITexture.h" />
     <ClInclude Include="src\Invent\Renderer\IBuffer.h" />
     <ClInclude Include="src\Invent\Renderer\IRenderer.h" />
@@ -84,6 +86,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Invent\Invent.cpp" />
+    <ClCompile Include="src\Invent\IPhysicsCollision\ICollider.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\Invent\IPhysicsCollision\ICollisionDetection.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Invent\ITexture\ITexture.cpp" />
     <ClCompile Include="src\Invent\Renderer\IBuffer.cpp" />
     <ClCompile Include="src\Invent\Renderer\IRenderer.cpp" />

@@ -5,6 +5,8 @@
 
 #include "IBase/IBaseActor.h"
 
+#include "IPhysicsCollision/ICollider.h"
+
 namespace INVENT
 {
 	class IActor2D : public IObject2D, public IBaseActor
