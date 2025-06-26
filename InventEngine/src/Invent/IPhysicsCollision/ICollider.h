@@ -11,6 +11,7 @@ namespace INVENT
 	{
 		friend class IColliderCapsule;
 		friend class IColliderBall;
+		friend class IColliderBox;
 	public:
 		enum class ColliderType
 		{
@@ -45,7 +46,7 @@ namespace INVENT
 	class IColliderCapsule : public IColliderBase
 	{
 	public:
-		IColliderCapsule(IObjectBase* object, const glm::vec3& relative_position = { 0.0f,0.0f,0.0f }, float radius = 0.0f, float height = 0.0f, glm::vec3 rotation = { 0.0f,0.0f,0.0f });
+		IColliderCapsule(IObjectBase* object, const glm::vec3& relative_position = { 0.0f,0.0f,0.0f }, float radius = 0.0f, float height = 0.0f, const glm::vec3& rotation = { 0.0f,0.0f,0.0f });
 		virtual ~IColliderCapsule() = default;
 
 		void SetUpVector(const glm::vec3& up);
@@ -54,6 +55,9 @@ namespace INVENT
 		const glm::vec3& GetDirection() const { return _direction; }
 		void SetRadius(float radius) { _radius = radius; }
 		float GetRadius() const { return _radius; }
+
+		void SetHeight(float height) { _height = height; }
+		float GetHeight() const { return _height; }
 
 	private:
 		void RecalculateDirection();
@@ -80,6 +84,40 @@ namespace INVENT
 
 	private:
 		float _radius;
+	};
+
+	class IColliderBox : public IColliderBase
+	{
+	public:
+		IColliderBox(IObjectBase* object, const glm::vec3& relative_position = { 0.0f,0.0f,0.0f }, const glm::vec3& size = { 0.0f,0.0f,0.0f }, const glm::vec3& rotation = { 0.0f,0.0f,0.0f });
+		virtual ~IColliderBox() = default;
+
+		void SetSize(const glm::vec3& size) { _size = size; }
+		const glm::vec3& GetSize() const { return _size; }
+
+		void SetRotation(const glm::vec3& rotation);
+		const glm::vec3& GetRotation() const { return _rotation; }
+
+		// 三个轴的方向，可指定两两不平行的任意方向
+		void SetBaseAxisDirextion(const glm::vec3& x, const glm::vec3& y, const glm::vec3& z);
+		const glm::vec3& GetAxisDirextionX() const { return _rotated_vector_X; }
+		const glm::vec3& GetAxisDirextionY() const { return _rotated_vector_Y; }
+		const glm::vec3& GetAxisDirextionZ() const { return _rotated_vector_Z; }
+
+	private:
+		// 分别在三个轴上的长度
+		glm::vec3 _size;
+		glm::vec3 _rotation;
+
+		// 三个轴的方向，可指定两两不平行的任意方向
+		glm::vec3 _vector_X;
+		glm::vec3 _vector_Y;
+		glm::vec3 _vector_Z;
+
+		glm::vec3 _rotated_vector_X;
+		glm::vec3 _rotated_vector_Y;
+		glm::vec3 _rotated_vector_Z;
+
 	};
 
 }

@@ -156,16 +156,28 @@ int main()
 
 	INVENT::IEngine::InstancePtr()->GetIWindow();*/
 
-	INVENT::ICollisionDetection::LineSegment line_s1({ 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f }, 0.0f, 0.0f);
+	INVENT::IColliderBox box1(nullptr, { 0.0f,0.0f,0.0f }, { 2.0f, 2.0f, 2.0f }, { 0.0f, 0.0f, 0.0f });
+	INVENT::IColliderBox box2(nullptr, { 0.0f,0.01f,0.0f }, { 2.0f, 2.0f, 2.0f }, { 0.0f, 0.0f, 0.0f });
+	//INVENT::IColliderBall ball(nullptr, { 0.0f,2.0f,0.0f }, 0.6f);
+	//INVENT::IColliderCapsule capsule1(nullptr, { 0.0f,3.0f,0.0f }, 1.0f, 8.0f, { 60.0f,0.0f,0.0f });
+
+	glm::vec3 diretion{};
+	float distance = 0.0f;
+
+	bool iscollid = INVENT::ICollisionDetection::IsCollision(&box1, &box2, diretion, distance);
+	if(iscollid)
+		std::cout << "direction: " << glm::to_string(diretion) << " distance: " << distance << "\n";
+
+	/*INVENT::ICollisionDetection::LineSegment line_s1({ 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f }, 0.0f, 0.0f);
 	INVENT::ICollisionDetection::LineSegment line_s2({ 1.0f,0.0f,0.0f }, { -1.0f,1.0f,0.0f }, 0.0f, 0.0f);
 
-	glm::vec3 p1{}, p2{};
+	glm::vec3 p1{}, p2{};*/
 
-	auto dist = INVENT::ICollisionDetection::TwoLineSegmentMinDistance(line_s1, line_s2, p1, p2);
+	/*auto dist = INVENT::ICollisionDetection::TwoLineSegmentMinDistance(line_s1, line_s2, p1, p2);
 
 	std::cout << "distance : " << dist
 		<< " p1 : " << glm::to_string(p1)
-		<< " p2 : " << glm::to_string(p2) << "\n";
+		<< " p2 : " << glm::to_string(p2) << "\n";*/
 
 	/*INVENT::IThreadPool pool(2, 3);
 	auto back1 = pool.Submit(2, [](int a, int b) -> int {

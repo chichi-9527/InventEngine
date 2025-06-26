@@ -30,7 +30,15 @@ namespace INVENT
 			}
 		};
 
-		static bool IsCollision(const IColliderBase* first, const IColliderBase* second);
+		// collision direction always first point to second
+		static bool IsCollision(const IColliderBase* first, const IColliderBase* second, glm::vec3& collision_direction, float& overlap_distance);
+
+		static bool IsCollisionTwoCapsule(const IColliderCapsule* first, const IColliderCapsule* second, glm::vec3& collision_direction, float& overlap_distance);
+		static bool IsCollisionCapsuleBall(const IColliderCapsule* capsule, const IColliderBall* ball, glm::vec3& collision_direction, float& overlap_distance);
+		static bool IsCollisionCapsuleBox(const IColliderCapsule* capsule, const IColliderBox* box, glm::vec3& collision_direction, float& overlap_distance);
+		static bool IsCollisionBallBox(const IColliderBall* ball, const IColliderBox* box, glm::vec3& collision_direction, float& overlap_distance);
+		static bool IsCollisionTwoBall(const IColliderBall* first, const IColliderBall* second, glm::vec3& collision_direction, float& overlap_distance);
+		static bool IsCollisionTwoBox(const IColliderBox* first, const IColliderBox* second, glm::vec3& collision_direction, float& overlap_distance);
 
 		static float TwoLineSegmentMinDistance(const LineSegment& first, const LineSegment& second, glm::vec3& point_in_first, glm::vec3& point_in_second);
 		static float PointLineSegmentMinDistance(const LineSegment& line, const glm::vec3& point, glm::vec3& point_in_line);
