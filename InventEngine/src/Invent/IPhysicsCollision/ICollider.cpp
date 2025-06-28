@@ -1,5 +1,7 @@
 #include "ICollider.h"
 
+#include "ILog.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace INVENT
@@ -10,7 +12,7 @@ namespace INVENT
 		, _relative_position(relative_position)
 		, _world_position(object ? object->GetWorldPosition() + relative_position : relative_position)
 	{
-	
+		
 	}
 
 	void IColliderBase::SetRelativePosition(const glm::vec3& position)

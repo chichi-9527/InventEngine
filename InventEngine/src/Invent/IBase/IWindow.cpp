@@ -4,6 +4,8 @@
 #include "Renderer/IRenderer.h"
 #include "Renderer/IRenderer2D.h"
 
+#include "IPhysicsCollision//ICollisionPresets.h"
+
 #include "IEngine.h"
 
 
@@ -321,6 +323,7 @@ namespace INVENT
 	// ----------------------Start--------------------------------------
 	void IWindow::Start()
 	{
+		ICollisionPresets::Init();
 		IRenderer::Init();
 		_game_instance_ptr->Begin();
 

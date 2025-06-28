@@ -1,12 +1,17 @@
 ﻿#ifndef _ICOLLIDER_
 #define _ICOLLIDER_
 
+#include "ICollisionPresets.h"
+
 #include "IBase/IObjectBase.h"
 
 #include <glm/glm.hpp>
 
+#include <functional>
+
 namespace INVENT
 {
+	class IBaseActor;
 	class IColliderBase 
 	{
 		friend class IColliderCapsule;
@@ -20,9 +25,17 @@ namespace INVENT
 			BOX
 		};
 
+		struct CollisionInformation
+		{
+			IBaseActor* actors;
+			ICollisionPresets::CollisionType collision_type;
+			glm::vec3 direction;
+		};
+
 	private:
 		IColliderBase(ColliderType type, const glm::vec3& relative_position, IObjectBase* object = nullptr);
 	public:
+		using CollisionFunction = std::function<void(std::vector<CollisionInformation>)>;
 
 		virtual ~IColliderBase() = default;
 
@@ -34,11 +47,15 @@ namespace INVENT
 
 		const ColliderType& GetColliderType() const { return _type; }
 
+		void BindCollisionFunc(CollisionFunction func);
+
 	private:
 		ColliderType _type;
 
 		glm::vec3 _relative_position;
 		glm::vec3 _world_position;
+
+		CollisionFunction _collision_func;
 
 		IObjectBase* _object;
 	};

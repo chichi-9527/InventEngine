@@ -5,7 +5,9 @@ namespace INVENT
 {
 	IActor2D::IActor2D()
 		: IObject2D()
-	{}
+	{
+
+	}
 
 	IActor2D::~IActor2D()
 	{}

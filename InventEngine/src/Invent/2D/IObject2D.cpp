@@ -14,6 +14,29 @@ namespace INVENT
 	IObject2D::~IObject2D()
 	{}
 
+	//void IObject2D::SetParent(IObject2D * parent)
+	//{}
+
+	//void IObject2D::AddChild(IObject2D * child)
+	//{}
+
+	//void IObject2D::AddChildren(const std::vector<IObject2D*>&children)
+	//{}
+
+	//void IObject2D::EraseChild(IObject2D * child)
+	//{}
+
+	//void IObject2D::SetWorldPosition(const glm::vec3 & position)
+	//{}
+
+	//void IObject2D::SetRelativePosition(const glm::vec2 & position)
+	//{}
+
+	//const glm::vec2& IObject2D::GetRelativePosition()
+	//{
+	//	
+	//}
+
 
 
 }

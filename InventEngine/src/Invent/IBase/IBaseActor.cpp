@@ -12,6 +12,15 @@ namespace INVENT
 		}
 	}
 
+	void IBaseActor::AddCollider(const IColliderBase* base)
+	{}
+
+	void IBaseActor::EraseCollider(const IColliderBase * base)
+	{}
+
+	void IBaseActor::ClearCollider()
+	{}
+
 	void IBaseActor::UnBindActionComponent(IActionComponent* component)
 	{
 		for (auto iter = _action_components.begin(); iter != _action_components.end(); iter++)

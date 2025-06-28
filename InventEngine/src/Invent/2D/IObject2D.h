@@ -11,18 +11,18 @@ namespace INVENT
 		IObject2D();
 		virtual ~IObject2D();
 
-		void SetParent(IObject2D* parent);
-		IObject2D* GetParent() const { return _parent; }
+		//void SetParent(IObject2D* parent);
+		//IObject2D* GetParent() const { return _parent; }
 
-		void AddChild(IObject2D* child);
-		void AddChildren(const std::vector<IObject2D*>& children);
-		void EraseChild(IObject2D* child);
-		const std::vector<IObject2D*>& GetChildren() const { return _children; }
+		//void AddChild(IObject2D* child);
+		//void AddChildren(const std::vector<IObject2D*>& children);
+		//void EraseChild(IObject2D* child);
+		//const std::vector<IObject2D*>& GetChildren() const { return _children; }
 
-		virtual void SetWorldPosition(const glm::vec3& position) override;
+		//virtual void SetWorldPosition(const glm::vec3& position) override;
 
-		void SetRelativePosition(const glm::vec2& position);
-		const glm::vec2& GetRelativePosition();
+		//void SetRelativePosition(const glm::vec2& position);
+		//const glm::vec2& GetRelativePosition();
 
 	private:
 		IObject2D* _parent;

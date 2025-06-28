@@ -104,7 +104,9 @@ namespace INVENT
 
 				if (std::is_base_of_v<ISquare2dActor, T>)
 					AddSquare2dActor((ISquare2dActor*)actor);
-				});
+				}
+				
+			);
 
 			/*if (std::is_base_of_v<ISquare2dActor, T>)
 				_square_2d_actors.push_back((ISquare2dActor*)actor);*/
@@ -128,6 +130,8 @@ namespace INVENT
 		void _clear();
 
 		void _clear_color() const;
+
+		void _collision_detection();
 
 	protected:
 		IEventLayer* ObjectEventLayer;
