@@ -12,7 +12,7 @@ namespace INVENT
 		, _relative_position(relative_position)
 		, _world_position(object ? object->GetWorldPosition() + relative_position : relative_position)
 	{
-		
+		_informations = std::make_shared<std::vector<CollisionInformation>>();
 	}
 
 	void IColliderBase::SetRelativePosition(const glm::vec3& position)

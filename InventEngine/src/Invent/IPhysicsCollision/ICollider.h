@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 
 #include <functional>
+#include <memory>
 
 namespace INVENT
 {
@@ -17,6 +18,8 @@ namespace INVENT
 		friend class IColliderCapsule;
 		friend class IColliderBall;
 		friend class IColliderBox;
+
+		friend class ICollisionHandling;
 	public:
 		enum class ColliderType
 		{
@@ -27,15 +30,25 @@ namespace INVENT
 
 		struct CollisionInformation
 		{
-			IBaseActor* actors;
+			CollisionInformation(IBaseActor* act = nullptr
+				, ICollisionPresets::CollisionType type = ICollisionPresets::CollisionType::COLLISION_IGNORE
+				, const glm::vec3& direct = {}
+				, float dist = 0.0f)
+				: actor(act)
+				, collision_type(type)
+				, direction(direct)
+				, distance(dist)
+			{}
+			IBaseActor* actor;
 			ICollisionPresets::CollisionType collision_type;
 			glm::vec3 direction;
+			float distance;
 		};
 
 	private:
 		IColliderBase(ColliderType type, const glm::vec3& relative_position, IObjectBase* object = nullptr);
 	public:
-		using CollisionFunction = std::function<void(std::vector<CollisionInformation>)>;
+		using CollisionFunction = std::function<void(std::shared_ptr<std::vector<CollisionInformation>>)>;
 
 		virtual ~IColliderBase() = default;
 
@@ -47,6 +60,9 @@ namespace INVENT
 
 		const ColliderType& GetColliderType() const { return _type; }
 
+		void SetCollisionPreset(const ICollisionPresets::CollisionPresets& preset) { _preset = preset; }
+		const ICollisionPresets::CollisionType& GetCollisionType() const { return ICollisionPresets::GetCollisionType(_preset); }
+
 		void BindCollisionFunc(CollisionFunction func);
 
 	private:
@@ -55,7 +71,11 @@ namespace INVENT
 		glm::vec3 _relative_position;
 		glm::vec3 _world_position;
 
+		ICollisionPresets::CollisionPresets _preset;
+
 		CollisionFunction _collision_func;
+
+		std::shared_ptr<std::vector<CollisionInformation>> _informations;
 
 		IObjectBase* _object;
 	};

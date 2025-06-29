@@ -9,9 +9,9 @@ namespace INVENT
 	void ICollisionPresets::Init()
 	{
 		_table_collision_type = { CollisionType::COLLISION_IGNORE };
-		INVENT_ASSERT(_table_collision_type.size() != static_cast<size_t>(CollisionPresets::PRESET_END), "if you update enum collision presets you must update _table_collision_type!");
+		INVENT_ASSERT(_table_collision_type.size() == static_cast<size_t>(CollisionPresets::PRESET_END), "if you update enum collision presets you must update _table_collision_type!");
 	}
-	ICollisionPresets::CollisionType ICollisionPresets::GetCollisionType(CollisionPresets preset)
+	const ICollisionPresets::CollisionType& ICollisionPresets::GetCollisionType(const CollisionPresets& preset)
 	{
 		return _table_collision_type[static_cast<size_t>(preset)];
 	}

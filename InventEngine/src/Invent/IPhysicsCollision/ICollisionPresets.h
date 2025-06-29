@@ -23,7 +23,7 @@ namespace INVENT
 			PRESET_END
 		};
 
-		static CollisionType GetCollisionType(CollisionPresets preset);
+		static const CollisionType& GetCollisionType(const CollisionPresets& preset);
 
 	};
 }

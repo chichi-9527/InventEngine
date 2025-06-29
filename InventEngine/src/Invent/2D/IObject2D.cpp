@@ -11,8 +11,11 @@ namespace INVENT
 	{
 		this->AddComponent<RelativePosition2DComponent>(glm::vec2{ 0.0f,0.0f });
 	}
+
 	IObject2D::~IObject2D()
-	{}
+	{
+		this->RemoveComponent<RelativePosition2DComponent>();
+	}
 
 	//void IObject2D::SetParent(IObject2D * parent)
 	//{}

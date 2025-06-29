@@ -134,6 +134,36 @@ namespace INVENT
 #endif // USE_OPENGL
 	}
 
+	void IBaseLevel::_collision_detection()
+	{
+		if (_is_over_collision_detection)
+		{
+			// TODO start collision detection
+		}
+	}
+
+	void IBaseLevel::_deal_collision()
+	{
+		{
+			std::lock_guard<std::mutex> lock(_collision_mutex);
+			for (auto& func : _collision_handings)
+			{
+				func();
+			}
+			_collision_handings.clear();
+		}
+		{
+			std::lock_guard<std::mutex> lock(_collision_mutex);
+			for (auto& func : _collider_callbacks)
+			{
+				func();
+			}
+			_collider_callbacks.clear();
+		}
+		if (_is_over_collision_detection)
+			_collision_detection();
+	}
+
 	void IBaseLevel::AddLayer(IEventLayer* layer)
 	{
 		_event_layers.push_back(layer);

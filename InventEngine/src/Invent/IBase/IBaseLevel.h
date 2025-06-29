@@ -9,6 +9,8 @@
 
 #include "2D/ISquare2dActor.h"
 
+#include "IPhysicsCollision/ICollisionHandling.h"
+
 #include "ThreadPool/IThreadPool.h"
 
 #include "ILog.h"
@@ -22,6 +24,7 @@ namespace INVENT
 {
 	class IBaseLevel : public IEventLayer
 	{
+		friend class ICollisionHandling;
 	public:
 		friend class IWindow;
 		friend void register_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -132,6 +135,7 @@ namespace INVENT
 		void _clear_color() const;
 
 		void _collision_detection();
+		void _deal_collision();
 
 	protected:
 		IEventLayer* ObjectEventLayer;
@@ -147,6 +151,12 @@ namespace INVENT
 		std::vector<IBaseActor*> _actors;
 		// 以下实例数组为记录可渲染实例，不需要释放
 		std::vector<ISquare2dActor*> _square_2d_actors;
+		// 碰撞体回调函数，统一在主线程调用
+		// 更改代码时，注意多线程资源竞争
+		std::vector<std::function<void()>> _collider_callbacks;
+		std::vector<std::function<void()>> _collision_handings;
+		// 由 ICollisionHandling 管理，若更改逻辑，需要更改 ICollisionHandling::StartCollisionHandle 函数中逻辑
+		bool _is_over_collision_detection = true;
 
 		std::shared_ptr<IPlayerControllerBase> _controller_ptr;
 
@@ -155,7 +165,7 @@ namespace INVENT
 		glm::vec4 _clear_color_vec;
 
 		std::mutex _mutex;
-
+		std::mutex _collision_mutex;
 
 	};
 
