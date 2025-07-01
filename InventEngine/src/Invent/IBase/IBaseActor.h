@@ -44,6 +44,12 @@ namespace INVENT
 	protected:
 		WorldColliderType _collider_type = WorldColliderType::WorldStaticCollider;
 
+	public:
+		// 碰撞等级，等级低的不能推动等级高的
+		unsigned int ColiisionLevel = 0;
+		// 碰撞系数，当碰撞等级相同时 通过系数比确定推动距离；
+		float CollisionCoefficient = 0.0f;
+
 	private:
 		std::vector<IActionComponent*> _action_components;
 		std::vector<IColliderBase*> _colliders;

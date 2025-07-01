@@ -202,16 +202,66 @@ namespace INVENT
 			{
 				auto actor1 = dynamic_cast<IBaseActor*>(obj1);
 				auto actor2 = dynamic_cast<IBaseActor*>(obj2);
-				if (actor1->GetWorldColliderType() == IBaseActor::WorldColliderType::WorldStaticCollider)
+				if ((actor1 != nullptr) && (actor2 != nullptr))
 				{
-					obj2->SetWorldPosition(obj2->GetWorldPosition() + distance * direction);
-					return;
+					if (actor1->GetWorldColliderType() == IBaseActor::WorldColliderType::WorldStaticCollider)
+					{
+						obj2->SetWorldPosition(obj2->GetWorldPosition() + distance * direction);
+						return;
+					}
+					else if (actor2->GetWorldColliderType() == IBaseActor::WorldColliderType::WorldStaticCollider)
+					{
+						obj1->SetWorldPosition(obj1->GetWorldPosition() - distance * direction);
+						return;
+					}
+
+					// 检测谁能推动谁
+					if (actor1->ColiisionLevel == actor2->ColiisionLevel)
+					{
+						if (actor1->CollisionCoefficient)
+						{
+							if (actor2->CollisionCoefficient)
+							{
+								obj1->SetWorldPosition(obj1->GetWorldPosition() - (distance * actor1->CollisionCoefficient / (actor1->CollisionCoefficient + actor2->CollisionCoefficient)) * direction);
+								obj2->SetWorldPosition(obj2->GetWorldPosition() + (distance * actor2->CollisionCoefficient / (actor1->CollisionCoefficient + actor2->CollisionCoefficient)) * direction);
+								return;
+							}
+							else
+							{
+								obj2->SetWorldPosition(obj2->GetWorldPosition() + distance * direction);
+								return;
+							}
+						}
+						else
+						{
+							if (actor2->CollisionCoefficient)
+							{
+								obj1->SetWorldPosition(obj1->GetWorldPosition() - distance * direction);
+								return;
+							}
+							else
+							{
+								obj1->SetWorldPosition(obj1->GetWorldPosition() - (distance / 2.0f) * direction);
+								obj2->SetWorldPosition(obj2->GetWorldPosition() + (distance / 2.0f) * direction);
+								return;
+							}
+							
+						}
+					}
+					else if (actor1->ColiisionLevel < actor2->ColiisionLevel)
+					{
+						obj1->SetWorldPosition(obj1->GetWorldPosition() - distance * direction);
+						return;
+					}
+					else
+					{
+						obj2->SetWorldPosition(obj2->GetWorldPosition() + distance * direction);
+						return;
+					}
+
 				}
-				else if (actor2->GetWorldColliderType() == IBaseActor::WorldColliderType::WorldStaticCollider)
-				{
-					obj1->SetWorldPosition(obj1->GetWorldPosition() - distance * direction);
-					return;
-				}
+				
+
 				obj1->SetWorldPosition(obj1->GetWorldPosition() - (distance / 2.0f) * direction);
 				obj2->SetWorldPosition(obj2->GetWorldPosition() + (distance / 2.0f) * direction);
 			}
