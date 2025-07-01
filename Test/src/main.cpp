@@ -87,6 +87,9 @@ public:
 		collider1->BindBlockCollisionFunc([](const std::unordered_set<INVENT::IColliderBase*>& colliders) {
 			std::cout << "Block other Colliders num : " << colliders.size() << "\n";
 			});
+		collider1->BindBeginOverlapFunc([](const std::unordered_set<INVENT::IColliderBase*>& colliders) {
+			std::cout << "begin overlap other Colliders num : " << colliders.size() << "\n";
+			});
 
 		act->AddCollider(collider1);
 		act2->AddCollider(collider2);

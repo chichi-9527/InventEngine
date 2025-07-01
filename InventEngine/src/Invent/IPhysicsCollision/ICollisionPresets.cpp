@@ -44,7 +44,7 @@ namespace INVENT
 
 	void ICollisionPresets::Init()
 	{
-		collision_type_matrix._table = { CollisionType::COLLISION_BLOCK };
+		collision_type_matrix._table = { CollisionType::COLLISION_OVERLAP };
 		INVENT_LOG_DEBUG("if you update enum collision presets you need update _table_collision_type in ICollisionPresets::Init() !");
 	}
 

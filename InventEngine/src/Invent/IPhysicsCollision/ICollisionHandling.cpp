@@ -145,14 +145,21 @@ namespace INVENT
 				std::lock_guard<std::mutex> lock(_level->_collision_mutex);
 				_level->_collider_callbacks.push_back(collision_callback);
 			}
-			if (collider->_end_overlap_func && collider->_end_overlaps.size())
+			if (collider->_end_overlaps.size())
 			{
-				auto collision_callback = [collider]() {
-					(collider->_end_overlap_func)(collider->_end_overlaps);
-					};
+				// 结束重叠时删除 正在重叠容器中元素
+				for (auto it : collider->_end_overlaps)
+					collider->_on_overlaps.erase(it);
 
-				std::lock_guard<std::mutex> lock(_level->_collision_mutex);
-				_level->_collider_callbacks.push_back(collision_callback);
+				if (collider->_end_overlap_func)
+				{
+					auto collision_callback = [collider]() {
+						(collider->_end_overlap_func)(collider->_end_overlaps);
+						};
+
+					std::lock_guard<std::mutex> lock(_level->_collision_mutex);
+					_level->_collider_callbacks.push_back(collision_callback);
+				}
 			}
 			if (collider->_block_collision_func && collider->_blocks.size())
 			{
