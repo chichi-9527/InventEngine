@@ -1,4 +1,4 @@
-#include "ICollisionHandling.h"
+﻿#include "ICollisionHandling.h"
 
 #include "ICollisionDetection.h"
 
@@ -35,86 +35,194 @@ namespace INVENT
 
 		for (auto colider : static_colliders)
 		{
-			colider->_informations->clear();
+			colider->_begin_overlaps.clear();
+			colider->_blocks.clear();
+			EraseUnorderedSetNotIn2Vectors(static_colliders, dynamic_colliders, colider->_on_overlaps);
+			colider->_end_overlaps = colider->_on_overlaps;
+		}
+		for (auto colider : dynamic_colliders)
+		{
+			colider->_begin_overlaps.clear();
+			colider->_blocks.clear();
+			EraseUnorderedSetNotIn2Vectors(static_colliders, dynamic_colliders, colider->_on_overlaps);
+			colider->_end_overlaps = colider->_on_overlaps;
 		}
 		glm::vec3 direction{};
 		float distance = 0.0f;
-		ICollisionPresets::CollisionType type = ICollisionPresets::CollisionType::COLLISION_BLOCK;
 		for (size_t i = 0; i < dynamic_colliders.size(); ++i)
 		{
-			dynamic_colliders[i]->_informations->clear();
-
-			if (dynamic_colliders[i]->GetCollisionType() == ICollisionPresets::CollisionType::COLLISION_IGNORE)
-				continue;
+			
 			for (size_t j = i + 1; j < dynamic_colliders.size(); ++j)
 			{
-				if (dynamic_colliders[j]->GetCollisionType() == ICollisionPresets::CollisionType::COLLISION_IGNORE)
+				auto collision_type = ICollisionHandling::GetCollisionTypeWithTwoCollider(dynamic_colliders[i], dynamic_colliders[j]);
+				if (collision_type == ICollisionPresets::CollisionType::COLLISION_IGNORE)
 					continue;
+				// 获取两个碰撞体的预设，通过预设检测两个碰撞体是否发生碰撞或重叠
+
 				if (ICollisionDetection::IsCollision(dynamic_colliders[i], dynamic_colliders[j], direction, distance))
 				{
-					
-					if (dynamic_colliders[i]->GetCollisionType() == ICollisionPresets::CollisionType::COLLISION_OVERLAP || dynamic_colliders[j]->GetCollisionType() == ICollisionPresets::CollisionType::COLLISION_OVERLAP)
+					if (dynamic_colliders[i]->_object == dynamic_colliders[j]->_object)
+						continue;
+
+					if (collision_type == ICollisionPresets::CollisionType::COLLISION_OVERLAP)
 					{
-						type = ICollisionPresets::CollisionType::COLLISION_OVERLAP;
+						if (IsFindInUnorderedSet(dynamic_colliders[i]->_on_overlaps, dynamic_colliders[j]))
+						{
+							dynamic_colliders[i]->_end_overlaps.erase(dynamic_colliders[j]);
+							dynamic_colliders[j]->_end_overlaps.erase(dynamic_colliders[i]);
+						}
+						else 
+						{
+							dynamic_colliders[i]->_begin_overlaps.insert(dynamic_colliders[j]);
+							dynamic_colliders[i]->_on_overlaps.insert(dynamic_colliders[j]);
+
+							dynamic_colliders[j]->_begin_overlaps.insert(dynamic_colliders[i]);
+							dynamic_colliders[j]->_on_overlaps.insert(dynamic_colliders[i]);
+						}
 					}
-					if (dynamic_colliders[i]->_collision_func)
+					else
 					{
-						dynamic_colliders[i]->_informations->emplace_back(IColliderBase::CollisionInformation((IBaseActor*)dynamic_colliders[j]->_object, type, direction, distance));
+						if (distance)
+						{
+							_level->_collision_handings.push_back(std::bind(&ICollisionHandling::UpdateBlockActorPosition, dynamic_colliders[i], dynamic_colliders[j], direction, distance));
+						}
+						dynamic_colliders[i]->_blocks.insert(dynamic_colliders[j]);
+						dynamic_colliders[j]->_blocks.insert(dynamic_colliders[i]);
 					}
-					if (dynamic_colliders[j]->_collision_func)
-					{
-						dynamic_colliders[j]->_informations->emplace_back(IColliderBase::CollisionInformation((IBaseActor*)dynamic_colliders[i]->_object, type, -direction, distance));
-					}
-				}
+
+				} // end if IsCollision
+
 			}
+
 			for (size_t k = 0; k < static_colliders.size(); ++k)
 			{
-				if (static_colliders[k]->GetCollisionType() == ICollisionPresets::CollisionType::COLLISION_IGNORE)
+				auto collision_type = ICollisionHandling::GetCollisionTypeWithTwoCollider(dynamic_colliders[i], static_colliders[k]);
+				if (collision_type == ICollisionPresets::CollisionType::COLLISION_IGNORE)
 					continue;
 				if (ICollisionDetection::IsCollision(dynamic_colliders[i], static_colliders[k], direction, distance))
 				{
 
-					if (dynamic_colliders[i]->GetCollisionType() == ICollisionPresets::CollisionType::COLLISION_OVERLAP || static_colliders[k]->GetCollisionType() == ICollisionPresets::CollisionType::COLLISION_OVERLAP)
+					if (collision_type == ICollisionPresets::CollisionType::COLLISION_OVERLAP)
 					{
-						type = ICollisionPresets::CollisionType::COLLISION_OVERLAP;
+						if (IsFindInUnorderedSet(dynamic_colliders[i]->_on_overlaps, static_colliders[k]))
+						{
+							dynamic_colliders[i]->_end_overlaps.erase(static_colliders[k]);
+							static_colliders[k]->_end_overlaps.erase(dynamic_colliders[i]);
+						}
+						else
+						{
+							dynamic_colliders[i]->_begin_overlaps.insert(static_colliders[k]);
+							dynamic_colliders[i]->_on_overlaps.insert(static_colliders[k]);
+
+							static_colliders[k]->_begin_overlaps.insert(dynamic_colliders[i]);
+							static_colliders[k]->_on_overlaps.insert(dynamic_colliders[i]);
+						}
 					}
-					if (dynamic_colliders[i]->_collision_func)
+					else
 					{
-						dynamic_colliders[i]->_informations->emplace_back(IColliderBase::CollisionInformation((IBaseActor*)static_colliders[k]->_object, type, direction, distance));
+						if (distance)
+						{
+							_level->_collision_handings.push_back(std::bind(&ICollisionHandling::UpdateBlockActorPosition, dynamic_colliders[i], static_colliders[k], direction, distance));
+							dynamic_colliders[i]->_blocks.insert(static_colliders[k]);
+							static_colliders[k]->_blocks.insert(dynamic_colliders[i]);
+						}
 					}
-					if (static_colliders[k]->_collision_func)
-					{
-						static_colliders[k]->_informations->emplace_back(IColliderBase::CollisionInformation((IBaseActor*)dynamic_colliders[i]->_object, type, -direction, distance));
-					}
+					
 				}
 			}
 
-			if (dynamic_colliders[i]->_collision_func)
-			{
-				auto collider = dynamic_colliders[i];
-				auto collision_callback = [collider]() {
-					(collider->_collision_func)(collider->_informations);
-					};
-
-				_level->_collider_callbacks.push_back(collision_callback);
-			}
+			
 		}
 
-		for (size_t k = 0; k < static_colliders.size(); ++k)
-		{
-			if (static_colliders[k]->_collision_func)
+		auto push2levelcallbacks = [this](IColliderBase* collider) {
+
+			if (collider->_begin_overlap_func && collider->_begin_overlaps.size())
 			{
-				auto collider = static_colliders[k];
 				auto collision_callback = [collider]() {
-					(collider->_collision_func)(collider->_informations);
+					(collider->_begin_overlap_func)(collider->_begin_overlaps);
 					};
-				
+
+				std::lock_guard<std::mutex> lock(_level->_collision_mutex);
 				_level->_collider_callbacks.push_back(collision_callback);
 			}
+			if (collider->_end_overlap_func && collider->_end_overlaps.size())
+			{
+				auto collision_callback = [collider]() {
+					(collider->_end_overlap_func)(collider->_end_overlaps);
+					};
+
+				std::lock_guard<std::mutex> lock(_level->_collision_mutex);
+				_level->_collider_callbacks.push_back(collision_callback);
+			}
+			if (collider->_block_collision_func && collider->_blocks.size())
+			{
+				auto collision_callback = [collider]() {
+					(collider->_block_collision_func)(collider->_blocks);
+					};
+
+				std::lock_guard<std::mutex> lock(_level->_collision_mutex);
+				_level->_collider_callbacks.push_back(collision_callback);
+			}
+
+			};
+
+		for (size_t i = 0; i < dynamic_colliders.size(); ++i)
+		{
+			auto collider = dynamic_colliders[i];
+			push2levelcallbacks(collider);
+		}
+
+		for (size_t i = 0; i < static_colliders.size(); ++i)
+		{
+			auto collider = static_colliders[i];
+			push2levelcallbacks(collider);
 		}
 
 		// end
 		_level->_is_over_collision_detection = true;
 
+	}
+
+	void ICollisionHandling::UpdateBlockActorPosition(IColliderBase* collider1, IColliderBase* collider2, glm::vec3 direction, float distance)
+	{
+		
+		auto obj1 = collider1->GetActorObject();
+		auto obj2 = collider2->GetActorObject();
+
+		if (obj1)
+		{
+			if (obj2)
+			{
+				auto actor1 = dynamic_cast<IBaseActor*>(obj1);
+				auto actor2 = dynamic_cast<IBaseActor*>(obj2);
+				if (actor1->GetWorldColliderType() == IBaseActor::WorldColliderType::WorldStaticCollider)
+				{
+					obj2->SetWorldPosition(obj2->GetWorldPosition() + distance * direction);
+					return;
+				}
+				else if (actor2->GetWorldColliderType() == IBaseActor::WorldColliderType::WorldStaticCollider)
+				{
+					obj1->SetWorldPosition(obj1->GetWorldPosition() - distance * direction);
+					return;
+				}
+				obj1->SetWorldPosition(obj1->GetWorldPosition() - (distance / 2.0f) * direction);
+				obj2->SetWorldPosition(obj2->GetWorldPosition() + (distance / 2.0f) * direction);
+			}
+			else
+				obj1->SetWorldPosition(obj1->GetWorldPosition() - distance * direction);
+		}
+		else
+		{
+			if (obj2)
+			{
+				obj2->SetWorldPosition(obj2->GetWorldPosition() + distance * direction);
+			}
+		}
+
+	}
+	const ICollisionPresets::CollisionType& ICollisionHandling::GetCollisionTypeWithTwoCollider(const IColliderBase* collider1, const IColliderBase* collider2)
+	{
+		
+		return ICollisionPresets::GetCollisionTypeWithTwoCollisionPreset(collider1->GetCollisionType(), collider2->GetCollisionType());
 	}
 }

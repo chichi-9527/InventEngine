@@ -7,6 +7,8 @@ namespace INVENT
 	{
 		this->SetForwardVector({ 0.0f,0.0f,-1.0f });
 		this->SetUpVector({ 0.0f,1.0f,0.0f });
+
+		this->_collider_type = WorldColliderType::WorldDynamicCollider;
 	}
 
 	ISquare2dPawn::~ISquare2dPawn()

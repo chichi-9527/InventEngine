@@ -107,9 +107,20 @@ namespace INVENT
 
 				if (std::is_base_of_v<ISquare2dActor, T>)
 					AddSquare2dActor((ISquare2dActor*)actor);
+
+				if (((IBaseActor*)actor)->HasCollider())
+				{
+					if (((IBaseActor*)actor)->GetWorldColliderType() == IBaseActor::WorldColliderType::WorldStaticCollider)
+					{
+						AddStaticColliders(((IBaseActor*)actor)->GetActorColliders());
+					}
+					else if (actor->GetWorldColliderType() == IBaseActor::WorldColliderType::WorldDynamicCollider)
+					{
+						AddDynamicColliders(((IBaseActor*)actor)->GetActorColliders());
+					}
 				}
-				
-			);
+
+				});
 
 			/*if (std::is_base_of_v<ISquare2dActor, T>)
 				_square_2d_actors.push_back((ISquare2dActor*)actor);*/
@@ -125,6 +136,11 @@ namespace INVENT
 		// will render ,不会自动释放，谨慎使用
 		void AddSquare2dActor(ISquare2dActor* actor);
 		void EraseSquare2dActor(ISquare2dActor* actor);
+
+		void AddStaticCollider(IColliderBase* collider);
+		void AddStaticColliders(const std::vector<IColliderBase*>& collider);
+		void AddDynamicCollider(IColliderBase* collider);
+		void AddDynamicColliders(const std::vector<IColliderBase*>& collider);
 
 		IThreadPool* GetIWindowThreadPool();
 
@@ -151,6 +167,9 @@ namespace INVENT
 		std::vector<IBaseActor*> _actors;
 		// 以下实例数组为记录可渲染实例，不需要释放
 		std::vector<ISquare2dActor*> _square_2d_actors;
+
+		std::vector<IColliderBase*> _static_colliders;
+		std::vector<IColliderBase*> _dynamic_colliders;
 		// 碰撞体回调函数，统一在主线程调用
 		// 更改代码时，注意多线程资源竞争
 		std::vector<std::function<void()>> _collider_callbacks;
@@ -166,6 +185,9 @@ namespace INVENT
 
 		std::mutex _mutex;
 		std::mutex _collision_mutex;
+		std::mutex _colliders_mutex;
+
+		ICollisionHandling* _colli_handler;
 
 	};
 

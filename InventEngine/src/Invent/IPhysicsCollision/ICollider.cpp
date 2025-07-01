@@ -10,21 +10,21 @@ namespace INVENT
 		: _type(type)
 		, _object(object)
 		, _relative_position(relative_position)
-		, _world_position(object ? object->GetWorldPosition() + relative_position : relative_position)
-	{
-		_informations = std::make_shared<std::vector<CollisionInformation>>();
-	}
+	{}
 
 	void IColliderBase::SetRelativePosition(const glm::vec3& position)
 	{
 		_relative_position = position;
-		_world_position = _object ? _object->GetWorldPosition() + position : position;
 	}
 
 	void IColliderBase::SetWorldPosition(const glm::vec3& position)
 	{
-		_world_position = position;
 		_relative_position = _object ? position - _object->GetWorldPosition() : position;
+	}
+
+	const glm::vec3& IColliderBase::GetWorldPosition() const
+	{
+		return _object ? _relative_position + _object->GetWorldPosition() : _relative_position;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////

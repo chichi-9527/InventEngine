@@ -25,9 +25,12 @@ namespace INVENT
 
 		virtual void Update(float delta);
 
-		virtual void AddCollider(const IColliderBase* base);
+		virtual void AddCollider(IColliderBase* base);
 		virtual void EraseCollider(const IColliderBase* base);
 		virtual void ClearCollider();
+		virtual bool HasCollider();
+		virtual bool HasCollider(const IColliderBase* base);
+		virtual const std::vector<IColliderBase*>& GetActorColliders() const { return _colliders; }
 		
 		// 当 type 为 static 时不检查与其他 static actor 中的碰撞体碰撞
 		// 当存在碰撞体时有效，默认 static ,当此 actor 为 pawn（即可控制移动）时返回 dynamic

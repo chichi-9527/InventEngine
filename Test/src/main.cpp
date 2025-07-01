@@ -59,12 +59,15 @@ public:
 
 		this->SetMoveSpeed(1.0f);
 
-		this->SetScale({ 0.1f,0.1f });
+		//this->SetScale({ 0.1f,0.1f });
+
+		
+		//this->AddCollider(collider);
 	}
 
 	virtual void Update(float delta) override
 	{
-		//this->SetWorldPosition(this->GetWorldPosition() + delta * glm::vec3(0.01f, 0.0f, 0.0f));
+		//std::cout << "actor position : " << glm::to_string(this->GetWorldPosition()) << "\n";
 	}
 };
 
@@ -76,7 +79,17 @@ public:
 	{
 		auto act = this->CreateActor<MyActor>();
 		auto act2 = this->CreateActor<MyActor>();
-		act2->SetWorldPosition({ 0.1f,0.0f,-0.1f });
+		act->SetWorldPosition({ 0.0f,2.0f,0.0f });
+		act2->SetWorldRotation({ 0.0f,0.0f,45.0f });
+
+		auto collider1 = new INVENT::IColliderBox(nullptr, { 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f });
+		auto collider2 = new INVENT::IColliderBox(nullptr, { 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f }, { 0.0f,0.0f,45.0f });
+		collider1->BindBlockCollisionFunc([](const std::unordered_set<INVENT::IColliderBase*>& colliders) {
+			std::cout << "Block other Colliders num : " << colliders.size() << "\n";
+			});
+
+		act->AddCollider(collider1);
+		act2->AddCollider(collider2);
 
 		camera = new INVENT::ICamera();
 		camera->SetWorldPosition({ 0.0f,0.0f,3.0f });

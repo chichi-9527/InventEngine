@@ -163,20 +163,24 @@ namespace INVENT
                 + std::abs(obb->GetSize().z / 2.0f * glm::dot(axis, obb->GetAxisDirextionZ()));
             };
 
-        auto OverlapOnAxis = [first, second, GetProjectionRadius](const glm::vec3& axis, float& distance) -> bool {
+        auto OverlapOnAxis = [first, second, GetProjectionRadius](glm::vec3& axis, float& distance) -> bool {
             if (axis.x == 0.0f && axis.y == 0.0f && axis.z == 0.0f) return true;
             auto norm = glm::normalize(axis);
-            float center_dist = std::abs(glm::dot(second->GetWorldPosition() - first->GetWorldPosition(), norm));
+            float center_dist = glm::dot(second->GetWorldPosition() - first->GetWorldPosition(), norm);
+            if (center_dist < 0.0f)
+            {
+                axis = -axis;
+            }
             auto r1 = GetProjectionRadius(first, norm);
             auto r2 = GetProjectionRadius(second, norm);
 
-            distance = (r1 + r2) - center_dist;
+            distance = (r1 + r2) - std::abs(center_dist);
             return distance >= 0;
             };
         
         float distance = 0.0f;
         overlap_distance = FLT_MAX;
-        for (const auto& axis : axes)
+        for (auto& axis : axes)
         {
             if (!OverlapOnAxis(axis, distance))
             {

@@ -17,6 +17,8 @@ namespace INVENT
 
 		AddLayer(ObjectEventLayer);
 		AddLayer(this);
+
+		_colli_handler = new ICollisionHandling(this);
 	}
 
 	IBaseLevel::~IBaseLevel()
@@ -38,6 +40,12 @@ namespace INVENT
 				actor = nullptr;
 			}
 		}
+
+		if (_colli_handler)
+		{
+			delete _colli_handler;
+			_colli_handler = nullptr;
+		}
 	}
 
 	void IBaseLevel::Update(float delta)
@@ -46,6 +54,9 @@ namespace INVENT
 		{
 			if (actor) actor->Update(delta);
 		}
+
+		// 碰撞检测
+		_deal_collision();
 	}
 
 	void IBaseLevel::SetController(std::shared_ptr<IPlayerControllerBase> controller)
@@ -115,6 +126,30 @@ namespace INVENT
 		}
 	}
 
+	void IBaseLevel::AddStaticCollider(IColliderBase* collider)
+	{
+		std::lock_guard<std::mutex> lock(_colliders_mutex);
+		_static_colliders.push_back(collider);
+	}
+
+	void IBaseLevel::AddStaticColliders(const std::vector<IColliderBase*>& collider)
+	{
+		std::lock_guard<std::mutex> lock(_colliders_mutex);
+		_static_colliders.insert(_static_colliders.end(), collider.begin(), collider.end());
+	}
+
+	void IBaseLevel::AddDynamicCollider(IColliderBase* collider)
+	{
+		std::lock_guard<std::mutex> lock(_colliders_mutex);
+		_dynamic_colliders.push_back(collider);
+	}
+
+	void IBaseLevel::AddDynamicColliders(const std::vector<IColliderBase*>&collider)
+	{
+		std::lock_guard<std::mutex> lock(_colliders_mutex);
+		_dynamic_colliders.insert(_dynamic_colliders.end(), collider.begin(), collider.end());
+	}
+
 	IThreadPool* IBaseLevel::GetIWindowThreadPool()
 	{
 		return IEngine::InstancePtr()->GetIWindow()->GetThreadPool();
@@ -136,10 +171,7 @@ namespace INVENT
 
 	void IBaseLevel::_collision_detection()
 	{
-		if (_is_over_collision_detection)
-		{
-			// TODO start collision detection
-		}
+		_colli_handler->StartCollisionHandleDynamic(_static_colliders, _dynamic_colliders);
 	}
 
 	void IBaseLevel::_deal_collision()

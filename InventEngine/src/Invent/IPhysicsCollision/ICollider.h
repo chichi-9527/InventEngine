@@ -9,6 +9,7 @@
 
 #include <functional>
 #include <memory>
+#include <unordered_set>
 
 namespace INVENT
 {
@@ -28,27 +29,10 @@ namespace INVENT
 			BOX
 		};
 
-		struct CollisionInformation
-		{
-			CollisionInformation(IBaseActor* act = nullptr
-				, ICollisionPresets::CollisionType type = ICollisionPresets::CollisionType::COLLISION_IGNORE
-				, const glm::vec3& direct = {}
-				, float dist = 0.0f)
-				: actor(act)
-				, collision_type(type)
-				, direction(direct)
-				, distance(dist)
-			{}
-			IBaseActor* actor;
-			ICollisionPresets::CollisionType collision_type;
-			glm::vec3 direction;
-			float distance;
-		};
-
 	private:
 		IColliderBase(ColliderType type, const glm::vec3& relative_position, IObjectBase* object = nullptr);
 	public:
-		using CollisionFunction = std::function<void(std::shared_ptr<std::vector<CollisionInformation>>)>;
+		using CollisionFunction = std::function<void(const std::unordered_set<IColliderBase*>&)>;
 
 		virtual ~IColliderBase() = default;
 
@@ -56,26 +40,42 @@ namespace INVENT
 		const glm::vec3& GetRelativePosition() const { return _relative_position; }
 
 		void SetWorldPosition(const glm::vec3& position);
-		const glm::vec3& GetWorldPosition() const { return _world_position; }
+		const glm::vec3& GetWorldPosition() const;
 
 		const ColliderType& GetColliderType() const { return _type; }
 
 		void SetCollisionPreset(const ICollisionPresets::CollisionPresets& preset) { _preset = preset; }
-		const ICollisionPresets::CollisionType& GetCollisionType() const { return ICollisionPresets::GetCollisionType(_preset); }
+		const ICollisionPresets::CollisionPresets& GetCollisionType() const { return _preset; }
 
-		void BindCollisionFunc(CollisionFunction func);
+		template<typename T>
+		T GetActorObject() const { return dynamic_cast<T>(_object); }
+		IObjectBase* GetActorObject() const { return _object; }
+		void SetActorObject(IObjectBase* object) { _object = object; }
+
+		void BindBeginOverlapFunc(CollisionFunction func) { _begin_overlap_func = func; }
+		void BindEndOverlapFunc(CollisionFunction func) { _end_overlap_func = func; }
+		void BindBlockCollisionFunc(CollisionFunction func) { _block_collision_func = func; }
+		void UnBindBeginOverlapFunc() { _begin_overlap_func = nullptr; }
+		void UnBindEndOverlapFunc() { _end_overlap_func = nullptr; }
+		void UnBindBlockCollisionFunc() { _block_collision_func = nullptr; }
+
+		const std::unordered_set<IColliderBase*>& GetOverlappingColliders() const { return _on_overlaps; }
 
 	private:
 		ColliderType _type;
 
 		glm::vec3 _relative_position;
-		glm::vec3 _world_position;
 
 		ICollisionPresets::CollisionPresets _preset;
 
-		CollisionFunction _collision_func;
+		CollisionFunction _begin_overlap_func;;
+		CollisionFunction _end_overlap_func;
+		CollisionFunction _block_collision_func;
 
-		std::shared_ptr<std::vector<CollisionInformation>> _informations;
+		std::unordered_set<IColliderBase*> _on_overlaps;
+		std::unordered_set<IColliderBase*> _begin_overlaps;
+		std::unordered_set<IColliderBase*> _end_overlaps;
+		std::unordered_set<IColliderBase*> _blocks;
 
 		IObjectBase* _object;
 	};
