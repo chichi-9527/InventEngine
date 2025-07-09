@@ -10,6 +10,7 @@ namespace INVENT
 		: _type(type)
 		, _object(object)
 		, _relative_position(relative_position)
+		,_preset(ICollisionPresets::CollisionPresets::PRESET_NORMAL)
 	{}
 
 	void IColliderBase::SetRelativePosition(const glm::vec3& position)
@@ -22,7 +23,7 @@ namespace INVENT
 		_relative_position = _object ? position - _object->GetWorldPosition() : position;
 	}
 
-	const glm::vec3& IColliderBase::GetWorldPosition() const
+	glm::vec3 IColliderBase::GetWorldPosition() const
 	{
 		return _object ? _relative_position + _object->GetWorldPosition() : _relative_position;
 	}

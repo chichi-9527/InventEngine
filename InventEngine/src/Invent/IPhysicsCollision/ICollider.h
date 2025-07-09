@@ -40,7 +40,7 @@ namespace INVENT
 		const glm::vec3& GetRelativePosition() const { return _relative_position; }
 
 		void SetWorldPosition(const glm::vec3& position);
-		const glm::vec3& GetWorldPosition() const;
+		glm::vec3 GetWorldPosition() const;
 
 		const ColliderType& GetColliderType() const { return _type; }
 

@@ -41,6 +41,8 @@ namespace INVENT
             }
             };
         enableVTMode();
+
+        SetConsoleOutputCP(CP_UTF8);
 #endif // !INVENT_USE_WINDOWS
 
         boost::log::add_common_attributes();

@@ -19,6 +19,8 @@
 
 #include "IPhysicsCollision/ICollisionDetection.h"
 
+#include "ITools/ITrieTag.h"
+
 #include "IEngine.h"
 
 #endif // !_INVENT_

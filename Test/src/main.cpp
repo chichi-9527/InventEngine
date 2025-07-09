@@ -1,4 +1,4 @@
-
+﻿
 
 #include "Invent/Invent.h"
 
@@ -9,6 +9,8 @@
 #include <iostream>
 
 #include <filesystem>
+
+// #include <Windows.h>
 
 
 class MyGameInstance : public INVENT::IGameInstance<MyGameInstance>
@@ -171,6 +173,62 @@ int main()
 	window.Start();
 
 	//INVENT::IEngine::InstancePtr()->GetIWindow();
+
+ //	INVENT::ITagTrie trie;
+	//trie.Insert("apple.orange");
+	//trie.Insert("apple.orange.banana");
+	//trie.Insert("apple.pear");
+	//trie.Insert("foo.bar");
+
+	//// Search
+	//auto print_search = [&](const std::string& kw) {
+	//	auto res = trie.Search(kw);
+	//	if (res.Id) std::cout << "Search " << kw << ": found, id=" << res.Id << " vaild=" << res.Vaild << std::endl;
+	//	else std::cout << "Search " << kw << ": not found" << std::endl;
+	//	};
+
+	//// startsWith
+	//auto print_startsWith = [&](const std::string& prefix) {
+	//	std::vector<INVENT::ITagTrie::TrieNodeId> ids;
+	//	trie.SearchAbout(prefix, ids);
+	//	std::cout << "startsWith " << prefix << ": ";
+	//	if (ids.empty()) std::cout << "no match";
+	//	else
+	//	{
+	//		std::cout << "full-word ids=[";
+	//		for (size_t i = 0; i < ids.size(); ++i)
+	//		{
+	//			if (i) std::cout << ",";
+	//			std::cout << ids[i].Id;
+	//		}
+	//		std::cout << "]";
+	//	}
+	//	std::cout << std::endl;
+	//	};
+
+	//print_search("apple.orange");
+	//print_search("apple.orange.banana");
+	//print_search("apple.orange.banana.lemon");
+
+	//print_startsWith("apple.orange");
+	//print_startsWith("apple");
+	//print_startsWith("foo");
+	//print_startsWith("foo.baz");
+
+	//// 删除测试
+	//std::cout << "\n== 删除 apple.orange ==" << std::endl;
+	//trie.Erase("apple.orange");
+	//print_search("apple.orange");
+	//print_search("apple.orange.banana");
+	//print_startsWith("apple.orange");
+	//print_startsWith("apple");
+
+	//std::cout << "\n== 添加 apple.orange（应复用id）==" << std::endl;
+	//auto id = trie.Insert("apple.orange");
+	//std::cout << "\n== 第二次添加 apple.orange（应复用id）==" << id.Id << " vaild ==" << id.Vaild << std::endl;
+	//print_search("apple.orange");
+	//print_startsWith("apple.orange");
+	//print_startsWith("apple");
 
 	//INVENT::IColliderBox box1(nullptr, { 0.0f,0.0f,0.0f }, { 2.0f, 2.0f, 2.0f }, { 0.0f, 0.0f, 0.0f });
 	//INVENT::IColliderBox box2(nullptr, { 0.0f,0.01f,0.0f }, { 2.0f, 2.0f, 2.0f }, { 0.0f, 0.0f, 0.0f });

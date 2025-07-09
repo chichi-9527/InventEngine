@@ -43,6 +43,7 @@
     <ClInclude Include="src\Invent\IPhysicsCollision\ICollisionHandling.h" />
     <ClInclude Include="src\Invent\IPhysicsCollision\ICollisionPresets.h" />
     <ClInclude Include="src\Invent\ITexture\ITexture.h" />
+    <ClInclude Include="src\Invent\ITools\ITrieTag.h" />
     <ClInclude Include="src\Invent\Renderer\IBuffer.h" />
     <ClInclude Include="src\Invent\Renderer\IRenderer.h" />
     <ClInclude Include="src\Invent\Renderer\IRenderer2D.h" />
@@ -105,6 +106,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Invent\ITexture\ITexture.cpp" />
+    <ClCompile Include="src\Invent\ITools\ITrieTag.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Invent\Renderer\IBuffer.cpp" />
     <ClCompile Include="src\Invent\Renderer\IRenderer.cpp" />
     <ClCompile Include="src\Invent\Renderer\IRenderer2D.cpp" />

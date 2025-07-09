@@ -27,6 +27,7 @@ D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IPhysicsCollision\ICo
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IPhysicsCollision\ICollisionHandling.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\ICollisionHandling.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IPhysicsCollision\ICollisionPresets.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\ICollisionPresets.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\ITexture\ITexture.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\ITexture.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Invent\ITools\ITrieTag.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\ITrieTag.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IBuffer.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IBuffer.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IRenderer.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IRenderer.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IRenderer2D.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IRenderer2D.obj
