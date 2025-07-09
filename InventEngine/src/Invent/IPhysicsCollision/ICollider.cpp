@@ -92,12 +92,12 @@ namespace INVENT
 	void IColliderBox::SetRotation(const glm::vec3& rotation)
 	{
 		glm::mat4 translate(1.0f);
-		if (_rotation.x)
-			translate *= glm::rotate(glm::mat4(1.0f), glm::radians(_rotation.x), { 1.0f, 0.0f, 0.0f });
-		if (_rotation.y)
-			translate *= glm::rotate(glm::mat4(1.0f), glm::radians(_rotation.y), { 0.0f, 1.0f, 0.0f });
-		if (_rotation.z)
-			translate *= glm::rotate(glm::mat4(1.0f), glm::radians(_rotation.z), { 0.0f, 0.0f, 1.0f });
+		if (rotation.x)
+			translate *= glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), { 1.0f, 0.0f, 0.0f });
+		if (rotation.y)
+			translate *= glm::rotate(glm::mat4(1.0f), glm::radians(rotation.y), { 0.0f, 1.0f, 0.0f });
+		if (rotation.z)
+			translate *= glm::rotate(glm::mat4(1.0f), glm::radians(rotation.z), { 0.0f, 0.0f, 1.0f });
 		_rotated_vector_X = glm::normalize(glm::vec3(translate * glm::vec4(_vector_X, 1.0f)));
 		_rotated_vector_Y = glm::normalize(glm::vec3(translate * glm::vec4(_vector_Y, 1.0f)));
 		_rotated_vector_Z = glm::normalize(glm::vec3(translate * glm::vec4(_vector_Z, 1.0f)));

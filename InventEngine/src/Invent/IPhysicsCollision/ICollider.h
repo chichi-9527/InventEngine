@@ -24,6 +24,7 @@ namespace INVENT
 	public:
 		enum class ColliderType
 		{
+			NONE,
 			CAPSULE,
 			BALL,
 			BOX

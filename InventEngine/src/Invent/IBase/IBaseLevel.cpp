@@ -91,7 +91,6 @@ namespace INVENT
 		auto iter = std::find(_actors.begin(), _actors.end(), actor);
 		if (iter != _actors.end())
 		{
-			delete* iter;
 			*iter = _actors.back();
 			_actors.pop_back();
 		}
@@ -101,10 +100,14 @@ namespace INVENT
 
 		// 删除其他记录实例类中的元素
 
+
+		// delete actor at last
+		delete actor;
 	}
 
 	void IBaseLevel::AddActor(IBaseActor* actor)
 	{
+		actor->SetLevel(this);
 		std::lock_guard<std::mutex> lock(_mutex);
 		_actors.push_back(actor);
 	}
@@ -120,8 +123,8 @@ namespace INVENT
 		auto iter = std::find(_square_2d_actors.begin(), _square_2d_actors.end(), actor);
 		if (iter != _square_2d_actors.end())
 		{
-			*iter = _square_2d_actors.back();
 			std::lock_guard<std::mutex> lock(_mutex);
+			*iter = _square_2d_actors.back();
 			_actors.pop_back();
 		}
 	}
@@ -130,6 +133,18 @@ namespace INVENT
 	{
 		std::lock_guard<std::mutex> lock(_colliders_mutex);
 		_static_colliders.push_back(collider);
+	}
+
+	void IBaseLevel::EraseStaticCollider(const IColliderBase* collider)
+	{
+		auto iter = std::find(_static_colliders.begin(), _static_colliders.end(), collider);
+		if (iter != _static_colliders.end())
+		{
+			std::lock_guard<std::mutex> lock(_colliders_mutex);
+			*iter = _static_colliders.back();
+			_static_colliders.pop_back();
+		}
+		
 	}
 
 	void IBaseLevel::AddStaticColliders(const std::vector<IColliderBase*>& collider)
@@ -142,6 +157,17 @@ namespace INVENT
 	{
 		std::lock_guard<std::mutex> lock(_colliders_mutex);
 		_dynamic_colliders.push_back(collider);
+	}
+
+	void IBaseLevel::EraseDynamicCollider(const IColliderBase* collider)
+	{
+		auto iter = std::find(_dynamic_colliders.begin(), _dynamic_colliders.end(), collider);
+		if (iter != _dynamic_colliders.end())
+		{
+			std::lock_guard<std::mutex> lock(_colliders_mutex);
+			*iter = _dynamic_colliders.back();
+			_dynamic_colliders.pop_back();
+		}
 	}
 
 	void IBaseLevel::AddDynamicColliders(const std::vector<IColliderBase*>&collider)

@@ -22,6 +22,7 @@
 
 namespace INVENT
 {
+	class IBaseActor;
 	class IBaseLevel : public IEventLayer
 	{
 		friend class ICollisionHandling;
@@ -108,18 +109,6 @@ namespace INVENT
 				if (std::is_base_of_v<ISquare2dActor, T>)
 					AddSquare2dActor((ISquare2dActor*)actor);
 
-				if (((IBaseActor*)actor)->HasCollider())
-				{
-					if (((IBaseActor*)actor)->GetWorldColliderType() == IBaseActor::WorldColliderType::WorldStaticCollider)
-					{
-						AddStaticColliders(((IBaseActor*)actor)->GetActorColliders());
-					}
-					else if (actor->GetWorldColliderType() == IBaseActor::WorldColliderType::WorldDynamicCollider)
-					{
-						AddDynamicColliders(((IBaseActor*)actor)->GetActorColliders());
-					}
-				}
-
 				});
 
 			/*if (std::is_base_of_v<ISquare2dActor, T>)
@@ -137,9 +126,12 @@ namespace INVENT
 		void AddSquare2dActor(ISquare2dActor* actor);
 		void EraseSquare2dActor(ISquare2dActor* actor);
 
+	public:
 		void AddStaticCollider(IColliderBase* collider);
+		void EraseStaticCollider(const IColliderBase* collider);
 		void AddStaticColliders(const std::vector<IColliderBase*>& collider);
 		void AddDynamicCollider(IColliderBase* collider);
+		void EraseDynamicCollider(const IColliderBase* collider);
 		void AddDynamicColliders(const std::vector<IColliderBase*>& collider);
 
 		IThreadPool* GetIWindowThreadPool();

@@ -61,6 +61,11 @@ public:
 
 		this->SetMoveSpeed(1.0f);
 
+		collider_id = this->CreateCollider<INVENT::IColliderBox>(this, glm::vec3{ 0.0f,0.0f,0.0f }, glm::vec3{ 1.0f,1.0f,1.0f });
+
+		this->GetCollider<INVENT::IColliderBox>(collider_id)->BindBlockCollisionFunc([](const std::unordered_set<INVENT::IColliderBase*>& colliders) {
+			std::cout << "Block other Colliders num : " << colliders.size() << "\n";
+			});
 		//this->SetScale({ 0.1f,0.1f });
 
 		
@@ -71,6 +76,16 @@ public:
 	{
 		//std::cout << "actor position : " << glm::to_string(this->GetWorldPosition()) << "\n";
 	}
+
+	virtual void SetWorldRotation(const glm::vec3& rotation) override
+	{
+		ISquare2dPawn::SetWorldRotation(rotation);
+		auto collider = this->GetCollider<INVENT::IColliderBox>(collider_id);
+		collider->SetRotation(rotation + collider->GetRotation());
+	}
+
+private:
+	INVENT::IActor2D::AColliderID collider_id;
 };
 
 class MyLevel : public INVENT::IBaseLevel 
@@ -84,7 +99,7 @@ public:
 		act->SetWorldPosition({ 0.0f,2.0f,0.0f });
 		act2->SetWorldRotation({ 0.0f,0.0f,45.0f });
 
-		auto collider1 = new INVENT::IColliderBox(nullptr, { 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f });
+		/*auto collider1 = new INVENT::IColliderBox(nullptr, { 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f });
 		auto collider2 = new INVENT::IColliderBox(nullptr, { 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f }, { 0.0f,0.0f,45.0f });
 		collider1->BindBlockCollisionFunc([](const std::unordered_set<INVENT::IColliderBase*>& colliders) {
 			std::cout << "Block other Colliders num : " << colliders.size() << "\n";
@@ -94,7 +109,7 @@ public:
 			});
 
 		act->AddCollider(collider1);
-		act2->AddCollider(collider2);
+		act2->AddCollider(collider2);*/
 
 		camera = new INVENT::ICamera();
 		camera->SetWorldPosition({ 0.0f,0.0f,3.0f });

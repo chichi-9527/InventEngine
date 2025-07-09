@@ -31,8 +31,8 @@ namespace INVENT
 		// 绕 z 轴 {0.0f, 0.0f, 1.0f} 旋转
 		float GetRotation();
 
-		void SetWorldRotation(const glm::vec3& rotation);
-		const glm::vec3& GetWorldRotation();
+		virtual void SetWorldRotation(const glm::vec3& rotation);
+		virtual const glm::vec3& GetWorldRotation();
 
 		void SetShader(IShader* shader) { _shader = shader; }
 		const IShader* GetShader() const { return _shader; }

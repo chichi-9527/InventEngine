@@ -22,7 +22,12 @@ D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IEngine.cpp;D:\projec
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\ILog.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Debug\InventEngine\ILog.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IEpch.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Debug\InventEngine\IEpch.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Invent.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Debug\InventEngine\Invent.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IPhysicsCollision\ICollider.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Debug\InventEngine\ICollider.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IPhysicsCollision\ICollisionDetection.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Debug\InventEngine\ICollisionDetection.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IPhysicsCollision\ICollisionHandling.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Debug\InventEngine\ICollisionHandling.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IPhysicsCollision\ICollisionPresets.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Debug\InventEngine\ICollisionPresets.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\ITexture\ITexture.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Debug\InventEngine\ITexture.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Invent\ITools\ITrieTag.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Debug\InventEngine\ITrieTag.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IBuffer.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Debug\InventEngine\IBuffer.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IRenderer.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Debug\InventEngine\IRenderer.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IRenderer2D.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Debug\InventEngine\IRenderer2D.obj

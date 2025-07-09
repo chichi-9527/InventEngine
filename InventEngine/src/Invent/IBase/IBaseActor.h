@@ -11,6 +11,7 @@
 
 namespace INVENT
 {
+	class IBaseLevel;
 	class IBaseActor : public IBaseEventFunction
 	{
 	public:
@@ -21,7 +22,7 @@ namespace INVENT
 		};
 
 		IBaseActor() = default;
-		virtual ~IBaseActor() = default;
+		virtual ~IBaseActor();
 
 		virtual void Update(float delta);
 
@@ -31,6 +32,9 @@ namespace INVENT
 		virtual bool HasCollider();
 		virtual bool HasCollider(const IColliderBase* base);
 		virtual const std::vector<IColliderBase*>& GetActorColliders() const { return _colliders; }
+
+		inline IBaseLevel* GetActorFromLevel() { return _level; }
+		void SetLevel(IBaseLevel* level);
 		
 		// 当 type 为 static 时不检查与其他 static actor 中的碰撞体碰撞
 		// 当存在碰撞体时有效，默认 static ,当此 actor 为 pawn（即可控制移动）时返回 dynamic
@@ -53,6 +57,8 @@ namespace INVENT
 	private:
 		std::vector<IActionComponent*> _action_components;
 		std::vector<IColliderBase*> _colliders;
+
+		IBaseLevel* _level = nullptr;
 	};
 }
 
