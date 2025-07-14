@@ -20,6 +20,7 @@
 #include "IPhysicsCollision/ICollisionDetection.h"
 
 #include "ITools/ITrieTag.h"
+#include "ITools/IDelegate.h"
 
 #include "IEngine.h"
 

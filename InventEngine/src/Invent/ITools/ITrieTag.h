@@ -22,7 +22,7 @@ namespace INVENT
 			size_t Id = 0;
 			size_t Vaild = 0;
 
-			bool operator==(const TrieNodeId& other)
+			bool operator==(const TrieNodeId& other) const
 			{
 				return this->Id == other.Id && this->Vaild == other.Vaild;
 			}
@@ -53,7 +53,7 @@ namespace INVENT
 		~ITagTrie();
 
 		TrieNodeId Insert(const std::string& tag);
-		void Erase(const std::string& tag);
+		TrieNodeId Erase(const std::string& tag);
 		TrieNodeId Search(const std::string& tag);
 		void SearchAbout(const std::string& tag, std::vector<TrieNodeId>& out_ids);
 

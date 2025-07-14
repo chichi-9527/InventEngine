@@ -26,6 +26,11 @@ namespace INVENT
 
 		void Start();
 
+		// if submit some functions before start you can call this
+		void NotifyOne() { _lock.notify_one(); }
+		// if submit some functions before start you can call this
+		void NotifyAll() { _lock.notify_all(); }
+
 		// 线程数量只能在未 Start 时设置
 		void SetThreadNum(unsigned int thread_num);
 		// 优先级数量只能在未 Start 时设置, 设置前指定的任务顺序不会改变

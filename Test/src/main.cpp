@@ -181,11 +181,21 @@ public:
 //	int is = 0;
 //};
 
+//static void add(int a, int b)
+//{
+//	std::cout << a + b << "\n";
+//}
+
 
 int main()
 {
 	MyWindow window;
 	window.Start();
+
+	/*INVENT::Event<int, int> myevent;
+	myevent.AddFunction(add);
+
+	myevent(1, 2);*/
 
 	//INVENT::IEngine::InstancePtr()->GetIWindow();
 

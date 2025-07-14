@@ -41,14 +41,14 @@ namespace INVENT
 
 	void IBaseActor::SetLevel(IBaseLevel* level)
 	{
-		if (nullptr == level)
-			return;
-
 		if (_level)
 		{
 			ClearCollider();
 		}
 		_level = level;
+		if (nullptr == level)
+			return;
+
 		switch (_collider_type)
 		{
 		case INVENT::IBaseActor::WorldColliderType::WorldStaticCollider:

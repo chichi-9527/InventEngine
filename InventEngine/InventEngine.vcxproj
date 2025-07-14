@@ -32,7 +32,9 @@
     <ClInclude Include="src\Glad\glad\glad.h" />
     <ClInclude Include="src\Glad\KHR\khrplatform.h" />
     <ClInclude Include="src\Invent\IComponent\IAbilitySystemComponent\IAbilitySystemComponent.h" />
+    <ClInclude Include="src\Invent\IComponent\IAbilitySystemComponent\IGameplayAbility.h" />
     <ClInclude Include="src\Invent\IComponent\IAbilitySystemComponent\IGameplayAbilitySystem.h" />
+    <ClInclude Include="src\Invent\IComponent\IAbilitySystemComponent\IGASTags.h" />
     <ClInclude Include="src\Invent\IComponent\InventComponent.h" />
     <ClInclude Include="src\Invent\IEngine.h" />
     <ClInclude Include="src\Invent\ILog.h" />
@@ -43,6 +45,7 @@
     <ClInclude Include="src\Invent\IPhysicsCollision\ICollisionHandling.h" />
     <ClInclude Include="src\Invent\IPhysicsCollision\ICollisionPresets.h" />
     <ClInclude Include="src\Invent\ITexture\ITexture.h" />
+    <ClInclude Include="src\Invent\ITools\IDelegate.h" />
     <ClInclude Include="src\Invent\ITools\ITrieTag.h" />
     <ClInclude Include="src\Invent\Renderer\IBuffer.h" />
     <ClInclude Include="src\Invent\Renderer\IRenderer.h" />
@@ -81,7 +84,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\Invent\IComponent\IAbilitySystemComponent\IGameplayAbility.cpp" />
     <ClCompile Include="src\Invent\IComponent\IAbilitySystemComponent\IGameplayAbilitySystem.cpp" />
+    <ClCompile Include="src\Invent\IComponent\IAbilitySystemComponent\IGASTags.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Invent\IEngine.cpp" />
     <ClCompile Include="src\Invent\ILog.cpp" />
     <ClCompile Include="src\Invent\IEpch.cpp">
@@ -106,6 +114,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Invent\ITexture\ITexture.cpp" />
+    <ClCompile Include="src\Invent\ITools\IDelegate.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Invent\ITools\ITrieTag.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -124,6 +136,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md">
+      <SubType>
+      </SubType>
+    </None>
+    <None Include="src\Invent\ITools\readme.md">
       <SubType>
       </SubType>
     </None>
@@ -181,7 +197,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>USE_OPENGL;WATCH_LOG;_WIN32_WINNT=0x0A00;USE_BOOST;INVENT_USE_WINDOWS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -202,7 +218,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>USE_OPENGL;WATCH_LOG;_WIN32_WINNT=0x0A00;USE_BOOST;INVENT_USE_WINDOWS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PrecompiledHeader>Use</PrecompiledHeader>

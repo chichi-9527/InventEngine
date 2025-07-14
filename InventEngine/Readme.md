@@ -17,7 +17,7 @@ $(SolutionDir)\bin-int\$(Platform)-$(Configuration)\$(ProjectName)\
 
 ### 语言标准
 
-C/C++ 17
+最低标准 C++ 20
 
 ### VC++ 目录
 包含目录

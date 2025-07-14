@@ -17,7 +17,9 @@ D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IObjectBase.cpp
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IBase\IWindow.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IWindow.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Glad\glad.c;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\glad.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IComponent\IAbilitySystemComponent\IAbilitySystemComponent.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IAbilitySystemComponent.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IComponent\IAbilitySystemComponent\IGameplayAbility.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IGameplayAbility.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IComponent\IAbilitySystemComponent\IGameplayAbilitySystem.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IGameplayAbilitySystem.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IComponent\IAbilitySystemComponent\IGASTags.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IGASTags.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IEngine.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IEngine.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\ILog.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\ILog.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IEpch.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IEpch.obj
@@ -27,6 +29,7 @@ D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IPhysicsCollision\ICo
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IPhysicsCollision\ICollisionHandling.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\ICollisionHandling.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\IPhysicsCollision\ICollisionPresets.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\ICollisionPresets.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\ITexture\ITexture.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\ITexture.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Invent\ITools\IDelegate.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IDelegate.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\ITools\ITrieTag.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\ITrieTag.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IBuffer.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IBuffer.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\Renderer\IRenderer.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IRenderer.obj

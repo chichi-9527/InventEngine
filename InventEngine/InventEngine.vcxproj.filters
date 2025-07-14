@@ -144,6 +144,15 @@
     <ClInclude Include="src\Invent\ITools\ITrieTag.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Invent\IComponent\IAbilitySystemComponent\IGameplayAbility.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Invent\IComponent\IAbilitySystemComponent\IGASTags.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Invent\ITools\IDelegate.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\Invent.cpp">
@@ -260,8 +269,18 @@
     <ClCompile Include="src\Invent\ITools\ITrieTag.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\Invent\IComponent\IAbilitySystemComponent\IGameplayAbility.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\IComponent\IAbilitySystemComponent\IGASTags.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\ITools\IDelegate.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md" />
+    <None Include="src\Invent\ITools\readme.md" />
   </ItemGroup>
 </Project>

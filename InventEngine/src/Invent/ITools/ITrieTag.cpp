@@ -36,7 +36,7 @@ namespace INVENT
 		return node->NodeId;
 	}
 
-	void ITagTrie::Erase(const std::string& tag)
+	ITagTrie::TrieNodeId ITagTrie::Erase(const std::string& tag)
 	{
 		std::vector<std::string> words;
 		ITagTrie::SplitStringWithDot(tag, words);
@@ -48,12 +48,12 @@ namespace INVENT
 		{
 			auto iter = node->children.find(word);
 			if (iter == node->children.end())
-				return;
+				return TrieNodeId();
 			path.emplace(node, word);
 			node = iter->second;
 		}
 		if (!node->IsEnd)
-			return;
+			return TrieNodeId();
 		node->IsEnd = false;
 		++node->NodeId.Vaild;
 
@@ -74,6 +74,7 @@ namespace INVENT
 			path.pop();
 		}
 
+		return node->NodeId;
 	}
 
 	ITagTrie::TrieNodeId ITagTrie::Search(const std::string& tag)
