@@ -64,10 +64,11 @@ namespace INVENT
 
 		glm::vec2 _texture_coord[2]{};
 		ITexture2D::_UInt2 _texture_coord_index;
-
+		
+		// 先判断 _texture , 若为 nullptr 则通过 id 获取
 		ITexture2DManagement::TextureID _texture_id;
-
 		ITexture2D* _texture;
+
 		IShader* _shader;
 	};
 }

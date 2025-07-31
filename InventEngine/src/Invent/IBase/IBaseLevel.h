@@ -8,6 +8,7 @@
 #include "ICamera.h"
 
 #include "2D/ISquare2dActor.h"
+#include "2D/ITileMap.h"
 
 #include "IPhysicsCollision/ICollisionHandling.h"
 
@@ -108,6 +109,8 @@ namespace INVENT
 
 				if (std::is_base_of_v<ISquare2dActor, T>)
 					AddSquare2dActor((ISquare2dActor*)actor);
+				else if (std::is_base_of_v<ITileMap, T>)
+					AddTileMap((ITileMap*)actor);
 
 				});
 
@@ -125,6 +128,9 @@ namespace INVENT
 		// will render ,不会自动释放，谨慎使用
 		void AddSquare2dActor(ISquare2dActor* actor);
 		void EraseSquare2dActor(ISquare2dActor* actor);
+
+		void AddTileMap(ITileMap* actor);
+		void EraseTileMap(ITileMap* actor);
 
 	public:
 		void AddStaticCollider(IColliderBase* collider);
@@ -159,6 +165,7 @@ namespace INVENT
 		std::vector<IBaseActor*> _actors;
 		// 以下实例数组为记录可渲染实例，不需要释放
 		std::vector<ISquare2dActor*> _square_2d_actors;
+		std::vector<ITileMap*>		 _tile_map_actors;
 
 		std::vector<IColliderBase*> _static_colliders;
 		std::vector<IColliderBase*> _dynamic_colliders;
@@ -176,6 +183,7 @@ namespace INVENT
 		glm::vec4 _clear_color_vec;
 
 		std::mutex _mutex;
+		std::mutex _tile_map_mutex;
 		std::mutex _collision_mutex;
 		std::mutex _colliders_mutex;
 

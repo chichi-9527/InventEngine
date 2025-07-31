@@ -82,5 +82,18 @@ namespace INVENT
 
 }
 
+#define INVENT_EVENT(event_name, ...) \
+class event_name : public EventBase<__VA_ARGS__> {};\
+public:\
+event_name EVENT_##event_name;
+
+#define IBIND_EVENT_P(target, event_name, class_name, func) \
+target->EVENT_##event_name.AddFunction([this](auto&&... args){	\
+	(this->*(&class_name::func))(std::forward<decltype(args)>(args)...); \
+	});
+
+#define IREMOVE_EVENT_P(target, event_name, event_func_id) \
+target->EVENT_##event_name.RemoveFunction(event_func_id);
+
 #endif // !_IDELEGATE_
 

@@ -1,6 +1,8 @@
 #ifndef _IABILITYSYSTEMCOMPONENT_
 #define _IABILITYSYSTEMCOMPONENT_
 
+#include "IGameplayAbilitySystem.h"
+
 namespace INVENT
 {
 	class IAbilitySystemComponent
@@ -13,8 +15,9 @@ namespace INVENT
 		~IAbilitySystemComponent();
 
 		// give ability
-		// try activate ability
-		// try activate ability by tag
+		ITagTrie::TrieNodeId GiveAbility();
+
+		
 
 		// give ability and activate once
 

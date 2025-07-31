@@ -97,6 +97,8 @@ namespace INVENT
 
 		// 删除 _square_2d_actors 中的元素
 		EraseSquare2dActor((ISquare2dActor*)actor);
+		// 删除 _tile_map_actors 中的元素
+		EraseTileMap((ITileMap*)actor);
 
 		// 删除其他记录实例类中的元素
 
@@ -125,7 +127,24 @@ namespace INVENT
 		{
 			std::lock_guard<std::mutex> lock(_mutex);
 			*iter = _square_2d_actors.back();
-			_actors.pop_back();
+			_square_2d_actors.pop_back();
+		}
+	}
+
+	void IBaseLevel::AddTileMap(ITileMap* actor)
+	{
+		std::lock_guard<std::mutex> lock(_tile_map_mutex);
+		_tile_map_actors.push_back(actor);
+	}
+
+	void IBaseLevel::EraseTileMap(ITileMap * actor)
+	{
+		auto iter = std::find(_tile_map_actors.begin(), _tile_map_actors.end(), actor);
+		if (iter != _tile_map_actors.end())
+		{
+			std::lock_guard<std::mutex> lock(_tile_map_mutex);
+			*iter = _tile_map_actors.back();
+			_tile_map_actors.pop_back();
 		}
 	}
 

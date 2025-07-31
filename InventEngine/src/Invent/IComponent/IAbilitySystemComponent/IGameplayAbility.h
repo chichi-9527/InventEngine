@@ -11,8 +11,11 @@ namespace INVENT
 	{
 		friend class IGameplayAbilitySystem;
 	public:
-		IGameplayAbility();
-		virtual ~IGameplayAbility();
+		IGameplayAbility() = default;
+		virtual ~IGameplayAbility() = default;
+
+		virtual void ActivateAbility(void* pawn) = 0;
+		virtual void EndAbility(void* pawn) = 0;
 
 		const ITagTrie::TrieNodeId& GetID() const { return _ability_id; }
 

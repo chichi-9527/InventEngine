@@ -404,6 +404,13 @@ namespace INVENT
 		{
 			IRenderer2D::DrawSquare(square_actor);
 		}
+		for (auto tile_map : level->_tile_map_actors)
+		{
+			for (auto& square : tile_map->GetSquares())
+			{
+				IRenderer2D::DrawSquare(&square);
+			}
+		}
 		IRenderer2D::EndRender();
 
 		/*IRenderer::BeginRender(level->GetController() ? level->GetController()->GetSceneCamera() : nullptr);

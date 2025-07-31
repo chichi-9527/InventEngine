@@ -56,7 +56,7 @@ public:
 	MyActor()
 		: INVENT::ISquare2dPawn()
 	{
-		this->SetColor({ 0.5f, 0.4f,0.3f,1.0f });
+		this->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 		this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("./Assets/Textures/test.png"));
 
 		this->SetMoveSpeed(1.0f);
@@ -88,6 +88,23 @@ private:
 	INVENT::IActor2D::AColliderID collider_id;
 };
 
+class MyTileMap : public INVENT::ITileMap
+{
+public:
+	MyTileMap()
+		: ITileMap()
+	{
+		this->SetTileMapSize(10, 10);
+
+		this->SetWorldPosition({ -5.0f,5.0f,0.0f });
+	}
+
+	virtual ~MyTileMap(){}
+
+private:
+
+};
+
 class MyLevel : public INVENT::IBaseLevel 
 {
 public:
@@ -98,6 +115,8 @@ public:
 		auto act2 = this->CreateActor<MyActor>();
 		act->SetWorldPosition({ 0.0f,2.0f,0.0f });
 		act2->SetWorldRotation({ 0.0f,0.0f,45.0f });
+
+		auto tilemap = this->CreateActor<MyTileMap>();
 
 		/*auto collider1 = new INVENT::IColliderBox(nullptr, { 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f });
 		auto collider2 = new INVENT::IColliderBox(nullptr, { 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f }, { 0.0f,0.0f,45.0f });
@@ -112,7 +131,7 @@ public:
 		act2->AddCollider(collider2);*/
 
 		camera = new INVENT::ICamera();
-		camera->SetWorldPosition({ 0.0f,0.0f,3.0f });
+		camera->SetWorldPosition({ 0.0f,0.0f,20.0f });
 
 		this->CreateControllerPtr<MyController>()->SetSceneCamera(camera);
 		this->GetController<MyController>()->AddPlayer(act);

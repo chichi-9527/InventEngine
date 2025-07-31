@@ -153,6 +153,9 @@
     <ClInclude Include="src\Invent\ITools\IDelegate.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Invent\2D\ITileMap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\Invent.cpp">
@@ -278,9 +281,12 @@
     <ClCompile Include="src\Invent\ITools\IDelegate.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\Invent\2D\ITileMap.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md" />
-    <None Include="src\Invent\ITools\readme.md" />
+    <None Include="src\Invent\ITools\Readme.md" />
   </ItemGroup>
 </Project>

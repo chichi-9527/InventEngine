@@ -16,6 +16,7 @@
     <ClInclude Include="src\Invent\2D\IObject2D.h" />
     <ClInclude Include="src\Invent\2D\ISquare2dActor.h" />
     <ClInclude Include="src\Invent\2D\ISquare2dPawn.h" />
+    <ClInclude Include="src\Invent\2D\ITileMap.h" />
     <ClInclude Include="src\Invent\IBase\IBaseActor.h" />
     <ClInclude Include="src\Invent\IBase\IBasePawnControl.h" />
     <ClInclude Include="src\Invent\IBase\IBindEvent.h" />
@@ -63,6 +64,7 @@
     <ClCompile Include="src\Invent\2D\IObject2D.cpp" />
     <ClCompile Include="src\Invent\2D\ISquare2dActor.cpp" />
     <ClCompile Include="src\Invent\2D\ISquare2dPawn.cpp" />
+    <ClCompile Include="src\Invent\2D\ITileMap.cpp" />
     <ClCompile Include="src\Invent\IBase\IBaseActor.cpp" />
     <ClCompile Include="src\Invent\IBase\IBasePawnControl.cpp" />
     <ClCompile Include="src\Invent\IBase\IBindEvent.cpp" />
@@ -139,7 +141,7 @@
       <SubType>
       </SubType>
     </None>
-    <None Include="src\Invent\ITools\readme.md">
+    <None Include="src\Invent\ITools\Readme.md">
       <SubType>
       </SubType>
     </None>

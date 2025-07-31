@@ -5,7 +5,8 @@ namespace INVENT
 {
 	IGameplayAbilitySystem::IGameplayAbilitySystem()
 	{
-
+		_thread_pool = new IThreadPool();
+		_thread_pool->Start();
 	}
 
 	IGameplayAbilitySystem::~IGameplayAbilitySystem()
@@ -22,6 +23,36 @@ namespace INVENT
 	{
 		static IGameplayAbilitySystem gas;
 		return gas;
+	}
+
+	bool IGameplayAbilitySystem::TryActivateAbility(ITagTrie::TrieNodeId id, void* pawn)
+	{
+		auto ability = FindAbilityWithActiveTag(id);
+		if (ability->GetID() == id)
+		{
+			_thread_pool->Submit(0, [ability](void* Pawn) {
+				ability->ActivateAbility(Pawn);
+				ability->EndAbility(Pawn);
+				}, pawn);
+			
+			return true;
+		}
+		return false;
+	}
+
+	bool IGameplayAbilitySystem::TryActivateAbilityByTag(const std::string& tag, void* pawn)
+	{
+		auto ability = FindAbilityWithActiveTag(tag);
+		if (ability)
+		{
+			_thread_pool->Submit(0, [ability](void* Pawn) {
+				ability->ActivateAbility(Pawn);
+				ability->EndAbility(Pawn);
+				}, pawn);
+
+			return true;
+		}
+		return false;
 	}
 
 	IGameplayAbility* IGameplayAbilitySystem::FindAbilityWithActiveTag(const std::string& tag)
