@@ -7,6 +7,7 @@
 
 #include <thread>
 #include <mutex>
+#include <atomic>
 
 namespace INVENT
 {
@@ -51,19 +52,27 @@ namespace INVENT
 		const unsigned int& GetBreakWNum() const { return _texture_breakup.width; }
 		const unsigned int& GetBreakHNum() const { return _texture_breakup.height; }
 
+		void InitTextureID();
+
 	private:
 		ITexture2D();
 		ITexture2D(const std::string& name, const std::string& path, const _UInt2& breakup = _UInt2());
+
+	public:
+		std::atomic_bool IsValid = false;
 
 	private:
 		std::string _name;
 
 		_UInt2 _texture_breakup;
 
-		unsigned int _width;
-		unsigned int _height;
+		unsigned int _width = 0;
+		unsigned int _height = 0;
+		unsigned int _channels = 0;
 
 		unsigned int _texture_id = 0;
+
+		unsigned char* _tex_data = nullptr;
 
 	};
 
@@ -78,6 +87,8 @@ namespace INVENT
 
 		ITexture2D* CreateTexture(const std::string& path, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
 		ITexture2D* CreateTexture(const std::string& name, const std::string& path, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
+		TextureID CreateTexture(ITexture2D* texture, const std::string& path, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
+		TextureID CreateTexture(ITexture2D* texture, const std::string& name, const std::string& path, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
 
 		TextureID CreateTextureDynamic(const std::string& path, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
 		TextureID CreateTextureDynamic(const std::string& name, const std::string& path, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
@@ -99,12 +110,16 @@ namespace INVENT
 
 		static ITexture2D* GetWhiteTexture();
 
+		std::vector<ITexture2D*>& GetUninitTextures() { return _uninit_textrues; }
+
 	private:
 		ITexture2DManagement();
 
 	private:
-		std::unordered_map<std::string, ITexture2D*> _textrues;
+		std::unordered_map<std::string, std::pair<ITexture2D*,size_t>> _textrues;
 		std::vector<ITexture2D*> _vector_textrues;
+
+		std::vector<ITexture2D*> _uninit_textrues;
 
 		std::mutex _mutex;
 

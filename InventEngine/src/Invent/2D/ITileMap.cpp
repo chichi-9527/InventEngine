@@ -1,6 +1,8 @@
 #include "IEpch.h"
 #include "ITileMap.h"
 
+#include "IEngine.h"
+
 namespace INVENT
 {
 	ITileMap::ITileMap()
@@ -13,6 +15,11 @@ namespace INVENT
 	ITileMap::~ITileMap()
 	{}
 
+	void ITileMap::DynamicInit(const std::initializer_list<TileSpriteTextureColorInit>& inits)
+	{
+		INVENT::IEngine::InstancePtr()->GetIWindow()->GetThreadPool()->Submit(0, []() {});
+	}
+
 	void ITileMap::SetWorldRotation(const glm::vec3& rotation)
 	{
 		_world_rotation = rotation;
@@ -24,6 +31,24 @@ namespace INVENT
 		_tile_map_size = { w, h };
 		_sprites.resize((size_t)(w) * h);
 		UpdateSpritesInformation();
+	}
+
+	const ISquare2dActor* ITileMap::GetSprite(unsigned int w, unsigned int h) const
+	{
+		if (w < _tile_map_size.first && h < _tile_map_size.second)
+		{
+			return &_sprites[(size_t)(h)*_tile_map_size.first + w];
+		}
+		return nullptr;
+	}
+
+	ISquare2dActor* ITileMap::GetSprite(unsigned int w, unsigned int h)
+	{
+		if (w < _tile_map_size.first && h < _tile_map_size.second)
+		{
+			return &_sprites[(size_t)(h)*_tile_map_size.first + w];
+		}
+		return nullptr;
 	}
 
 	void ITileMap::SetWorldPosition(const glm::vec3& position)

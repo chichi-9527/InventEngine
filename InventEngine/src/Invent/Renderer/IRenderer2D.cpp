@@ -201,45 +201,56 @@ namespace INVENT
 
 		if (texture)
 		{
-			for (unsigned int i = 1; i < renderer2d_data.TextureSlotIndex; ++i)
+			if (texture->IsValid)
 			{
-				if (renderer2d_data.TextureArray[i] == texture)
-					texture_index = (float)i; break;
+				for (unsigned int i = 1; i < renderer2d_data.TextureSlotIndex; ++i)
+				{
+					if (renderer2d_data.TextureArray[i] == texture)
+						texture_index = (float)i; break;
+				}
 			}
 		}
 
 		if (texture && texture_index == .0f)
 		{
-			if (renderer2d_data.TextureSlotIndex >= INVENT_MAX_TEXTURE_RENDER_ONCE - 1)
-				NextARender();
+			if (texture->IsValid)
+			{
+				if (renderer2d_data.TextureSlotIndex >= INVENT_MAX_TEXTURE_RENDER_ONCE - 1)
+					NextARender();
 
-			texture_index = (float)renderer2d_data.TextureSlotIndex;
-			renderer2d_data.TextureArray[renderer2d_data.TextureSlotIndex] = texture;
-			renderer2d_data.TextureSlotIndex++;
+				texture_index = (float)renderer2d_data.TextureSlotIndex;
+				renderer2d_data.TextureArray[renderer2d_data.TextureSlotIndex] = texture;
+				renderer2d_data.TextureSlotIndex++;
+			}
+			
 		}
 
 		glm::vec2 texture_coords[4]{};
 		
 		if (texture)
 		{
-			if (actor->GetTextureCoordIndex().is_valid && texture->GetBreakNum().is_valid)
+			if (texture->IsValid)
 			{
-				glm::vec2 ld((float)actor->GetTextureCoordIndex().width / (float)texture->GetBreakWNum(), (float)actor->GetTextureCoordIndex().height / (float)texture->GetBreakHNum());
-				glm::vec2 ru((float)(actor->GetTextureCoordIndex().width + 1) / (float)texture->GetBreakWNum(), (float)(actor->GetTextureCoordIndex().height + 1) / (float)texture->GetBreakHNum());
-				texture_coords[0] = ld;
-				texture_coords[1] = glm::vec2(ru.x, ld.y);
-				texture_coords[2] = ru;
-				texture_coords[3] = glm::vec2(ld.x, ru.y);
+				if (actor->GetTextureCoordIndex().is_valid && texture->GetBreakNum().is_valid)
+				{
+					glm::vec2 ld((float)actor->GetTextureCoordIndex().width / (float)texture->GetBreakWNum(), (float)actor->GetTextureCoordIndex().height / (float)texture->GetBreakHNum());
+					glm::vec2 ru((float)(actor->GetTextureCoordIndex().width + 1) / (float)texture->GetBreakWNum(), (float)(actor->GetTextureCoordIndex().height + 1) / (float)texture->GetBreakHNum());
+					texture_coords[0] = ld;
+					texture_coords[1] = glm::vec2(ru.x, ld.y);
+					texture_coords[2] = ru;
+					texture_coords[3] = glm::vec2(ld.x, ru.y);
+				}
+				else
+				{
+					glm::vec2 ld = actor->GetTextureCoord()[0];
+					glm::vec2 ru = actor->GetTextureCoord()[1];
+					texture_coords[0] = ld;
+					texture_coords[1] = glm::vec2(ru.x, ld.y);
+					texture_coords[2] = ru;
+					texture_coords[3] = glm::vec2(ld.x, ru.y);
+				}
 			}
-			else
-			{
-				glm::vec2 ld = actor->GetTextureCoord()[0];
-				glm::vec2 ru = actor->GetTextureCoord()[1];
-				texture_coords[0] = ld;
-				texture_coords[1] = glm::vec2(ru.x, ld.y);
-				texture_coords[2] = ru;
-				texture_coords[3] = glm::vec2(ld.x, ru.y);
-			}
+			
 		}
 
 		constexpr size_t square_vertex_count = 4;

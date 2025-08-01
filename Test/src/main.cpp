@@ -26,7 +26,8 @@ public:
 
 		std::cout << std::filesystem::current_path() << "\n";
 
-		auto tex = INVENT::ITexture2DManagement::Instance().CreateTexture("./Assets/Textures/test.png");
+		//auto id = INVENT::ITexture2DManagement::Instance().CreateTexture(nullptr, "./Assets/Textures/test.png");
+		//std::cout << id;
 	}
 
 	virtual void Update(float delta) override
@@ -96,7 +97,16 @@ public:
 	{
 		this->SetTileMapSize(10, 10);
 
+		auto sprite = this->GetSprite(5, 5);
+		if (sprite)
+		{
+			sprite->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+		}
+
+		/*this->DynamicInit({ {1},{2} });*/
+
 		this->SetWorldPosition({ -5.0f,5.0f,0.0f });
+		this->SetWorldRotation({ 45.0f,0.0f,0.0f });
 	}
 
 	virtual ~MyTileMap(){}

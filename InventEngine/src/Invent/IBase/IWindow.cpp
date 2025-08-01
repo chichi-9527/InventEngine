@@ -344,6 +344,18 @@ namespace INVENT
 			Level->_clear();
 			Level->Update(delta_time);
 
+			// init textures
+			for (auto iter = ITexture2DManagement::Instance().GetUninitTextures().begin(); iter != ITexture2DManagement::Instance().GetUninitTextures().end(); )
+			{
+				(*iter)->InitTextureID();
+				if ((*iter)->IsValid)
+				{
+					iter = ITexture2DManagement::Instance().GetUninitTextures().erase(iter);
+					continue;
+				}
+				++iter;
+			}
+
 			///////////////////////////////////////////////////////////
 			///////////// Render Begin
 
