@@ -43,6 +43,8 @@ namespace INVENT
 		void SetTextureID(ITexture2DManagement::TextureID id) { _texture = nullptr; _texture_id = id; }
 		ITexture2DManagement::TextureID GetTextureID() const { return _texture_id; }
 
+		///////////////////////////////////////////
+		// 先看 index
 		// size == 2
 		// [0] 左下角 [1] 右上角
 		const glm::vec2* GetTextureCoord() const { return _texture_coord; }
@@ -53,6 +55,8 @@ namespace INVENT
 		void SetTextureCoordIndex(unsigned int width, unsigned int height);
 		// set index will set texture coord invalid
 		void SetTextureCoordIndex(const ITexture2D::_UInt2& index);
+
+		////////////////////////////////////////////
 
 		const ITexture2D::_UInt2& GetTextureCoordIndex() const { return _texture_coord_index; }
 		unsigned int GetTextureCoordWidthIndex() const { return _texture_coord_index.width; }

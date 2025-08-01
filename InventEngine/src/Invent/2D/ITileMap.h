@@ -12,17 +12,38 @@ namespace INVENT
 		ITileMap();
 		virtual ~ITileMap();
 
+
 		struct TileSpriteTextureColorInit 
 		{
-			TileSpriteTextureColorInit()
-				
+			TileSpriteTextureColorInit(const glm::vec4& color)
+				: Color(color)
+			{
+				TileMapTextureIndex = -1;
+				TextureCoordIndex = { 0,0,false };
+			}
+
+			TileSpriteTextureColorInit(int tile_map_texture_index, const ITexture2D::_UInt2& texture_coord_index)
+				: TileMapTextureIndex(tile_map_texture_index)
+				, TextureCoordIndex(texture_coord_index)
+			{
+				Color = { 1.0f,1.0f,1.0f,1.0f };
+			}
+
+			TileSpriteTextureColorInit(const glm::vec4& color, int tile_map_texture_index, const ITexture2D::_UInt2& texture_coord_index)
+				: Color(color)
+				, TileMapTextureIndex(tile_map_texture_index)
+				, TextureCoordIndex(texture_coord_index)
 			{}
 
-			glm::vec4 Color;
+			glm::vec4 Color = { 1.0f,1.0f,1.0f,1.0f };
+			int TileMapTextureIndex = -1;
+			ITexture2D::_UInt2 TextureCoordIndex = { 0,0,false };
 
 		};
 
-		void DynamicInit(const std::initializer_list<TileSpriteTextureColorInit>& inits);
+		void InitTileMapTextures(const std::initializer_list<ITexture2DManagement::TextureID>& textures) { _texture_indexs = textures; }
+
+		void DynamicInit(const std::vector<TileSpriteTextureColorInit>& inits);
 
 		// 旋转锚点在左上角
 		virtual void SetWorldRotation(const glm::vec3& rotation);
@@ -50,6 +71,8 @@ namespace INVENT
 
 	private:
 		std::pair<unsigned int, unsigned int> _tile_map_size;
+
+		std::vector<ITexture2DManagement::TextureID> _texture_indexs;
 
 		glm::vec2 _sprite_size;
 		glm::vec3 _world_rotation;

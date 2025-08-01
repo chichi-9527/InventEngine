@@ -23,10 +23,10 @@ namespace INVENT
 			unsigned int height;
 			bool is_valid;
 
-			_UInt2(unsigned int w = 0, unsigned int h = 0)
-				: width(0)
-				, height(0)
-				, is_valid(true)
+			_UInt2(unsigned int w = 0, unsigned int h = 0, bool valid = true)
+				: width(w)
+				, height(h)
+				, is_valid(valid)
 			{}
 
 			bool operator==(unsigned int value) const
