@@ -356,6 +356,17 @@ namespace INVENT
 				++iter;
 			}
 
+			// init other functions
+			while (!_main_thread_init_queue.empty())
+			{
+				auto& func = _main_thread_init_queue.front();
+				if (func)
+				{
+					func();
+				}
+				_main_thread_init_queue.pop();
+			}
+
 			///////////////////////////////////////////////////////////
 			///////////// Render Begin
 

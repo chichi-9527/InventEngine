@@ -177,6 +177,11 @@ namespace INVENT
 	void IRenderer2D::DrawSquare(ISquare2dActor* actor)
 	{
 		//if (!actor) return;
+		
+		if (!actor->GetShader())
+		{
+			return;
+		}
 
 		if (renderer2d_data.SquareShader != actor->GetShader())
 		{
@@ -249,6 +254,18 @@ namespace INVENT
 					texture_coords[2] = ru;
 					texture_coords[3] = glm::vec2(ld.x, ru.y);
 				}
+
+				if (actor->GetFile().first)
+				{
+					std::swap(texture_coords[0], texture_coords[1]);
+					std::swap(texture_coords[2], texture_coords[3]);
+				}
+				if (actor->GetFile().second)
+				{
+					std::swap(texture_coords[0], texture_coords[3]);
+					std::swap(texture_coords[2], texture_coords[1]);
+				}
+
 			}
 			
 		}

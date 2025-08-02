@@ -35,13 +35,17 @@ namespace INVENT
 
 		void Close() const;
 
+		void SetLevel(IBaseLevel* level);
+
+		std::queue<std::function<void()>>& GetMainThreadInitQueue() { return _main_thread_init_queue; }
+
 	protected:
 		// default num {1,1} only set num before thread start
 		void SetThreadPoolThreadNumAndPriorityNum(unsigned int t_num, unsigned int p_num) { _threadpool->SetThreadPriorityNum(t_num, p_num); }
 		void StartThreadPool() { _threadpool->Start(); }
 		void ShutdownThreadPool() { _threadpool->Shutdown(); }
 
-		void SetLevel(IBaseLevel* level);
+		
 
 		// 异步
 		// CreateLevel
@@ -63,6 +67,8 @@ namespace INVENT
 		GLFWwindow* Window;
 	private:
 		std::shared_ptr<IBaseGameInstance> _game_instance_ptr;
+
+		std::queue<std::function<void()>> _main_thread_init_queue;
 
 		IThreadPool* _threadpool;
 

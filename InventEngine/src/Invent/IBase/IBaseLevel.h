@@ -107,6 +107,8 @@ namespace INVENT
 			GetIWindowThreadPool()->Submit(0, [this, actor]() {
 				AddActor((IBaseActor*)actor);
 
+				this->AddEventObj((IBaseEventFunction*)(actor));
+
 				if (std::is_base_of_v<ISquare2dActor, T>)
 					AddSquare2dActor((ISquare2dActor*)actor);
 				else if (std::is_base_of_v<ITileMap, T>)

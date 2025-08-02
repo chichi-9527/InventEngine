@@ -95,6 +95,8 @@ namespace INVENT
 			_actors.pop_back();
 		}
 
+		this->EraseEventObj((IBaseEventFunction*)(actor));
+
 		// 删除 _square_2d_actors 中的元素
 		EraseSquare2dActor((ISquare2dActor*)actor);
 		// 删除 _tile_map_actors 中的元素

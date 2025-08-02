@@ -4,6 +4,8 @@
 #include "IComponent/InventComponent.h"
 #include "2DComponent/Invent2DComponent.h"
 
+#include "IEngine.h"
+
 namespace INVENT
 {
 	ISquare2dActor::ISquare2dActor()
@@ -11,13 +13,18 @@ namespace INVENT
 		, _color({ 1.0f, 1.0f,1.0f,1.0f }) // white
 		, _texture_id(0)
 		, _texture(nullptr)
+		, _shader(nullptr)
+		, _file_left_right(false)
+		, _file_up_down(false)
 	{
 		AddComponent<Scale2DComponent>(glm::vec2{ 1.0f,1.0f });
 		// AddComponent<Rotation2DComponent>(0.0f);
 		AddComponent<WorldRotationComponent>(glm::vec3{ 0.0f,0.0f,0.0f });
 
-		_shader = IShaderManagement::GetDefaultSquare2DShader();
-
+		IEngine::InstancePtr()->GetIWindow()->GetMainThreadInitQueue().push([this]() {
+			_shader = IShaderManagement::GetDefaultSquare2DShader();
+			});
+		
 		_texture_coord[0] = { 0.0f, 0.0f };
 		_texture_coord[1] = { 1.0f, 1.0f };
 		_texture_coord_index.is_valid = false;

@@ -41,16 +41,6 @@ public:
 	}
 };
 
-class MyController : public INVENT::IPlayerController2D 
-{
-public:
-	MyController()
-		: INVENT::IPlayerController2D()
-	{}
-	virtual ~MyController(){}
-
-};
-
 class MyActor : public INVENT::ISquare2dPawn 
 {
 public:
@@ -69,6 +59,7 @@ public:
 			});
 		//this->SetScale({ 0.1f,0.1f });
 
+		this->SetFile(true, false);
 		
 		//this->AddCollider(collider);
 	}
@@ -76,6 +67,11 @@ public:
 	virtual void Update(float delta) override
 	{
 		//std::cout << "actor position : " << glm::to_string(this->GetWorldPosition()) << "\n";
+	}
+
+	virtual void PRESS_EVENT_KEY_2() override
+	{
+		std::cout << "PRESS_EVENT_KEY_2\n";
 	}
 
 	virtual void SetWorldRotation(const glm::vec3& rotation) override
@@ -87,6 +83,26 @@ public:
 
 private:
 	INVENT::IActor2D::AColliderID collider_id;
+};
+
+class MyController : public INVENT::IPlayerController2D
+{
+public:
+	MyController()
+		: INVENT::IPlayerController2D()
+	{}
+	virtual ~MyController() {}
+
+	virtual bool PRESS_EVENT_KEY_2() override
+	{
+		INVENT::IEventLayer::PRESS_EVENT_KEY_2();
+
+		auto actor = (MyActor*)(this->Get2DPlayerController(0));
+		actor->SetFile(false, true);
+
+		return false;
+	}
+
 };
 
 class MyTileMap : public INVENT::ITileMap
@@ -155,7 +171,7 @@ public:
 		act2->AddCollider(collider2);*/
 
 		camera = new INVENT::ICamera();
-		camera->SetWorldPosition({ 0.0f,0.0f,20.0f });
+		camera->SetWorldPosition({ 0.0f,0.0f,10.0f });
 
 		this->CreateControllerPtr<MyController>()->SetSceneCamera(camera);
 		this->GetController<MyController>()->AddPlayer(act);
@@ -190,10 +206,16 @@ public:
 		: IWindow(width, height, title)
 	{
 		this->SetGameInstance(std::static_pointer_cast<INVENT::IBaseGameInstance>(MyGameInstance::GetGameInstancePtr()));
-
-		this->SetLevel(new MyLevel);
-
 		this->StartThreadPool();
+
+		//this->SetLevel(new MyLevel);
+
+		std::thread create_level([this]() {
+			this->SetLevel(new MyLevel);
+			});
+
+		create_level.detach();
+
 	}
 
 	virtual ~MyWindow()
