@@ -255,12 +255,12 @@ namespace INVENT
 					texture_coords[3] = glm::vec2(ld.x, ru.y);
 				}
 
-				if (actor->GetFile().first)
+				if (actor->GetFlip().first)
 				{
 					std::swap(texture_coords[0], texture_coords[1]);
 					std::swap(texture_coords[2], texture_coords[3]);
 				}
-				if (actor->GetFile().second)
+				if (actor->GetFlip().second)
 				{
 					std::swap(texture_coords[0], texture_coords[3]);
 					std::swap(texture_coords[2], texture_coords[1]);

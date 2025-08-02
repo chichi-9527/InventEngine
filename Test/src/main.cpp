@@ -59,7 +59,7 @@ public:
 			});
 		//this->SetScale({ 0.1f,0.1f });
 
-		this->SetFile(true, false);
+		this->SetFlip(true, false);
 		
 		//this->AddCollider(collider);
 	}
@@ -98,7 +98,7 @@ public:
 		INVENT::IEventLayer::PRESS_EVENT_KEY_2();
 
 		auto actor = (MyActor*)(this->Get2DPlayerController(0));
-		actor->SetFile(false, true);
+		actor->SetFlip(false, true);
 
 		return false;
 	}

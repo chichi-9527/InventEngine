@@ -5,6 +5,7 @@
 #include "2DComponent/Invent2DComponent.h"
 
 #include "IEngine.h"
+#include "IBase/IWindow.h"
 
 namespace INVENT
 {
@@ -14,8 +15,8 @@ namespace INVENT
 		, _texture_id(0)
 		, _texture(nullptr)
 		, _shader(nullptr)
-		, _file_left_right(false)
-		, _file_up_down(false)
+		, _flip_left_right(false)
+		, _flip_up_down(false)
 	{
 		AddComponent<Scale2DComponent>(glm::vec2{ 1.0f,1.0f });
 		// AddComponent<Rotation2DComponent>(0.0f);

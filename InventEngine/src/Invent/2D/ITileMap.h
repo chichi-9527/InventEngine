@@ -20,24 +20,28 @@ namespace INVENT
 			{
 				TileMapTextureIndex = -1;
 				TextureCoordIndex = { 0,0,false };
+				Flip = { false, false };
 			}
 
-			TileSpriteTextureColorInit(int tile_map_texture_index, const ITexture2D::_UInt2& texture_coord_index)
+			TileSpriteTextureColorInit(int tile_map_texture_index, const ITexture2D::_UInt2& texture_coord_index, const std::pair<bool, bool>& flip)
 				: TileMapTextureIndex(tile_map_texture_index)
 				, TextureCoordIndex(texture_coord_index)
+				, Flip(flip)
 			{
 				Color = { 1.0f,1.0f,1.0f,1.0f };
 			}
 
-			TileSpriteTextureColorInit(const glm::vec4& color, int tile_map_texture_index, const ITexture2D::_UInt2& texture_coord_index)
+			TileSpriteTextureColorInit(const glm::vec4& color, int tile_map_texture_index, const ITexture2D::_UInt2& texture_coord_index, const std::pair<bool, bool>& flip)
 				: Color(color)
 				, TileMapTextureIndex(tile_map_texture_index)
 				, TextureCoordIndex(texture_coord_index)
+				, Flip(flip)
 			{}
 
 			glm::vec4 Color = { 1.0f,1.0f,1.0f,1.0f };
 			int TileMapTextureIndex = -1;
 			ITexture2D::_UInt2 TextureCoordIndex = { 0,0,false };
+			std::pair<bool, bool> Flip = { false, false };
 
 		};
 

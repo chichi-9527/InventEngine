@@ -2,6 +2,7 @@
 #include "ITexture.h"
 
 #include "IEngine.h"
+#include "IBase/IWindow.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"

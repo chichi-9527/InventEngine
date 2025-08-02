@@ -3,6 +3,7 @@
 #include "IBaseActor.h"
 
 #include "IEngine.h"
+#include "IBase/IWindow.h"
 
 namespace INVENT
 {

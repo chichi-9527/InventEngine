@@ -2,6 +2,7 @@
 #include "ITileMap.h"
 
 #include "IEngine.h"
+#include "IBase/IWindow.h"
 
 namespace INVENT
 {
@@ -32,6 +33,8 @@ namespace INVENT
 
 				if (Inits[i].TextureCoordIndex.is_valid)
 					this->_sprites[i].SetTextureCoordIndex(Inits[i].TextureCoordIndex);
+
+				this->_sprites[i].SetFlip(Inits[i].Flip.first, Inits[i].Flip.second);
 
 			}
 			}, inits);

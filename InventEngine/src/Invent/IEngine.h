@@ -3,18 +3,22 @@
 
 #include <memory>
 
-#include "IBase/IWindow.h"
+#include <chrono>
 
 namespace INVENT
 {
-	// class IWindow;
+	class IWindow;
 	class IEngine 
 	{
 		friend class IWindow;
 	public:
 		static std::shared_ptr<IEngine> InstancePtr();
 
-		IWindow* GetIWindow() { return _iwindow; }
+		IWindow* GetIWindow();
+
+		float GetEngineMilliseconds();
+
+		static const std::chrono::steady_clock::time_point& GetEngineStartTimePoint();
 
 	private:
 		void SetIWindow(IWindow* window);

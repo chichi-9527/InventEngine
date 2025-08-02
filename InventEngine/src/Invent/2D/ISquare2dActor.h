@@ -62,9 +62,9 @@ namespace INVENT
 		unsigned int GetTextureCoordWidthIndex() const { return _texture_coord_index.width; }
 		unsigned int GetTextureCoordHeightIndex() const { return _texture_coord_index.height; }
 
-		void SetFile(bool left_right, bool up_down) { _file_left_right = left_right; _file_up_down = up_down; }
+		void SetFlip(bool left_right, bool up_down) { _flip_left_right = left_right; _flip_up_down = up_down; }
 		// 是否 first: 左右 second: 上下 翻转
-		std::pair<bool, bool> GetFile() const { return { _file_left_right,_file_up_down }; }
+		std::pair<bool, bool> GetFlip() const { return { _flip_left_right,_flip_up_down }; }
 
 	private:
 		glm::vec4 _color;
@@ -78,8 +78,8 @@ namespace INVENT
 
 		IShader* _shader;
 
-		bool _file_left_right;
-		bool _file_up_down;
+		bool _flip_left_right;
+		bool _flip_up_down;
 	};
 }
 
