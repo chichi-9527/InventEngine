@@ -10,7 +10,9 @@
 
 #include <filesystem>
 
-// #include <Windows.h>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/astar_search.hpp>
+#include <boost/graph/properties.hpp>
 
 
 class MyGameInstance : public INVENT::IGameInstance<MyGameInstance>
@@ -252,10 +254,121 @@ public:
 //}
 
 
+//typedef boost::adjacency_list<boost::listS, boost::vecS, boost::undirectedS, boost::no_property,
+//	boost::property<boost::edge_weight_t, double>> Graph;
+//typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
+//
+//class heuristic : public boost::astar_heuristic< Graph, double>
+//{
+//public:
+//	heuristic(Vertex goal) : m_goal(goal) {}
+//	double operator()(Vertex u)
+//	{
+//		// 这里返回 u 到目标点 m_goal 的估算距离
+//		// 示例：假设所有距离为0（Dijkstra），实际应根据问题自定义
+//		return 0.0;
+//	}
+//private:
+//	Vertex m_goal;
+//};
+//
+//// 3. 实现访问器（用于终止搜索）
+//struct found_goal {}; // 用于异常终止
+//
+//struct astar_goal_visitor : public boost::default_astar_visitor {
+//	astar_goal_visitor(Vertex goal) : m_goal(goal) {}
+//	template <class GraphT>
+//	void examine_vertex(Vertex u, GraphT&)
+//	{
+//		if (u == m_goal)
+//			throw found_goal();
+//	}
+//private:
+//	Vertex m_goal;
+//};
+
+
 int main()
 {
 	MyWindow window;
 	window.Start();
+
+	//// 4. 构建图
+	//Graph g(100*100); // 个节点
+	//for (size_t x = 0; x < 100; ++x)
+	//{
+	//	for (size_t y = 0; y < 100; ++y)
+	//	{
+	//		if (y * 100 + x + 1 < 10000 && x + 1 < 100)
+	//			boost::add_edge(y * 100 + x, y * 100 + x + 1, 1.0, g);
+	//		if ((y + 1) * 100 + x < 10000)
+	//			boost::add_edge(y * 100 + x, (y + 1) * 100 + x, 1.0, g);
+	//	}
+	//}
+
+	///*boost::remove_edge(8070, 8069, g);
+	//boost::remove_edge(8070, 7970, g);
+	//boost::remove_edge(8070, 8071, g);
+	//boost::remove_edge(8070, 8170, g);*/
+
+	//Vertex start = 0, goal = (size_t)80 * 100 + 70;
+
+	//// 5. 创建参数
+	//std::vector<Vertex> predecessors(num_vertices(g)); // 记录前驱
+	//std::vector<double> distances(num_vertices(g));    // 记录距离
+
+	//auto starttime = std::chrono::high_resolution_clock::now();
+
+	//try
+	//{
+	//	boost::astar_search(
+	//		g, start,
+	//		heuristic(goal), // 启发式函数
+	//		boost::predecessor_map(&predecessors[0])
+	//		.distance_map(&distances[0])
+	//		.visitor(astar_goal_visitor(goal))
+	//	);
+	//}
+	//catch (found_goal&)
+	//{
+	//	// 找到目标节点
+	//}
+
+	//auto endttime = std::chrono::high_resolution_clock::now();
+	//std::cout << std::chrono::duration<double>(endttime - starttime).count() << "\n";
+	//starttime = endttime;
+
+	//// 6. 还原路径
+	//std::vector<Vertex> path;
+	//for (Vertex v = goal; v != start; v = predecessors[v])
+	//{
+	//	path.push_back(v);
+
+	//	if (predecessors[v] == v)
+	//	{
+	//		std::cout << predecessors.size() << "\n";
+	//		break;
+	//	}
+
+	//}
+	//path.push_back(start);
+	////std::reverse(path.begin(), path.end());
+
+	//endttime = std::chrono::high_resolution_clock::now();
+	//std::cout << std::chrono::duration<double>(endttime - starttime).count() << "\n";
+
+	//// 7. 打印路径
+	//std::cout << "Path: ";
+	//size_t num = 0;
+	//for (auto v : path)
+	//{
+	//	++num;
+	//	std::cout << "(" << v % 100 << "," << v / 100 << ")" << " ";
+	//	if (num % 5 == 0)
+	//		std::cout << "\n";
+	//}
+	//std::cout << std::endl;
+
 
 	/*INVENT::Event<int, int> myevent;
 	myevent.AddFunction(add);

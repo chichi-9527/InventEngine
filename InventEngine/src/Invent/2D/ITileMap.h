@@ -45,7 +45,7 @@ namespace INVENT
 
 		};
 
-		void InitTileMapTextures(const std::initializer_list<ITexture2DManagement::TextureID>& textures) { _texture_indexs = textures; }
+		void InitTileMapTextures(const std::vector<ITexture2DManagement::TextureID>& textures) { _texture_indexs = textures; }
 
 		void DynamicInit(const std::vector<TileSpriteTextureColorInit>& inits);
 

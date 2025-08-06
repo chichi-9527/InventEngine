@@ -1,3 +1,11 @@
+D:\projects\CProjects\InventEngine\InventEngine\src\Imgui\imgui.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\imgui.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Imgui\imgui_demo.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\imgui_demo.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Imgui\imgui_draw.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\imgui_draw.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Imgui\imgui_impl_glfw.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\imgui_impl_glfw.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Imgui\imgui_impl_opengl3.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\imgui_impl_opengl3.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Imgui\imgui_stdlib.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\imgui_stdlib.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Imgui\imgui_tables.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\imgui_tables.obj
+D:\projects\CProjects\InventEngine\InventEngine\src\Imgui\imgui_widgets.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\imgui_widgets.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\2D\2DComponent\Invent2DAnimationComponent.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\Invent2DAnimationComponent.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\2D\IActor2D.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IActor2D.obj
 D:\projects\CProjects\InventEngine\InventEngine\src\Invent\2D\IObject2D.cpp;D:\projects\CProjects\InventEngine\bin-int\x64-Release\InventEngine\IObject2D.obj

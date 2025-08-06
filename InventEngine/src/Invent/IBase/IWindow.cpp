@@ -8,6 +8,10 @@
 
 #include "IEngine.h"
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 
 namespace INVENT
 {
@@ -327,6 +331,15 @@ namespace INVENT
 		IRenderer::Init();
 		_game_instance_ptr->Begin();
 
+		IMGUI_CHECKVERSION();
+		auto imgui_context = ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO();
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+		// Setup Platform/Renderer backends
+		ImGui_ImplGlfw_InitForOpenGL(Window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+		ImGui_ImplOpenGL3_Init();
+
 		///////////////////////////////////////////////////////////
 		////////// Begin Loop
 		//////////////////////////////////////////////////////////
@@ -337,6 +350,12 @@ namespace INVENT
 			float current_frame = static_cast<float>(glfwGetTime());
 			delta_time = current_frame - last_frame;
 			last_frame = current_frame;
+
+			// Start the Dear ImGui frame
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
+			ImGui::ShowDemoWindow(); // Show demo window! :)
 
 			INVENT_LOG_DEBUG(std::to_string(delta_time));
 
@@ -379,10 +398,17 @@ namespace INVENT
 
 			_game_instance_ptr->Update(delta_time);
 
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 			// 检查并调用事件，交换缓冲
 			glfwSwapBuffers(Window);
 			glfwPollEvents();
 		}
+
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
 
 		_game_instance_ptr->End();
 		IRenderer::Shutdown();
