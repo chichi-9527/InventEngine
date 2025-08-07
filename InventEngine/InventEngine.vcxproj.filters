@@ -189,6 +189,9 @@
     <ClInclude Include="src\Imgui\imstb_truetype.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Invent\UI\IUIImgui.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\Invent.cpp">
@@ -342,6 +345,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Imgui\imgui_widgets.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\UI\IUIImgui.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

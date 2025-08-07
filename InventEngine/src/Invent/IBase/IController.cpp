@@ -7,6 +7,8 @@ namespace INVENT
 	IPlayerControllerBase::IPlayerControllerBase()
 	{
 		this->SetAllEventReturn(false);
+		this->CursorPositionEventReturn = false;
+		this->MouseButtonEventReturn = false;
 	}
 
 	IController::IController()

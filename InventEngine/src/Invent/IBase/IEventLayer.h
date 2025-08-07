@@ -14,6 +14,9 @@ namespace INVENT
 	public:
 		friend class IWindow;
 		friend void register_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+		friend void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
+		friend void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+		friend void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 		IEventLayer();
 		virtual ~IEventLayer();
@@ -150,6 +153,8 @@ namespace INVENT
 		virtual bool EVENT_KEY_RIGHT_ALT(float delta);
 		virtual bool EVENT_KEY_RIGHT_SUPER(float delta);
 		virtual bool EVENT_KEY_MENU(float delta);
+
+		virtual bool EVENT_CURSOR_POSITION_FRAME(float delta, bool cursor_inside_window, double xpos, double ypos);
 
 		virtual bool PRESS_EVENT_KEY_SPACE();
 		virtual bool PRESS_EVENT_KEY_APOSTROPHE();
@@ -393,12 +398,43 @@ namespace INVENT
 		virtual bool RELEASE_EVENT_KEY_RIGHT_SUPER();
 		virtual bool RELEASE_EVENT_KEY_MENU();
 
+		virtual bool EVENT_CURSOR_POSITION(double xpos, double ypos);
+
+		virtual bool PRESS_EVENT_MOUSE_BUTTON_LEFT(double xpos, double ypos);
+		virtual bool RELEASE_EVENT_MOUSE_BUTTON_LEFT(double xpos, double ypos);
+
+		virtual bool PRESS_EVENT_MOUSE_BUTTON_RIGHT(double xpos, double ypos);
+		virtual bool RELEASE_EVENT_MOUSE_BUTTON_RIGHT(double xpos, double ypos);
+
+		virtual bool PRESS_EVENT_MOUSE_BUTTON_MIDDLE(double xpos, double ypos);
+		virtual bool RELEASE_EVENT_MOUSE_BUTTON_MIDDLE(double xpos, double ypos);
+
+		virtual bool PRESS_EVENT_MOUSE_BUTTON_4(double xpos, double ypos);
+		virtual bool RELEASE_EVENT_MOUSE_BUTTON_4(double xpos, double ypos);
+
+		virtual bool PRESS_EVENT_MOUSE_BUTTON_5(double xpos, double ypos);
+		virtual bool RELEASE_EVENT_MOUSE_BUTTON_5(double xpos, double ypos);
+
+		virtual bool PRESS_EVENT_MOUSE_BUTTON_6(double xpos, double ypos);
+		virtual bool RELEASE_EVENT_MOUSE_BUTTON_6(double xpos, double ypos);
+
+		virtual bool PRESS_EVENT_MOUSE_BUTTON_7(double xpos, double ypos);
+		virtual bool RELEASE_EVENT_MOUSE_BUTTON_7(double xpos, double ypos);
+
+		virtual bool PRESS_EVENT_MOUSE_BUTTON_8(double xpos, double ypos);
+		virtual bool RELEASE_EVENT_MOUSE_BUTTON_8(double xpos, double ypos);
+
+		virtual bool EVNET_SCROLL(double cursor_xpos, double cursor_ypos, double xoffset, double yoffset);
+
 	protected:
 		std::vector<IBaseEventFunction*> Objs;
 
 		bool AllEventReturn = true;
 		bool AllPressEventReturn = false;
 		bool AllReleaseEventReturn = false;
+
+		bool CursorPositionEventReturn = true;
+		bool MouseButtonEventReturn = true;
 	};
 
 

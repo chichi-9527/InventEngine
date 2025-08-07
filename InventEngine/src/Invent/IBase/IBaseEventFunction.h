@@ -133,6 +133,8 @@ namespace INVENT
 		virtual void EVENT_KEY_RIGHT_SUPER(float delta);
 		virtual void EVENT_KEY_MENU(float delta);
 
+		virtual void EVENT_CURSOR_POSITION_FRAME(float delta, bool cursor_inside_window, double xpos, double ypos);
+
 		virtual void PRESS_EVENT_KEY_SPACE();
 		virtual void PRESS_EVENT_KEY_APOSTROPHE();
 		virtual void PRESS_EVENT_KEY_COMMA();
@@ -374,6 +376,28 @@ namespace INVENT
 		virtual void RELEASE_EVENT_KEY_RIGHT_ALT();
 		virtual void RELEASE_EVENT_KEY_RIGHT_SUPER();
 		virtual void RELEASE_EVENT_KEY_MENU();
+
+		virtual void EVENT_CURSOR_POSITION(double xpos, double ypos);
+
+		virtual void PRESS_EVENT_MOUSE_BUTTON_LEFT(double xpos, double ypos);
+		virtual void RELEASE_EVENT_MOUSE_BUTTON_LEFT(double xpos, double ypos);
+
+		virtual void  PRESS_EVENT_MOUSE_BUTTON_RIGHT(double xpos, double ypos);
+		virtual void  RELEASE_EVENT_MOUSE_BUTTON_RIGHT(double xpos, double ypos);
+		virtual void  PRESS_EVENT_MOUSE_BUTTON_MIDDLE(double xpos, double ypos);
+		virtual void  RELEASE_EVENT_MOUSE_BUTTON_MIDDLE(double xpos, double ypos);
+		virtual void  PRESS_EVENT_MOUSE_BUTTON_4(double xpos, double ypos);
+		virtual void  RELEASE_EVENT_MOUSE_BUTTON_4(double xpos, double ypos);
+		virtual void  PRESS_EVENT_MOUSE_BUTTON_5(double xpos, double ypos);
+		virtual void  RELEASE_EVENT_MOUSE_BUTTON_5(double xpos, double ypos);
+		virtual void  PRESS_EVENT_MOUSE_BUTTON_6(double xpos, double ypos);
+		virtual void  RELEASE_EVENT_MOUSE_BUTTON_6(double xpos, double ypos);
+		virtual void  PRESS_EVENT_MOUSE_BUTTON_7(double xpos, double ypos);
+		virtual void  RELEASE_EVENT_MOUSE_BUTTON_7(double xpos, double ypos);
+		virtual void  PRESS_EVENT_MOUSE_BUTTON_8(double xpos, double ypos);
+		virtual void  RELEASE_EVENT_MOUSE_BUTTON_8(double xpos, double ypos);
+
+		virtual void EVNET_SCROLL(double cursor_xpos, double cursor_ypos, double xoffset, double yoffset);
 	};
 }
 

@@ -32,6 +32,10 @@ namespace INVENT
 
 		friend void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 		friend void register_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+		friend void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
+		friend void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+		friend void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+		friend void cursor_enter_callback(GLFWwindow* window, int entered);
 
 		void Close() const;
 
@@ -75,7 +79,11 @@ namespace INVENT
 		IBaseLevel* _default_level;
 
 		float delta_time;
-		float last_frame;
+		std::chrono::steady_clock::time_point  last_frame;
+
+		double cursor_xpos = 0.0, cursor_ypos = 0.0;
+
+		bool CursorInsideWindow = false;
 
 	private:
 		void _create();

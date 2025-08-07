@@ -191,6 +191,24 @@ public:
 		return false;
 	}
 
+	//virtual bool EVENT_CURSOR_POSITION(double xpos, double ypos) override
+	//{
+	//	IBaseLevel::EVENT_CURSOR_POSITION(xpos, ypos);
+	//	std::cout << "mouse xpos: " << xpos << " ; ypos : " << ypos << "\n";
+
+	//	return true;
+	//}
+
+	virtual bool EVENT_CURSOR_POSITION_FRAME(float delta, bool cursor_inside_window, double xpos, double ypos) override
+	{
+		if (cursor_inside_window)
+			std::cout << "mouse xpos: " << xpos << " ; ypos : " << ypos << "\n";
+		else
+			std::cout << "mouse not inside the window \n";
+
+		return true;
+	}
+
 	virtual ~MyLevel()
 	{
 

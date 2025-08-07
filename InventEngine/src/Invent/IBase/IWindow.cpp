@@ -8,9 +8,9 @@
 
 #include "IEngine.h"
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
+#include "UI/IUIImgui.h"
+
+#include <chrono>
 
 
 namespace INVENT
@@ -294,6 +294,206 @@ namespace INVENT
 		}
 	}
 
+	void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
+	{
+		IWindow* iwindow = static_cast<IWindow*>(glfwGetWindowUserPointer(window));
+		if (iwindow)
+		{
+			for (auto iter = iwindow->Level->_event_layers.rbegin(); iter != iwindow->Level->_event_layers.rend(); ++iter)
+			{
+				if ((*iter)->EVENT_CURSOR_POSITION(xpos, ypos))
+					break;
+			}
+		}
+	}
+
+//#define GLFW_MOUSE_BUTTON_1         0
+//#define GLFW_MOUSE_BUTTON_2         1
+//#define GLFW_MOUSE_BUTTON_3         2
+//#define GLFW_MOUSE_BUTTON_4         3
+//#define GLFW_MOUSE_BUTTON_5         4
+//#define GLFW_MOUSE_BUTTON_6         5
+//#define GLFW_MOUSE_BUTTON_7         6
+//#define GLFW_MOUSE_BUTTON_8         7
+//#define GLFW_MOUSE_BUTTON_LAST      GLFW_MOUSE_BUTTON_8
+//#define GLFW_MOUSE_BUTTON_LEFT      GLFW_MOUSE_BUTTON_1
+//#define GLFW_MOUSE_BUTTON_RIGHT     GLFW_MOUSE_BUTTON_2
+//#define GLFW_MOUSE_BUTTON_MIDDLE    GLFW_MOUSE_BUTTON_3
+
+	void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+	{
+		IWindow* iwindow = static_cast<IWindow*>(glfwGetWindowUserPointer(window));
+		if (iwindow)
+		{
+			double xpos = 0.0, ypos = 0.0;
+			glfwGetCursorPos(window, &xpos, &ypos);
+
+			if (action == GLFW_PRESS)
+			{
+				if (button == GLFW_MOUSE_BUTTON_1)
+				{
+					for (auto iter = iwindow->Level->_event_layers.rbegin(); iter != iwindow->Level->_event_layers.rend(); ++iter)
+					{
+						if ((*iter)->PRESS_EVENT_MOUSE_BUTTON_LEFT(xpos, ypos))
+							break;
+					}
+				}
+				else if (button == GLFW_MOUSE_BUTTON_2)
+				{
+					for (auto iter = iwindow->Level->_event_layers.rbegin(); iter != iwindow->Level->_event_layers.rend(); ++iter)
+					{
+						if ((*iter)->PRESS_EVENT_MOUSE_BUTTON_RIGHT(xpos, ypos))
+							break;
+					}
+				}
+				else if (button == GLFW_MOUSE_BUTTON_3)
+				{
+					for (auto iter = iwindow->Level->_event_layers.rbegin(); iter != iwindow->Level->_event_layers.rend(); ++iter)
+					{
+						if ((*iter)->PRESS_EVENT_MOUSE_BUTTON_MIDDLE(xpos, ypos))
+							break;
+					}
+				}
+				else if (button == GLFW_MOUSE_BUTTON_4)
+				{
+					for (auto iter = iwindow->Level->_event_layers.rbegin(); iter != iwindow->Level->_event_layers.rend(); ++iter)
+					{
+						if ((*iter)->PRESS_EVENT_MOUSE_BUTTON_4(xpos, ypos))
+							break;
+					}
+				}
+				else if (button == GLFW_MOUSE_BUTTON_5)
+				{
+					for (auto iter = iwindow->Level->_event_layers.rbegin(); iter != iwindow->Level->_event_layers.rend(); ++iter)
+					{
+						if ((*iter)->PRESS_EVENT_MOUSE_BUTTON_5(xpos, ypos))
+							break;
+					}
+				}
+				else if (button == GLFW_MOUSE_BUTTON_6)
+				{
+					for (auto iter = iwindow->Level->_event_layers.rbegin(); iter != iwindow->Level->_event_layers.rend(); ++iter)
+					{
+						if ((*iter)->PRESS_EVENT_MOUSE_BUTTON_6(xpos, ypos))
+							break;
+					}
+				}
+				else if (button == GLFW_MOUSE_BUTTON_7)
+				{
+					for (auto iter = iwindow->Level->_event_layers.rbegin(); iter != iwindow->Level->_event_layers.rend(); ++iter)
+					{
+						if ((*iter)->PRESS_EVENT_MOUSE_BUTTON_7(xpos, ypos))
+							break;
+					}
+				}
+				else if (button == GLFW_MOUSE_BUTTON_8)
+				{
+					for (auto iter = iwindow->Level->_event_layers.rbegin(); iter != iwindow->Level->_event_layers.rend(); ++iter)
+					{
+						if ((*iter)->PRESS_EVENT_MOUSE_BUTTON_8(xpos, ypos))
+							break;
+					}
+				}
+			}
+			else if (action == GLFW_RELEASE)
+			{
+				if (button == GLFW_MOUSE_BUTTON_1)
+				{
+					for (auto iter = iwindow->Level->_event_layers.rbegin(); iter != iwindow->Level->_event_layers.rend(); ++iter)
+					{
+						if ((*iter)->RELEASE_EVENT_MOUSE_BUTTON_LEFT(xpos, ypos))
+							break;
+					}
+				}
+				else if (button == GLFW_MOUSE_BUTTON_2)
+				{
+					for (auto iter = iwindow->Level->_event_layers.rbegin(); iter != iwindow->Level->_event_layers.rend(); ++iter)
+					{
+						if ((*iter)->RELEASE_EVENT_MOUSE_BUTTON_RIGHT(xpos, ypos))
+							break;
+					}
+				}
+				else if (button == GLFW_MOUSE_BUTTON_3)
+				{
+					for (auto iter = iwindow->Level->_event_layers.rbegin(); iter != iwindow->Level->_event_layers.rend(); ++iter)
+					{
+						if ((*iter)->RELEASE_EVENT_MOUSE_BUTTON_MIDDLE(xpos, ypos))
+							break;
+					}
+				}
+				else if (button == GLFW_MOUSE_BUTTON_4)
+				{
+					for (auto iter = iwindow->Level->_event_layers.rbegin(); iter != iwindow->Level->_event_layers.rend(); ++iter)
+					{
+						if ((*iter)->RELEASE_EVENT_MOUSE_BUTTON_4(xpos, ypos))
+							break;
+					}
+				}
+				else if (button == GLFW_MOUSE_BUTTON_5)
+				{
+					for (auto iter = iwindow->Level->_event_layers.rbegin(); iter != iwindow->Level->_event_layers.rend(); ++iter)
+					{
+						if ((*iter)->RELEASE_EVENT_MOUSE_BUTTON_5(xpos, ypos))
+							break;
+					}
+				}
+				else if (button == GLFW_MOUSE_BUTTON_6)
+				{
+					for (auto iter = iwindow->Level->_event_layers.rbegin(); iter != iwindow->Level->_event_layers.rend(); ++iter)
+					{
+						if ((*iter)->RELEASE_EVENT_MOUSE_BUTTON_6(xpos, ypos))
+							break;
+					}
+				}
+				else if (button == GLFW_MOUSE_BUTTON_7)
+				{
+					for (auto iter = iwindow->Level->_event_layers.rbegin(); iter != iwindow->Level->_event_layers.rend(); ++iter)
+					{
+						if ((*iter)->RELEASE_EVENT_MOUSE_BUTTON_7(xpos, ypos))
+							break;
+					}
+				}
+				else if (button == GLFW_MOUSE_BUTTON_8)
+				{
+					for (auto iter = iwindow->Level->_event_layers.rbegin(); iter != iwindow->Level->_event_layers.rend(); ++iter)
+					{
+						if ((*iter)->RELEASE_EVENT_MOUSE_BUTTON_8(xpos, ypos))
+							break;
+					}
+				}
+
+
+
+			} // if (action ==
+
+		} // if (iwindow)
+	}
+
+	void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+	{
+		IWindow* iwindow = static_cast<IWindow*>(glfwGetWindowUserPointer(window));
+		if (iwindow)
+		{
+			double xpos = 0.0, ypos = 0.0;
+			glfwGetCursorPos(window, &xpos, &ypos);
+
+			for (auto iter = iwindow->Level->_event_layers.rbegin(); iter != iwindow->Level->_event_layers.rend(); ++iter)
+			{
+				if ((*iter)->EVNET_SCROLL(xpos, ypos, xoffset, yoffset))
+					break;
+			}
+		}
+	}
+
+	void cursor_enter_callback(GLFWwindow* window, int entered)
+	{
+		IWindow* iwindow = static_cast<IWindow*>(glfwGetWindowUserPointer(window));
+		if (iwindow)
+		{
+			iwindow->CursorInsideWindow = (entered == GLFW_TRUE);
+		}
+	}
+
 	IWindow::IWindow(unsigned int width, unsigned int height, std::string title)
 		: Width(width)
 		, Height(height)
@@ -301,7 +501,6 @@ namespace INVENT
 		, Window(nullptr)
 		, Level(nullptr)
 		, delta_time(0.0f)
-		, last_frame(0.0f)
 	{
 		_create();
 		_default_level = new IBaseLevel;
@@ -329,33 +528,24 @@ namespace INVENT
 	{
 		ICollisionPresets::Init();
 		IRenderer::Init();
+		IUIImgui::Init(Window);
 		_game_instance_ptr->Begin();
 
-		IMGUI_CHECKVERSION();
-		auto imgui_context = ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO();
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-		// Setup Platform/Renderer backends
-		ImGui_ImplGlfw_InitForOpenGL(Window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
-		ImGui_ImplOpenGL3_Init();
+		
 
 		///////////////////////////////////////////////////////////
 		////////// Begin Loop
 		//////////////////////////////////////////////////////////
 
-		last_frame = static_cast<float>(glfwGetTime());
+		//last_frame = static_cast<float>(glfwGetTime());
+		last_frame = std::chrono::high_resolution_clock::now();
 		while (!glfwWindowShouldClose(Window))
 		{
-			float current_frame = static_cast<float>(glfwGetTime());
-			delta_time = current_frame - last_frame;
+			auto current_frame = std::chrono::high_resolution_clock::now();
+			delta_time = std::chrono::duration<float>(current_frame - last_frame).count();
 			last_frame = current_frame;
 
-			// Start the Dear ImGui frame
-			ImGui_ImplOpenGL3_NewFrame();
-			ImGui_ImplGlfw_NewFrame();
-			ImGui::NewFrame();
-			ImGui::ShowDemoWindow(); // Show demo window! :)
+			IUIImgui::StartFrame();
 
 			INVENT_LOG_DEBUG(std::to_string(delta_time));
 
@@ -398,19 +588,15 @@ namespace INVENT
 
 			_game_instance_ptr->Update(delta_time);
 
-			ImGui::Render();
-			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+			IUIImgui::Render();
 
 			// 检查并调用事件，交换缓冲
 			glfwSwapBuffers(Window);
 			glfwPollEvents();
 		}
 
-		ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplGlfw_Shutdown();
-		ImGui::DestroyContext();
-
 		_game_instance_ptr->End();
+		IUIImgui::End();
 		IRenderer::Shutdown();
 	}
 
@@ -517,6 +703,10 @@ namespace INVENT
 #endif // USE_OPENGL
 			glfwSetFramebufferSizeCallback(Window, framebuffer_size_callback);
 			glfwSetKeyCallback(Window, register_key_callback);
+			glfwSetCursorPosCallback(Window, cursor_position_callback);
+			glfwSetMouseButtonCallback(Window, mouse_button_callback);
+			glfwSetScrollCallback(Window, scroll_callback);
+			glfwSetCursorEnterCallback(Window, cursor_enter_callback);
 			return;
 		}
 		else
@@ -678,6 +868,15 @@ namespace INVENT
 		CALLEVENT(GLFW_KEY_RIGHT_ALT, EVENT_KEY_RIGHT_ALT);
 		CALLEVENT(GLFW_KEY_RIGHT_SUPER, EVENT_KEY_RIGHT_SUPER);
 		CALLEVENT(GLFW_KEY_MENU, EVENT_KEY_MENU);
+
+		
+		glfwGetCursorPos(Window, &cursor_xpos, &cursor_ypos);
+
+		for (auto iter = Level->_event_layers.rbegin(); iter != Level->_event_layers.rend(); ++iter)
+		{
+			if ((*iter)->EVENT_CURSOR_POSITION_FRAME(delta, CursorInsideWindow, cursor_xpos, cursor_ypos))
+				break;
+		}
 		
 	}
 	

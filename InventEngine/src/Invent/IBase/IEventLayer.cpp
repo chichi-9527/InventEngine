@@ -417,6 +417,177 @@ namespace INVENT
 	RELEASE_EVENT_FUNC(EVENT_KEY_RIGHT_SUPER);
 	RELEASE_EVENT_FUNC(EVENT_KEY_MENU);
 
+	bool IEventLayer::EVENT_CURSOR_POSITION(double xpos, double ypos)
+	{
+		for (auto obj : Objs)
+		{
+			obj->EVENT_CURSOR_POSITION(xpos, ypos);
+		}
+		return CursorPositionEventReturn;
+	}
+
+	bool IEventLayer::PRESS_EVENT_MOUSE_BUTTON_LEFT(double xpos, double ypos)
+	{
+		for (auto obj : Objs)
+		{
+			obj->PRESS_EVENT_MOUSE_BUTTON_LEFT(xpos, ypos);
+		}
+		return MouseButtonEventReturn;
+	}
+
+	bool IEventLayer::RELEASE_EVENT_MOUSE_BUTTON_LEFT(double xpos, double ypos)
+	{
+		for (auto obj : Objs)
+		{
+			obj->RELEASE_EVENT_MOUSE_BUTTON_LEFT(xpos, ypos);
+		}
+		return MouseButtonEventReturn;
+	}
+
+	bool IEventLayer::PRESS_EVENT_MOUSE_BUTTON_RIGHT(double xpos, double ypos)
+	{
+		for (auto obj : Objs)
+		{
+			obj->PRESS_EVENT_MOUSE_BUTTON_RIGHT(xpos, ypos);
+		}
+		return MouseButtonEventReturn;
+	}
+
+	bool IEventLayer::RELEASE_EVENT_MOUSE_BUTTON_RIGHT(double xpos, double ypos)
+	{
+		for (auto obj : Objs)
+		{
+			obj->RELEASE_EVENT_MOUSE_BUTTON_RIGHT(xpos, ypos);
+		}
+		return MouseButtonEventReturn;
+	}
+
+	bool IEventLayer::PRESS_EVENT_MOUSE_BUTTON_MIDDLE(double xpos, double ypos)
+	{
+		for (auto obj : Objs)
+		{
+			obj->PRESS_EVENT_MOUSE_BUTTON_MIDDLE(xpos, ypos);
+		}
+		return MouseButtonEventReturn;
+	}
+
+	bool IEventLayer::RELEASE_EVENT_MOUSE_BUTTON_MIDDLE(double xpos, double ypos)
+	{
+		for (auto obj : Objs)
+		{
+			obj->RELEASE_EVENT_MOUSE_BUTTON_MIDDLE(xpos, ypos);
+		}
+		return MouseButtonEventReturn;
+	}
+
+	bool IEventLayer::PRESS_EVENT_MOUSE_BUTTON_4(double xpos, double ypos)
+	{
+		for (auto obj : Objs)
+		{
+			obj->PRESS_EVENT_MOUSE_BUTTON_4(xpos, ypos);
+		}
+		return MouseButtonEventReturn;
+	}
+
+	bool IEventLayer::RELEASE_EVENT_MOUSE_BUTTON_4(double xpos, double ypos)
+	{
+		for (auto obj : Objs)
+		{
+			obj->RELEASE_EVENT_MOUSE_BUTTON_4(xpos, ypos);
+		}
+		return MouseButtonEventReturn;
+	}
+
+	bool IEventLayer::PRESS_EVENT_MOUSE_BUTTON_5(double xpos, double ypos)
+	{
+		for (auto obj : Objs)
+		{
+			obj->PRESS_EVENT_MOUSE_BUTTON_5(xpos, ypos);
+		}
+		return MouseButtonEventReturn;
+	}
+
+	bool IEventLayer::RELEASE_EVENT_MOUSE_BUTTON_5(double xpos, double ypos)
+	{
+		for (auto obj : Objs)
+		{
+			obj->RELEASE_EVENT_MOUSE_BUTTON_5(xpos, ypos);
+		}
+		return MouseButtonEventReturn;
+	}
+
+	bool IEventLayer::PRESS_EVENT_MOUSE_BUTTON_6(double xpos, double ypos)
+	{
+		for (auto obj : Objs)
+		{
+			obj->PRESS_EVENT_MOUSE_BUTTON_6(xpos, ypos);
+		}
+		return MouseButtonEventReturn;
+	}
+
+	bool IEventLayer::RELEASE_EVENT_MOUSE_BUTTON_6(double xpos, double ypos)
+	{
+		for (auto obj : Objs)
+		{
+			obj->RELEASE_EVENT_MOUSE_BUTTON_6(xpos, ypos);
+		}
+		return MouseButtonEventReturn;
+	}
+
+	bool IEventLayer::PRESS_EVENT_MOUSE_BUTTON_7(double xpos, double ypos)
+	{
+		for (auto obj : Objs)
+		{
+			obj->PRESS_EVENT_MOUSE_BUTTON_7(xpos, ypos);
+		}
+		return MouseButtonEventReturn;
+	}
+
+	bool IEventLayer::RELEASE_EVENT_MOUSE_BUTTON_7(double xpos, double ypos)
+	{
+		for (auto obj : Objs)
+		{
+			obj->RELEASE_EVENT_MOUSE_BUTTON_7(xpos, ypos);
+		}
+		return MouseButtonEventReturn;
+	}
+
+	bool IEventLayer::PRESS_EVENT_MOUSE_BUTTON_8(double xpos, double ypos)
+	{
+		for (auto obj : Objs)
+		{
+			obj->PRESS_EVENT_MOUSE_BUTTON_8(xpos, ypos);
+		}
+		return MouseButtonEventReturn;
+	}
+
+	bool IEventLayer::RELEASE_EVENT_MOUSE_BUTTON_8(double xpos, double ypos)
+	{
+		for (auto obj : Objs)
+		{
+			obj->RELEASE_EVENT_MOUSE_BUTTON_8(xpos, ypos);
+		}
+		return MouseButtonEventReturn;
+	}
+
+	bool IEventLayer::EVNET_SCROLL(double cursor_xpos, double cursor_ypos, double xoffset, double yoffset)
+	{
+		for (auto obj : Objs)
+		{
+			obj->EVNET_SCROLL(cursor_xpos, cursor_ypos, xoffset, yoffset);
+		}
+		return MouseButtonEventReturn;
+	}
+
+	bool IEventLayer::EVENT_CURSOR_POSITION_FRAME(float delta, bool cursor_inside_window, double xpos, double ypos)
+	{
+		for (auto obj : Objs)
+		{
+			obj->EVENT_CURSOR_POSITION_FRAME(delta, cursor_inside_window, xpos, ypos);
+		}
+		return AllEventReturn;
+	}
+
 }
 
 
