@@ -362,7 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /boost1_87_0
-/bin-int
 *.tlog
-*.tlog
-/bin-int
+
