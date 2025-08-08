@@ -159,36 +159,6 @@
     <ClInclude Include="src\Invent\2D\2DComponent\Invent2DAnimationComponent.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\Imgui\imconfig.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Imgui\imgui.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Imgui\imgui_impl_glfw.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Imgui\imgui_impl_opengl3.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Imgui\imgui_impl_opengl3_loader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Imgui\imgui_internal.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Imgui\imgui_stdlib.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Imgui\imstb_rectpack.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Imgui\imstb_textedit.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Imgui\imstb_truetype.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="src\Invent\UI\IUIImgui.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -323,30 +293,6 @@
     <ClCompile Include="src\Invent\2D\2DComponent\Invent2DAnimationComponent.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\Imgui\imgui.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Imgui\imgui_demo.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Imgui\imgui_draw.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Imgui\imgui_impl_glfw.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Imgui\imgui_impl_opengl3.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Imgui\imgui_stdlib.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Imgui\imgui_tables.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Imgui\imgui_widgets.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="src\Invent\UI\IUIImgui.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -354,9 +300,5 @@
   <ItemGroup>
     <None Include="Readme.md" />
     <None Include="src\Invent\ITools\Readme.md" />
-    <None Include="src\Imgui\imgui.natstepfilter" />
-  </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="src\Imgui\imgui.natvis" />
   </ItemGroup>
 </Project>
