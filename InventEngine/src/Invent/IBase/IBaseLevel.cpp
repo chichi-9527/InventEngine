@@ -56,6 +56,12 @@ namespace INVENT
 			if (actor) actor->Update(delta);
 		}
 
+		// render imgui
+		if (_imgui_showing_layer)
+		{
+			_imgui_showing_layer->RenderImgui();
+		}
+
 		// 碰撞检测
 		_deal_collision();
 	}
@@ -261,23 +267,50 @@ namespace INVENT
 			if ((*iter) == layer)
 			{
 				_event_layers.erase(iter);
+				break;
 			}
 		}
 
 	}
 
 
+	void IBaseLevel::ShowImguiUILayer(IImguiUILayer* layer)
+	{
+		if (_imgui_showing_layer)
+		{
+			HideImguiUILayer();
+		}
+		_imgui_showing_layer = layer;
+		this->AddLayer((IEventLayer*)layer);
+
+	}
+
+	void IBaseLevel::HideImguiUILayer()
+	{
+		if (_imgui_showing_layer)
+		{
+			this->PopLayer((IEventLayer*)_imgui_showing_layer);
+			_imgui_showing_layer = nullptr;
+		}
+	}
+
 	void IBaseLevel::EraseLayer(IEventLayer* layer)
 	{
-		for (auto iter = layers.begin(); iter != layers.end(); iter++)
-		{
-			if ((*iter) == layer)
-			{
-				layers.erase(iter);
-			}
-		}
 		if (layer)
 		{
+			for (auto iter = layers.begin(); iter != layers.end(); iter++)
+			{
+				if ((*iter) == layer)
+				{
+					layers.erase(iter);
+					break;
+				}
+			}
+
+			PopLayer(layer);
+
+			// erase layer in ui_layers
+
 			delete layer;
 			layer = nullptr;
 		}

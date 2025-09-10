@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -57,7 +57,9 @@
     <ClInclude Include="src\Invent\Renderer\IVertexArray.h" />
     <ClInclude Include="src\Invent\Shader\IDefaultShader.h" />
     <ClInclude Include="src\Invent\Shader\IShader.h" />
+    <ClInclude Include="src\Invent\UI\IDrawString.h" />
     <ClInclude Include="src\Invent\UI\IUIImgui.h" />
+    <ClInclude Include="src\Invent\UI\IUIText.h" />
     <ClInclude Include="src\StbImage\stb_image.h" />
     <ClInclude Include="src\Invent\ThreadPool\IThreadPool.h" />
   </ItemGroup>
@@ -141,7 +143,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\Invent\UI\IDrawString.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Invent\UI\IUIImgui.cpp" />
+    <ClCompile Include="src\Invent\UI\IUIText.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md">
@@ -195,8 +203,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)\bin\$(Platform)-$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)\bin-int\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\Glfw34\include;$(SolutionDir)\boost1_87_0\include;$(SolutionDir)\Glm1.0.1;$(SolutionDir)\Imgui\src</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)\Glfw34\lib;$(SolutionDir)\boost1_87_0\lib</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\Glfw34\include;$(SolutionDir)\boost1_87_0\include;$(SolutionDir)\Glm1.0.1;$(SolutionDir)\Imgui\src;$(SolutionDir)\FreeType\include</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)\Glfw34\lib;$(SolutionDir)\boost1_87_0\lib;$(SolutionDir)\FreeType\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)\bin\$(Platform)-$(Configuration)\$(ProjectName)\</OutDir>

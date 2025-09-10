@@ -162,6 +162,12 @@
     <ClInclude Include="src\Invent\UI\IUIImgui.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Invent\UI\IDrawString.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Invent\UI\IUIText.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\Invent.cpp">
@@ -294,6 +300,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Invent\UI\IUIImgui.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\UI\IDrawString.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\UI\IUIText.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

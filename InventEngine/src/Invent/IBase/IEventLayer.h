@@ -27,6 +27,10 @@ namespace INVENT
 		void SetAllPressEventReturn(bool v);
 		// default false
 		void SetAllReleaseEventReturn(bool v);
+		// default true
+		void SetCursorPositionEventReturn(bool v) { CursorPositionEventReturn = v; }
+		// default true
+		void SetMouseButtonEventReturn(bool v) { MouseButtonEventReturn = v; }
 
 		void AddEventObj(IBaseEventFunction* obj);
 		void EraseEventObj(IBaseEventFunction* obj);

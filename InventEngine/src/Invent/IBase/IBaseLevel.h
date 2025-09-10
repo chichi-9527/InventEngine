@@ -12,6 +12,8 @@
 
 #include "IPhysicsCollision/ICollisionHandling.h"
 
+#include "UI/IUIImgui.h"
+
 #include "ThreadPool/IThreadPool.h"
 
 #include "ILog.h"
@@ -86,6 +88,9 @@ namespace INVENT
 			return layer;
 		}
 
+		void ShowImguiUILayer(IImguiUILayer* layer);
+		void HideImguiUILayer();
+
 		void EraseLayer(IEventLayer* layer);
 
 		float GetAspectRatio() const { return _window_size.x / _window_size.y; }
@@ -110,12 +115,12 @@ namespace INVENT
 			GetIWindowThreadPool()->Submit(0, [this, actor]() {
 				AddActor((IBaseActor*)actor);
 
-				this->AddEventObj((IBaseEventFunction*)(actor));
-
 				if (std::is_base_of_v<ISquare2dActor, T>)
 					AddSquare2dActor((ISquare2dActor*)actor);
 				else if (std::is_base_of_v<ITileMap, T>)
 					AddTileMap((ITileMap*)actor);
+
+				this->AddEventObj((IBaseEventFunction*)(actor));
 
 				});
 
@@ -193,6 +198,8 @@ namespace INVENT
 		std::mutex _colliders_mutex;
 
 		ICollisionHandling* _colli_handler;
+
+		IImguiUILayer* _imgui_showing_layer = nullptr;
 
 	};
 

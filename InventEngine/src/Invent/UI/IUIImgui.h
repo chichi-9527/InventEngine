@@ -1,6 +1,8 @@
 #ifndef _IUIIMGUI_
 #define _IUIIMGUI_
 
+#include "IBase/IEventLayer.h"
+
 #include "imgui.h"
 
 struct GLFWwindow;
@@ -17,7 +19,14 @@ namespace INVENT
 
 	};
 
-	
+	class IImguiUILayer : public IEventLayer
+	{
+	public:
+		IImguiUILayer() = default;
+		virtual ~IImguiUILayer() = default;
+
+		virtual void RenderImgui() = 0;
+	};
 
 }
 
