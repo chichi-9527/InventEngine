@@ -22,6 +22,8 @@
 #include "ITools/ITrieTag.h"
 #include "ITools/IDelegate.h"
 
+#include "UI/IDrawString.h"
+
 #include "IEngine.h"
 
 #endif // !_INVENT_

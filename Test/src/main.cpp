@@ -51,6 +51,7 @@ public:
 	{
 		this->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 		this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("./Assets/Textures/test.png"));
+		//this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("charX",INVENT::UI::IDrawString::LoadChar('x')));
 
 		this->SetMoveSpeed(1.0f);
 
@@ -73,6 +74,7 @@ public:
 
 	virtual void PRESS_EVENT_KEY_2() override
 	{
+		this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("charX", INVENT::UI::IDrawString::LoadChar('A')));
 		std::cout << "PRESS_EVENT_KEY_2\n";
 	}
 
@@ -199,7 +201,7 @@ public:
 	//	return true;
 	//}
 
-	virtual bool EVENT_CURSOR_POSITION_FRAME(float delta, bool cursor_inside_window, double xpos, double ypos) override
+	/*virtual bool EVENT_CURSOR_POSITION_FRAME(float delta, bool cursor_inside_window, double xpos, double ypos) override
 	{
 		if (cursor_inside_window)
 			std::cout << "mouse xpos: " << xpos << " ; ypos : " << ypos << "\n";
@@ -207,7 +209,7 @@ public:
 			std::cout << "mouse not inside the window \n";
 
 		return true;
-	}
+	}*/
 
 	virtual ~MyLevel()
 	{

@@ -9,6 +9,7 @@
 #include "IEngine.h"
 
 #include "UI/IUIImgui.h"
+#include "UI/IDrawString.h"
 
 #include <chrono>
 
@@ -508,11 +509,15 @@ namespace INVENT
 
 		IEngine::InstancePtr()->SetIWindow(this);
 
+		UI::IDrawString::Init("C:/Windows/Fonts/arial.ttf");
+
 		_threadpool = new IThreadPool();
 	}
 
 	IWindow::~IWindow()
 	{
+		UI::IDrawString::Shutdown();
+
 		if (_default_level)
 			delete _default_level;
 		_default_level = nullptr;
@@ -529,6 +534,7 @@ namespace INVENT
 		ICollisionPresets::Init();
 		IRenderer::Init();
 		IUIImgui::Init(Window);
+		
 		_game_instance_ptr->Begin();
 
 		
@@ -547,7 +553,7 @@ namespace INVENT
 
 			IUIImgui::StartFrame();
 
-			INVENT_LOG_DEBUG(std::to_string(delta_time));
+			//INVENT_LOG_DEBUG(std::to_string(delta_time));
 
 			Level->_clear_color();
 			Level->_clear();
@@ -597,6 +603,7 @@ namespace INVENT
 
 		_game_instance_ptr->End();
 		IUIImgui::End();
+		
 		IRenderer::Shutdown();
 	}
 

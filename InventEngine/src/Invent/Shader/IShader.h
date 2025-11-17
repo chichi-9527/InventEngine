@@ -53,6 +53,7 @@ namespace INVENT
 		IShader* Get(const std::string& name);
 
 		static IShader* GetDefaultSquare2DShader();
+		static IShader* GetDefaultTextShader();
 
 	private:
 		IShaderManagement() = default;

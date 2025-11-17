@@ -29,8 +29,27 @@ namespace INVENT
 		float TexIndex;
 	};
 
+	struct TextVertex 
+	{
+		glm::vec3 Position;
+		glm::vec4 Color;
+		glm::vec2 TexCoord;
+	};
+
+	struct CircleVertex
+	{
+
+	};
+
+	struct LineVertex
+	{
+		glm::vec3 Position;
+		glm::vec4 Color;
+	};
+
 	struct Renderer2DData
 	{
+		// Square
 		std::shared_ptr<IVertexArray> SquareVertexArray;
 		std::shared_ptr<IVertexBuffer> SquareVertexBuffer;
 		IShader* SquareShader = nullptr;
@@ -40,6 +59,19 @@ namespace INVENT
 		// is not ivertexbuffer is all vertexs
 		SquareVertex* SquareVertexBuffers = nullptr;
 		SquareVertex* SquareVertexBufferBack = nullptr;
+
+		// Text
+		std::shared_ptr<IVertexArray> TextVertexArray;
+		std::shared_ptr<IVertexBuffer> TextVertexBuffer;
+		IShader* TextShader = nullptr;
+
+		unsigned int TextIndexCount = 0;
+		TextVertex* TextVertexBuffers = nullptr;
+		TextVertex* TextVertexBufferBack = nullptr;
+		
+		// Circle
+
+		// Line
 
 		float LineWidth = 2.0f;
 
@@ -103,6 +135,19 @@ namespace INVENT
 		renderer2d_data.SquareVertexArray->SetIndexBuffer(square_index_buffer);
 		delete[] square_indices;
 
+		// Text
+		renderer2d_data.TextVertexArray = IVertexArray::CreatePtr();
+		renderer2d_data.TextVertexBuffer = IVertexBuffer::CreatePtr(INVENT_MAX_VERTEX_RENDER_ONCE * sizeof(SquareVertex));
+		renderer2d_data.TextVertexBuffer->SetLayout({
+			{IShaderDataType::Float3, "a_Position"},
+			{IShaderDataType::Float4, "a_Color"},
+			{IShaderDataType::Float2, "a_TexCoord"}
+			});
+		renderer2d_data.TextVertexArray->AddVertexBuffer(renderer2d_data.TextVertexBuffer);
+		renderer2d_data.TextVertexArray->SetIndexBuffer(square_index_buffer);
+		renderer2d_data.TextVertexBuffers = new TextVertex[INVENT_MAX_VERTEX_RENDER_ONCE];
+
+		renderer2d_data.TextShader = IShaderManagement::GetDefaultTextShader();
 
 		// other instance need render 
 
@@ -145,6 +190,9 @@ namespace INVENT
 		renderer2d_data.SquareIndexCount = 0;
 		renderer2d_data.SquareVertexBufferBack = renderer2d_data.SquareVertexBuffers;
 
+		renderer2d_data.TextIndexCount = 0;
+		renderer2d_data.TextVertexBufferBack = renderer2d_data.TextVertexBuffers;
+
 		renderer2d_data.TextureSlotIndex = 1;
 	}
 
@@ -171,6 +219,18 @@ namespace INVENT
 		}
 
 		//
+		if (renderer2d_data.TextIndexCount)
+		{
+			unsigned int data_size = (unsigned int)((unsigned char*)renderer2d_data.TextVertexBufferBack - (unsigned char*)renderer2d_data.TextVertexBuffers);
+			renderer2d_data.TextVertexBuffer->SetData((void*)renderer2d_data.TextVertexBuffers, data_size);
+
+			for (unsigned int i = 0; i < renderer2d_data.TextureSlotIndex; ++i)
+			{
+				renderer2d_data.TextureArray[i]->BindUnit(i);
+			}
+			renderer2d_data.SquareShader->Bind();
+			IRendererCommend::DrawIndexed(renderer2d_data.TextVertexArray, renderer2d_data.TextIndexCount);
+		}
 
 	}
 
@@ -284,6 +344,11 @@ namespace INVENT
 
 		renderer2d_data.SquareIndexCount += 6;
 
+	}
+
+	void IRenderer2D::DrawString(const std::string& string)
+	{
+		
 	}
 
 }

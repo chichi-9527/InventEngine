@@ -11,6 +11,22 @@
 
 namespace INVENT
 {
+
+	struct CharCharacter {
+		unsigned int Width = 0;
+		unsigned int Rows = 0;
+		unsigned char* Buffer = nullptr;
+
+		unsigned int OffsetLeft = 0;
+		unsigned int OffsetTop = 0;		// Offset from baseline to left/top of glyph
+
+		unsigned int AdvanceX = 0;		// Offset to advance to next glyph
+		unsigned int AdvanceY = 0;
+
+		bool IsValid() const { return nullptr != Buffer; }
+	};
+
+
 	class ITexture2D 
 	{
 		friend class ITexture2DManagement;
@@ -57,6 +73,7 @@ namespace INVENT
 	private:
 		ITexture2D();
 		ITexture2D(const std::string& name, const std::string& path, const _UInt2& breakup = _UInt2());
+		ITexture2D(const std::string& name, const CharCharacter& character, const _UInt2& breakup = _UInt2());
 
 	public:
 		std::atomic_bool IsValid = false;
@@ -65,6 +82,8 @@ namespace INVENT
 		std::string _name;
 
 		_UInt2 _texture_breakup;
+
+		CharCharacter _charcharacter;
 
 		unsigned int _width = 0;
 		unsigned int _height = 0;
@@ -87,11 +106,14 @@ namespace INVENT
 
 		ITexture2D* CreateTexture(const std::string& path, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
 		ITexture2D* CreateTexture(const std::string& name, const std::string& path, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
+		ITexture2D* CreateTexture(const std::string& name, const CharCharacter& character, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
 		TextureID CreateTexture(ITexture2D* texture, const std::string& path, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
 		TextureID CreateTexture(ITexture2D* texture, const std::string& name, const std::string& path, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
+		TextureID CreateTexture(ITexture2D* texture, const std::string& name, const CharCharacter& character, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
 
 		TextureID CreateTextureDynamic(const std::string& path, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
 		TextureID CreateTextureDynamic(const std::string& name, const std::string& path, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
+		TextureID CreateTextureDynamic(const std::string& name, const CharCharacter& character, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
 
 		ITexture2D* CreateWhiteTexture();
 

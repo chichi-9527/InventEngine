@@ -105,6 +105,11 @@ void main()
 		)";
 
 		// End Default 2D square shader
+
+
+		constexpr static const char* DefaultTextVertexShader = R"()";
+		constexpr static const char* DefaultTextFragmentShader = R"()";
+		
 	};
 }
 

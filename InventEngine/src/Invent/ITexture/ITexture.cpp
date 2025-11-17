@@ -1,4 +1,4 @@
-#include "IEpch.h"
+﻿#include "IEpch.h"
 #include "ITexture.h"
 
 #include "IEngine.h"
@@ -53,6 +53,7 @@ namespace INVENT
 		{
 #ifdef USE_OPENGL
 			glCreateTextures(GL_TEXTURE_2D, 1, &_texture_id);
+			glPixelStorei(GL_UNPACK_ALIGNMENT, 4); // 默认对齐
 
 			if (4 == _channels)
 			{
@@ -64,6 +65,13 @@ namespace INVENT
 				glTextureStorage2D(_texture_id, 1, GL_RGB8, _width, _height);
 				glTextureSubImage2D(_texture_id, 0, 0, 0, _width, _height, GL_RGB, GL_UNSIGNED_BYTE, _tex_data);
 			}
+			else if (1 == _channels)
+			{
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+				glTextureStorage2D(_texture_id, 1, GL_R8, _width, _height);
+				glTextureSubImage2D(_texture_id, 0, 0, 0, _width, _height, GL_RED, GL_UNSIGNED_BYTE, _tex_data);
+			}
 			glTextureParameteri(_texture_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTextureParameteri(_texture_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -71,8 +79,8 @@ namespace INVENT
 			glTextureParameteri(_texture_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 #endif // USE_OPENGL
-
-			stbi_image_free(_tex_data);
+			if (1 != _channels)
+				stbi_image_free(_tex_data);
 		}
 
 		IsValid = true;
@@ -122,6 +130,22 @@ namespace INVENT
 
 		ITexture2DManagement::Instance().GetUninitTextures().push_back(this);
 		
+	}
+
+	ITexture2D::ITexture2D(const std::string& name, const CharCharacter& character, const _UInt2& breakup)
+	{
+		_name = name;
+		_texture_breakup = breakup;
+		if (_texture_breakup.IsZore())
+			_texture_breakup.is_valid = false;
+
+		_width = character.Width;
+		_height = character.Rows;
+		_channels = 1;
+		_tex_data = character.Buffer;
+		_charcharacter = character;
+
+		ITexture2DManagement::Instance().GetUninitTextures().push_back(this);
 	}
 
 	/// <summary>
@@ -179,6 +203,23 @@ namespace INVENT
 		return texture;
 	}
 
+	ITexture2D* ITexture2DManagement::CreateTexture(const std::string& name, const CharCharacter& character, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
+	{
+		ITexture2D* texture = GetTexture(name);
+		if (texture)
+			return texture;
+		texture = new ITexture2D(name, character, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
+		size_t tex_id = 0;
+		{
+			std::lock_guard<std::mutex> lock(_mutex);
+			tex_id = _vector_textrues.size();
+			_vector_textrues.push_back(texture);
+		}
+
+		_textrues[name] = { texture, tex_id };
+		return texture;
+	}
+
 	ITexture2DManagement::TextureID ITexture2DManagement::CreateTexture(ITexture2D* texture, const std::string& path, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
 	{
 		auto startcount = path.find_last_of("/\\") + 1;
@@ -203,6 +244,28 @@ namespace INVENT
 		}
 
 		texture = new ITexture2D(name, path, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
+
+		size_t tex_id = 0;
+		{
+			std::lock_guard<std::mutex> lock(_mutex);
+			tex_id = _vector_textrues.size();
+			_vector_textrues.push_back(texture);
+		}
+
+		_textrues[name] = { texture, tex_id };
+		return  tex_id;
+	}
+
+	ITexture2DManagement::TextureID ITexture2DManagement::CreateTexture(ITexture2D* texture, const std::string& name, const CharCharacter& character, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
+	{
+		auto tex = _textrues.find(name);
+		if (tex != _textrues.end())
+		{
+			texture = (*tex).second.first;
+			return (*tex).second.second;
+		}
+
+		texture = new ITexture2D(name, character, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
 
 		size_t tex_id = 0;
 		{
@@ -245,6 +308,25 @@ namespace INVENT
 			this->_vector_textrues[id] = texture;
 			_textrues[Name] = { texture, id };
 			}, name, path);
+
+		return id;
+	}
+
+	ITexture2DManagement::TextureID ITexture2DManagement::CreateTextureDynamic(const std::string& name, const CharCharacter& character, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
+	{
+		size_t id = 0;
+		{
+			std::lock_guard<std::mutex> lock(_mutex);
+			id = _vector_textrues.size();
+			_vector_textrues.push_back(nullptr);
+		}
+
+		IEngine::InstancePtr()->GetIWindow()->GetThreadPool()->Submit(0, [this, tex_break_width_num, tex_break_height_num, id](const std::string& Name, const CharCharacter& Path) {
+			auto texture = new ITexture2D(Name, Path, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
+			std::lock_guard<std::mutex> lock(_mutex);
+			this->_vector_textrues[id] = texture;
+			_textrues[Name] = { texture, id };
+			}, name, character);
 
 		return id;
 	}

@@ -19,6 +19,7 @@ namespace INVENT
 		static void EndRender();
 
 		static void DrawSquare(ISquare2dActor* actor);
+		static void DrawString(const std::string& string);
 
 	private:
 		static void StartARender();

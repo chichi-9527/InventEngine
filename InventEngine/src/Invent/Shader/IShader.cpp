@@ -144,6 +144,12 @@ namespace INVENT
 		return _default_square_2d;
 	}
 
+	IShader* IShaderManagement::GetDefaultTextShader()
+	{
+		static INVENT::IShader* _default_text = INVENT::IShaderManagement::Instance().Load("DefaultText", std::string(IDefaultShader::DefaultTextVertexShader), std::string(IDefaultShader::DefaultTextFragmentShader));
+		return _default_text;
+	}
+
 	IShaderManagement::~IShaderManagement()
 	{
 		for (auto& kv : _shaders)
