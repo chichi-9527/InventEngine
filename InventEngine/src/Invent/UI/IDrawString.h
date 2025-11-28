@@ -3,6 +3,8 @@
 
 #include "ITexture/ITexture.h"
 
+#include <cwchar>
+
 namespace INVENT
 {
 	namespace UI
@@ -17,8 +19,12 @@ namespace INVENT
 			static void SetPixelSize(unsigned int w, unsigned int h);
 
 			static CharCharacter LoadChar(const char&);
+			static CharCharacter LoadWChar(const wchar_t&);
 
+			static void ShowText(const std::string& text);
 
+		private:
+			
 
 		};
 	}

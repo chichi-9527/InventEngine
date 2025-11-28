@@ -24,6 +24,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <queue>
+#include <cstring>
 
 #include <iostream>
 #include <fstream>

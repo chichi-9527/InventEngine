@@ -57,6 +57,7 @@ namespace INVENT
 	}
 
 	IShader::IShader(const std::string& vertexSrc, const std::string& fragmentSrc)
+		: _is_vaild(false)
 	{
 #ifdef USE_OPENGL
 		_shader_program = glCreateProgram();
@@ -78,7 +79,13 @@ namespace INVENT
 		int suc = 0;
 		glGetProgramiv(_shader_program, GL_LINK_STATUS, &suc);
 		if (!suc)
+		{
 			INVENT_LOG_ERROR("ERROR::SHADER::VERTEX_OR_FRAGRAM::COMPILATION_FAILED \n");
+		}
+		else
+		{
+			_is_vaild = true;
+		}
 
 		glDeleteShader(vertex_shader);
 		glDeleteShader(fragment_shader);
@@ -115,8 +122,12 @@ namespace INVENT
 		IShader::ReadFile(fragmentPath, fragmentSrc);
 
 		shader = new IShader(vertexSrc, fragmentSrc);
-		shader->_name = name;
-		_shaders[name] = shader;
+		if (shader->IsVaild())
+		{
+			shader->_name = name;
+			_shaders[name] = shader;
+			INVENT_LOG_INFO(std::string("SHADER LOAD DONE: ") + name);
+		}
 		return shader;
 	}
 
@@ -126,8 +137,12 @@ namespace INVENT
 		if (shader)
 			return shader;
 		shader = new IShader(vertexSrc, fragmentSrc);
-		shader->_name = name;
-		_shaders[name] = shader;
+		if (shader->IsVaild())
+		{
+			shader->_name = name;
+			_shaders[name] = shader;
+			INVENT_LOG_INFO(std::string("SHADER LOAD DONE: ") + name);
+		}
 		return shader;
 	}
 

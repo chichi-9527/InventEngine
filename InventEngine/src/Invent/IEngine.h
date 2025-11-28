@@ -15,6 +15,8 @@ namespace INVENT
 		static std::shared_ptr<IEngine> InstancePtr();
 
 		IWindow* GetIWindow();
+		unsigned int GetWindowSizeX();
+		unsigned int GetWindowSizeY();
 
 		float GetEngineMilliseconds();
 

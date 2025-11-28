@@ -9,6 +9,8 @@
 FT_Library library;
 FT_Face face;
 
+static std::unordered_map<char, INVENT::CharCharacter> Characters;
+static std::unordered_map<wchar_t, INVENT::CharCharacter> WCharacters;
 
 namespace INVENT
 {
@@ -37,7 +39,7 @@ namespace INVENT
 				INVENT_LOG_INFO(std::string("num_face ") + std::to_string(face->num_faces));
 			}
 
-			SetPixelSize(0, 160);
+			SetPixelSize(0, 64);
 		}
 
 		void IDrawString::Shutdown()
@@ -53,6 +55,12 @@ namespace INVENT
 
 		CharCharacter IDrawString::LoadChar(const char& char_code)
 		{
+			auto result = Characters.find(char_code);
+			if (result != Characters.end())
+			{
+				return result->second;
+			}
+
 			if (FT_Load_Char(face, char_code, FT_LOAD_RENDER))
 			{
 				INVENT_LOG_ERROR("ERROR::FREETYTPE: Failed to load Glyph");
@@ -68,6 +76,34 @@ namespace INVENT
 			c.AdvanceX = face->glyph->advance.x;
 			c.AdvanceY = face->glyph->advance.y;
 
+			Characters.insert({ char_code, c });
+			return c;
+		}
+
+		CharCharacter IDrawString::LoadWChar(const wchar_t& wchar_code)
+		{
+			auto result = WCharacters.find(wchar_code);
+			if (result != WCharacters.end())
+			{
+				return result->second;
+			}
+
+			if (FT_Load_Char(face, wchar_code, FT_LOAD_RENDER))
+			{
+				INVENT_LOG_ERROR("ERROR::FREETYTPE: Failed to load Glyph");
+				return CharCharacter();
+			}
+
+			CharCharacter c;
+			c.Width = face->glyph->bitmap.width;
+			c.Rows = face->glyph->bitmap.rows;
+			c.Buffer = face->glyph->bitmap.buffer;
+			c.OffsetLeft = face->glyph->bitmap_left;
+			c.OffsetTop = face->glyph->bitmap_top;
+			c.AdvanceX = face->glyph->advance.x;
+			c.AdvanceY = face->glyph->advance.y;
+
+			WCharacters.insert({ wchar_code, c });
 			return c;
 		}
 

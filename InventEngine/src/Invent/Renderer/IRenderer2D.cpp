@@ -9,6 +9,10 @@
 
 #include "ITexture/ITexture.h"
 
+#include "UI/IDrawString.h"
+
+#include "IEngine.h"
+
 #include <array>
 
 #include <glm/glm.hpp>
@@ -34,6 +38,7 @@ namespace INVENT
 		glm::vec3 Position;
 		glm::vec4 Color;
 		glm::vec2 TexCoord;
+		float TexIndex;
 	};
 
 	struct CircleVertex
@@ -83,6 +88,7 @@ namespace INVENT
 		struct CameraData 
 		{
 			glm::mat4 ViewProjection{ 1.0f };
+			glm::mat4 ViewProjection2D{ 1.0f };
 		};
 		CameraData CameraBuffer;
 
@@ -133,7 +139,7 @@ namespace INVENT
 		}
 		auto square_index_buffer = IIndexBuffer::CreatePtr(square_indices, INVENT_MAX_INDEX_RENDER_ONCE);
 		renderer2d_data.SquareVertexArray->SetIndexBuffer(square_index_buffer);
-		delete[] square_indices;
+		
 
 		// Text
 		renderer2d_data.TextVertexArray = IVertexArray::CreatePtr();
@@ -141,11 +147,13 @@ namespace INVENT
 		renderer2d_data.TextVertexBuffer->SetLayout({
 			{IShaderDataType::Float3, "a_Position"},
 			{IShaderDataType::Float4, "a_Color"},
-			{IShaderDataType::Float2, "a_TexCoord"}
+			{IShaderDataType::Float2, "a_TexCoord"},
+			{IShaderDataType::Float, "a_TexIndex"}
 			});
 		renderer2d_data.TextVertexArray->AddVertexBuffer(renderer2d_data.TextVertexBuffer);
 		renderer2d_data.TextVertexArray->SetIndexBuffer(square_index_buffer);
 		renderer2d_data.TextVertexBuffers = new TextVertex[INVENT_MAX_VERTEX_RENDER_ONCE];
+
 
 		renderer2d_data.TextShader = IShaderManagement::GetDefaultTextShader();
 
@@ -159,6 +167,8 @@ namespace INVENT
 		renderer2d_data.SquareVertexPosition[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 
 		renderer2d_data.CameraUniformBuffer = IUniformBuffer::CreatePtr(sizeof(Renderer2DData::CameraData), 0);
+
+		delete[] square_indices;
 	}
 
 	void IRenderer2D::Init(float line_width)
@@ -175,6 +185,7 @@ namespace INVENT
 	void IRenderer2D::BeginRender(const ICamera* camera)
 	{
 		renderer2d_data.CameraBuffer.ViewProjection = camera ? camera->GetViewProjectionMatrix() : glm::mat4(1.0f);
+		renderer2d_data.CameraBuffer.ViewProjection2D = glm::ortho(0.0f, (float)IEngine::InstancePtr()->GetWindowSizeX(), 0.0f, (float)IEngine::InstancePtr()->GetWindowSizeY());
 		renderer2d_data.CameraUniformBuffer->SetData(&renderer2d_data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
 		StartARender();
@@ -228,7 +239,7 @@ namespace INVENT
 			{
 				renderer2d_data.TextureArray[i]->BindUnit(i);
 			}
-			renderer2d_data.SquareShader->Bind();
+			renderer2d_data.TextShader->Bind();
 			IRendererCommend::DrawIndexed(renderer2d_data.TextVertexArray, renderer2d_data.TextIndexCount);
 		}
 
@@ -346,9 +357,160 @@ namespace INVENT
 
 	}
 
-	void IRenderer2D::DrawString(const std::string& string)
+	void IRenderer2D::DrawString(const std::string& string, const glm::vec4& color, const glm::vec2& position, float scale)
 	{
-		
+		glm::vec2 Position = position;
+
+		for (auto c = string.begin(); c != string.end(); ++c)
+		{
+			auto ch = UI::IDrawString::LoadChar(*c);
+
+			if (renderer2d_data.TextIndexCount >= INVENT_MAX_INDEX_RENDER_ONCE)
+				NextARender();
+
+			auto texture = ITexture2DManagement::Instance().CreateTexture(std::string("Char_") + (*c), ch);
+			float texture_index = .0f;
+
+			if (texture)
+			{
+				if (texture->IsValid)
+				{
+					for (unsigned int i = 1; i < renderer2d_data.TextureSlotIndex; ++i)
+					{
+						if (renderer2d_data.TextureArray[i] == texture)
+							texture_index = (float)i; break;
+					}
+				}
+			}
+
+			if (texture && texture_index == .0f)
+			{
+				if (texture->IsValid)
+				{
+					if (renderer2d_data.TextureSlotIndex >= INVENT_MAX_TEXTURE_RENDER_ONCE - 1)
+						NextARender();
+
+					texture_index = (float)renderer2d_data.TextureSlotIndex;
+					renderer2d_data.TextureArray[renderer2d_data.TextureSlotIndex] = texture;
+					renderer2d_data.TextureSlotIndex++;
+				}
+
+			}
+
+
+			float xpos = Position.x + (float)ch.OffsetLeft * scale;
+			float ypos = Position.y - (float)(ch.Rows - ch.OffsetTop) * scale;
+
+			float w = ch.Width * scale;
+			float h = ch.Rows * scale;
+
+			renderer2d_data.TextVertexBufferBack->Position = { xpos, ypos, 0.0f };
+			renderer2d_data.TextVertexBufferBack->Color = color;
+			renderer2d_data.TextVertexBufferBack->TexCoord = {0.0f, 1.0f};
+			renderer2d_data.TextVertexBufferBack->TexIndex = texture_index;
+			renderer2d_data.TextVertexBufferBack++;
+
+			renderer2d_data.TextVertexBufferBack->Position = { xpos + w, ypos, 0.0f };
+			renderer2d_data.TextVertexBufferBack->Color = color;
+			renderer2d_data.TextVertexBufferBack->TexCoord = {1.0f, 1.0f};
+			renderer2d_data.TextVertexBufferBack->TexIndex = texture_index;
+			renderer2d_data.TextVertexBufferBack++;
+
+			renderer2d_data.TextVertexBufferBack->Position = { xpos + w, ypos + h, 0.0f };
+			renderer2d_data.TextVertexBufferBack->Color = color;
+			renderer2d_data.TextVertexBufferBack->TexCoord = {1.0f, 0.0f};
+			renderer2d_data.TextVertexBufferBack->TexIndex = texture_index;
+			renderer2d_data.TextVertexBufferBack++;
+
+			renderer2d_data.TextVertexBufferBack->Position = { xpos, ypos + h, 0.0f };
+			renderer2d_data.TextVertexBufferBack->Color = color;
+			renderer2d_data.TextVertexBufferBack->TexCoord = {0.0f, 0.0f};
+			renderer2d_data.TextVertexBufferBack->TexIndex = texture_index;
+			renderer2d_data.TextVertexBufferBack++;
+
+			renderer2d_data.TextIndexCount += 6;
+
+			Position.x += (ch.AdvanceX >> 6) * scale;
+
+		}
+	}
+
+	void IRenderer2D::DrawWString(const std::wstring& wstring, const glm::vec4& color, const glm::vec2& position, float scale)
+	{
+		glm::vec2 Position = position;
+
+		for (auto c = wstring.begin(); c != wstring.end(); ++c)
+		{
+			auto ch = UI::IDrawString::LoadWChar(*c);
+
+			if (renderer2d_data.TextIndexCount >= INVENT_MAX_INDEX_RENDER_ONCE)
+				NextARender();
+
+			auto texture = ITexture2DManagement::Instance().CreateTexture(std::string("Char_") + std::string(reinterpret_cast<const char*>(&(*c)), sizeof(wchar_t)), ch);
+			float texture_index = .0f;
+
+			if (texture)
+			{
+				if (texture->IsValid)
+				{
+					for (unsigned int i = 1; i < renderer2d_data.TextureSlotIndex; ++i)
+					{
+						if (renderer2d_data.TextureArray[i] == texture)
+							texture_index = (float)i; break;
+					}
+				}
+			}
+
+			if (texture && texture_index == .0f)
+			{
+				if (texture->IsValid)
+				{
+					if (renderer2d_data.TextureSlotIndex >= INVENT_MAX_TEXTURE_RENDER_ONCE - 1)
+						NextARender();
+
+					texture_index = (float)renderer2d_data.TextureSlotIndex;
+					renderer2d_data.TextureArray[renderer2d_data.TextureSlotIndex] = texture;
+					renderer2d_data.TextureSlotIndex++;
+				}
+
+			}
+
+
+			float xpos = Position.x + (float)ch.OffsetLeft * scale;
+			float ypos = Position.y - (float)(ch.Rows - ch.OffsetTop) * scale;
+
+			float w = ch.Width * scale;
+			float h = ch.Rows * scale;
+
+			renderer2d_data.TextVertexBufferBack->Position = { xpos, ypos, 0.0f };
+			renderer2d_data.TextVertexBufferBack->Color = color;
+			renderer2d_data.TextVertexBufferBack->TexCoord = { 0.0f, 1.0f };
+			renderer2d_data.TextVertexBufferBack->TexIndex = texture_index;
+			renderer2d_data.TextVertexBufferBack++;
+
+			renderer2d_data.TextVertexBufferBack->Position = { xpos + w, ypos, 0.0f };
+			renderer2d_data.TextVertexBufferBack->Color = color;
+			renderer2d_data.TextVertexBufferBack->TexCoord = { 1.0f, 1.0f };
+			renderer2d_data.TextVertexBufferBack->TexIndex = texture_index;
+			renderer2d_data.TextVertexBufferBack++;
+
+			renderer2d_data.TextVertexBufferBack->Position = { xpos + w, ypos + h, 0.0f };
+			renderer2d_data.TextVertexBufferBack->Color = color;
+			renderer2d_data.TextVertexBufferBack->TexCoord = { 1.0f, 0.0f };
+			renderer2d_data.TextVertexBufferBack->TexIndex = texture_index;
+			renderer2d_data.TextVertexBufferBack++;
+
+			renderer2d_data.TextVertexBufferBack->Position = { xpos, ypos + h, 0.0f };
+			renderer2d_data.TextVertexBufferBack->Color = color;
+			renderer2d_data.TextVertexBufferBack->TexCoord = { 0.0f, 0.0f };
+			renderer2d_data.TextVertexBufferBack->TexIndex = texture_index;
+			renderer2d_data.TextVertexBufferBack++;
+
+			renderer2d_data.TextIndexCount += 6;
+
+			Position.x += (ch.AdvanceX >> 6) * scale;
+
+		}
 	}
 
 }

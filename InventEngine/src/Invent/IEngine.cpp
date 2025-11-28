@@ -23,6 +23,16 @@ namespace INVENT
 		return _iwindow;
 	}
 
+	unsigned int IEngine::GetWindowSizeX()
+	{
+		return _iwindow->GetWidth();
+	}
+
+	unsigned int IEngine::GetWindowSizeY()
+	{
+		return _iwindow->GetHeight();
+	}
+
 	float IEngine::GetEngineMilliseconds()
 	{
 		return std::chrono::duration<float, std::milli>(std::chrono::high_resolution_clock::now() - StartTimePoint).count();

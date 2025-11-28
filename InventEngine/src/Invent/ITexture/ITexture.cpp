@@ -80,10 +80,18 @@ namespace INVENT
 
 #endif // USE_OPENGL
 			if (1 != _channels)
+			{
 				stbi_image_free(_tex_data);
+			}
+			else
+			{
+				delete[] _tex_data;
+			}
+			_tex_data = nullptr;
+			IsValid = true;
 		}
-
-		IsValid = true;
+		else
+			INVENT_LOG_WARNING(std::string("texture init error: _tex_data is null ; TEXTURE: ") + this->Name());
 	}
 
 	ITexture2D::ITexture2D()
@@ -142,7 +150,8 @@ namespace INVENT
 		_width = character.Width;
 		_height = character.Rows;
 		_channels = 1;
-		_tex_data = character.Buffer;
+		_tex_data = new unsigned char[(size_t)_width * (size_t)_height];
+		memcpy(_tex_data, character.Buffer, (size_t)_width * (size_t)_height);
 		_charcharacter = character;
 
 		ITexture2DManagement::Instance().GetUninitTextures().push_back(this);
@@ -203,7 +212,7 @@ namespace INVENT
 		return texture;
 	}
 
-	ITexture2D* ITexture2DManagement::CreateTexture(const std::string& name, const CharCharacter& character, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
+	ITexture2D* ITexture2DManagement::CreateTexture(const std::string& name, const CharCharacter character, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
 	{
 		ITexture2D* texture = GetTexture(name);
 		if (texture)
@@ -256,7 +265,7 @@ namespace INVENT
 		return  tex_id;
 	}
 
-	ITexture2DManagement::TextureID ITexture2DManagement::CreateTexture(ITexture2D* texture, const std::string& name, const CharCharacter& character, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
+	ITexture2DManagement::TextureID ITexture2DManagement::CreateTexture(ITexture2D* texture, const std::string& name, const CharCharacter character, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
 	{
 		auto tex = _textrues.find(name);
 		if (tex != _textrues.end())
@@ -312,8 +321,14 @@ namespace INVENT
 		return id;
 	}
 
-	ITexture2DManagement::TextureID ITexture2DManagement::CreateTextureDynamic(const std::string& name, const CharCharacter& character, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
+	ITexture2DManagement::TextureID ITexture2DManagement::CreateTextureDynamic(const std::string& name, const CharCharacter character, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
 	{
+		auto tex = _textrues.find(name);
+		if (tex != _textrues.end())
+		{
+			return (*tex).second.second;
+		}
+
 		size_t id = 0;
 		{
 			std::lock_guard<std::mutex> lock(_mutex);

@@ -27,6 +27,7 @@ namespace INVENT
 		void SetMat4(const std::string& name, const glm::mat4& value) const;
 
 		const std::string& Name() const { return _name; }
+		bool IsVaild() const { return _is_vaild; }
 
 
 	private:
@@ -38,6 +39,8 @@ namespace INVENT
 		std::string _name;
 
 		unsigned int _shader_program;
+
+		bool _is_vaild;
 	};
 
 	class IShaderManagement 

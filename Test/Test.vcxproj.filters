@@ -19,4 +19,7 @@
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Font Include="E:\edgeDownload\popular-fonts-master\华文行楷.ttf" />
+  </ItemGroup>
 </Project>
