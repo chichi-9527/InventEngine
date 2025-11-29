@@ -368,7 +368,7 @@ namespace INVENT
 			if (renderer2d_data.TextIndexCount >= INVENT_MAX_INDEX_RENDER_ONCE)
 				NextARender();
 
-			auto texture = ITexture2DManagement::Instance().CreateTexture(std::string("Char_") + (*c), ch);
+			auto texture = ITexture2DManagement::Instance().CreateTexture(std::string("Char_") + std::string((*c), sizeof(char)), ch);
 			float texture_index = .0f;
 
 			if (texture)
@@ -447,6 +447,162 @@ namespace INVENT
 				NextARender();
 
 			auto texture = ITexture2DManagement::Instance().CreateTexture(std::string("Char_") + std::string(reinterpret_cast<const char*>(&(*c)), sizeof(wchar_t)), ch);
+			float texture_index = .0f;
+
+			if (texture)
+			{
+				if (texture->IsValid)
+				{
+					for (unsigned int i = 1; i < renderer2d_data.TextureSlotIndex; ++i)
+					{
+						if (renderer2d_data.TextureArray[i] == texture)
+							texture_index = (float)i; break;
+					}
+				}
+			}
+
+			if (texture && texture_index == .0f)
+			{
+				if (texture->IsValid)
+				{
+					if (renderer2d_data.TextureSlotIndex >= INVENT_MAX_TEXTURE_RENDER_ONCE - 1)
+						NextARender();
+
+					texture_index = (float)renderer2d_data.TextureSlotIndex;
+					renderer2d_data.TextureArray[renderer2d_data.TextureSlotIndex] = texture;
+					renderer2d_data.TextureSlotIndex++;
+				}
+
+			}
+
+
+			float xpos = Position.x + (float)ch.OffsetLeft * scale;
+			float ypos = Position.y - (float)(ch.Rows - ch.OffsetTop) * scale;
+
+			float w = ch.Width * scale;
+			float h = ch.Rows * scale;
+
+			renderer2d_data.TextVertexBufferBack->Position = { xpos, ypos, 0.0f };
+			renderer2d_data.TextVertexBufferBack->Color = color;
+			renderer2d_data.TextVertexBufferBack->TexCoord = { 0.0f, 1.0f };
+			renderer2d_data.TextVertexBufferBack->TexIndex = texture_index;
+			renderer2d_data.TextVertexBufferBack++;
+
+			renderer2d_data.TextVertexBufferBack->Position = { xpos + w, ypos, 0.0f };
+			renderer2d_data.TextVertexBufferBack->Color = color;
+			renderer2d_data.TextVertexBufferBack->TexCoord = { 1.0f, 1.0f };
+			renderer2d_data.TextVertexBufferBack->TexIndex = texture_index;
+			renderer2d_data.TextVertexBufferBack++;
+
+			renderer2d_data.TextVertexBufferBack->Position = { xpos + w, ypos + h, 0.0f };
+			renderer2d_data.TextVertexBufferBack->Color = color;
+			renderer2d_data.TextVertexBufferBack->TexCoord = { 1.0f, 0.0f };
+			renderer2d_data.TextVertexBufferBack->TexIndex = texture_index;
+			renderer2d_data.TextVertexBufferBack++;
+
+			renderer2d_data.TextVertexBufferBack->Position = { xpos, ypos + h, 0.0f };
+			renderer2d_data.TextVertexBufferBack->Color = color;
+			renderer2d_data.TextVertexBufferBack->TexCoord = { 0.0f, 0.0f };
+			renderer2d_data.TextVertexBufferBack->TexIndex = texture_index;
+			renderer2d_data.TextVertexBufferBack++;
+
+			renderer2d_data.TextIndexCount += 6;
+
+			Position.x += (ch.AdvanceX >> 6) * scale;
+
+		}
+	}
+
+	void IRenderer2D::DrawString(const std::string& string, const glm::vec4& color, const glm::vec2& position, float scale, unsigned int index)
+	{
+		glm::vec2 Position = position;
+
+		for (auto c = string.begin(); c != string.end(); ++c)
+		{
+			auto ch = UI::IDrawString::LoadChar(*c, index);
+
+			if (renderer2d_data.TextIndexCount >= INVENT_MAX_INDEX_RENDER_ONCE)
+				NextARender();
+
+			auto texture = ITexture2DManagement::Instance().CreateTexture(std::string("Char_") + std::string((*c), sizeof(char)) + std::to_string(index), ch);
+			float texture_index = .0f;
+
+			if (texture)
+			{
+				if (texture->IsValid)
+				{
+					for (unsigned int i = 1; i < renderer2d_data.TextureSlotIndex; ++i)
+					{
+						if (renderer2d_data.TextureArray[i] == texture)
+							texture_index = (float)i; break;
+					}
+				}
+			}
+
+			if (texture && texture_index == .0f)
+			{
+				if (texture->IsValid)
+				{
+					if (renderer2d_data.TextureSlotIndex >= INVENT_MAX_TEXTURE_RENDER_ONCE - 1)
+						NextARender();
+
+					texture_index = (float)renderer2d_data.TextureSlotIndex;
+					renderer2d_data.TextureArray[renderer2d_data.TextureSlotIndex] = texture;
+					renderer2d_data.TextureSlotIndex++;
+				}
+
+			}
+
+
+			float xpos = Position.x + (float)ch.OffsetLeft * scale;
+			float ypos = Position.y - (float)(ch.Rows - ch.OffsetTop) * scale;
+
+			float w = ch.Width * scale;
+			float h = ch.Rows * scale;
+
+			renderer2d_data.TextVertexBufferBack->Position = { xpos, ypos, 0.0f };
+			renderer2d_data.TextVertexBufferBack->Color = color;
+			renderer2d_data.TextVertexBufferBack->TexCoord = { 0.0f, 1.0f };
+			renderer2d_data.TextVertexBufferBack->TexIndex = texture_index;
+			renderer2d_data.TextVertexBufferBack++;
+
+			renderer2d_data.TextVertexBufferBack->Position = { xpos + w, ypos, 0.0f };
+			renderer2d_data.TextVertexBufferBack->Color = color;
+			renderer2d_data.TextVertexBufferBack->TexCoord = { 1.0f, 1.0f };
+			renderer2d_data.TextVertexBufferBack->TexIndex = texture_index;
+			renderer2d_data.TextVertexBufferBack++;
+
+			renderer2d_data.TextVertexBufferBack->Position = { xpos + w, ypos + h, 0.0f };
+			renderer2d_data.TextVertexBufferBack->Color = color;
+			renderer2d_data.TextVertexBufferBack->TexCoord = { 1.0f, 0.0f };
+			renderer2d_data.TextVertexBufferBack->TexIndex = texture_index;
+			renderer2d_data.TextVertexBufferBack++;
+
+			renderer2d_data.TextVertexBufferBack->Position = { xpos, ypos + h, 0.0f };
+			renderer2d_data.TextVertexBufferBack->Color = color;
+			renderer2d_data.TextVertexBufferBack->TexCoord = { 0.0f, 0.0f };
+			renderer2d_data.TextVertexBufferBack->TexIndex = texture_index;
+			renderer2d_data.TextVertexBufferBack++;
+
+			renderer2d_data.TextIndexCount += 6;
+
+			Position.x += (ch.AdvanceX >> 6) * scale;
+
+		}
+	}
+
+	void IRenderer2D::DrawWString(const std::wstring & wstring, const glm::vec4 & color, const glm::vec2 & position, float scale, unsigned int index)
+	{
+		glm::vec2 Position = position;
+
+		for (auto c = wstring.begin(); c != wstring.end(); ++c)
+		{
+			auto ch = UI::IDrawString::LoadWChar(*c, index);
+
+			if (renderer2d_data.TextIndexCount >= INVENT_MAX_INDEX_RENDER_ONCE)
+				NextARender();
+
+			auto texture = ITexture2DManagement::Instance().CreateTexture(std::string("Char_") + std::string(reinterpret_cast<const char*>(&(*c)), sizeof(wchar_t)) + std::to_string(index), ch);
 			float texture_index = .0f;
 
 			if (texture)

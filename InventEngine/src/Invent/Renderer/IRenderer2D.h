@@ -21,6 +21,8 @@ namespace INVENT
 		static void DrawSquare(ISquare2dActor* actor);
 		static void DrawString(const std::string& string, const glm::vec4& color, const glm::vec2& position, float scale);
 		static void DrawWString(const std::wstring& wstring, const glm::vec4& color, const glm::vec2& position, float scale);
+		static void DrawString(const std::string& string, const glm::vec4& color, const glm::vec2& position, float scale, unsigned int index);
+		static void DrawWString(const std::wstring& wstring, const glm::vec4& color, const glm::vec2& position, float scale, unsigned int index);
 
 	private:
 		static void StartARender();

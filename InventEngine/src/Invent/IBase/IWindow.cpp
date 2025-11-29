@@ -510,6 +510,7 @@ namespace INVENT
 		IEngine::InstancePtr()->SetIWindow(this);
 
 		UI::IDrawString::Init("./Assets/TTF/huawenxingkai.ttf");
+		UI::IDrawString::Init({ "./Assets/TTF/huawencaiyun.ttf", "./Assets/TTF/huawenfangsong.ttf" });
 
 		_threadpool = new IThreadPool();
 	}
@@ -659,6 +660,8 @@ namespace INVENT
 		IRenderer2D::DrawString("BACADA", { 0.5f, 0.8f, 0.2f, 1.0f }, {25.0f, 570.0f }, 1.0f);*/
 
 		IRenderer2D::DrawWString(L"你好，世界", { 0.5f, 0.8f, 0.2f, 1.0f }, { 25.0f, 25.0f }, 1.0f);
+		IRenderer2D::DrawWString(L"你好，世界", { 0.5f, 0.8f, 0.2f, 1.0f }, { 25.0f, 100.0f }, 1.0f, 0);
+		IRenderer2D::DrawWString(L"你好，世界", { 0.5f, 0.8f, 0.2f, 1.0f }, { 25.0f, 175.0f }, 1.0f, 1);
 
 		IRenderer2D::EndRender();
 
