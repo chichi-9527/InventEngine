@@ -23,9 +23,6 @@ public:
 
 	virtual void Begin() override
 	{
-		INVENT::ISquare2dPawn* pawn = new INVENT::ISquare2dPawn;
-		std::cout << pawn->GetColor().r << "\n";
-
 		std::cout << std::filesystem::current_path() << "\n";
 
 		//auto id = INVENT::ITexture2DManagement::Instance().CreateTexture(nullptr, "./Assets/Textures/test.png");
@@ -41,6 +38,7 @@ public:
 	{
 		
 	}
+
 };
 
 class MyActor : public INVENT::ISquare2dPawn 
@@ -72,11 +70,11 @@ public:
 		//std::cout << "actor position : " << glm::to_string(this->GetWorldPosition()) << "\n";
 	}
 
-	virtual void PRESS_EVENT_KEY_2() override
-	{
-		this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("charX", INVENT::UI::IDrawString::LoadChar('A')));
-		std::cout << "PRESS_EVENT_KEY_2\n";
-	}
+	//virtual void PRESS_EVENT_KEY_2() override
+	//{
+	//	this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("charX", INVENT::UI::IDrawString::LoadChar('A')));
+	//	std::cout << "PRESS_EVENT_KEY_2\n";
+	//}
 
 	virtual void SetWorldRotation(const glm::vec3& rotation) override
 	{
@@ -189,6 +187,15 @@ public:
 
 		//auto actor = this->GetController<MyController>()->Get2DPlayerController<MyActor>(0);
 		//actor->SetScale({ 1.0f,0.1f });
+
+		INVENT::IEngine::InstancePtr()->GetIWindow()->SetFullScreen(true);
+
+		return false;
+	}
+
+	virtual bool PRESS_EVENT_KEY_2() override
+	{
+		INVENT::IEngine::InstancePtr()->GetIWindow()->SetFullScreen(false);
 
 		return false;
 	}

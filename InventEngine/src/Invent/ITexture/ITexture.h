@@ -26,8 +26,52 @@ namespace INVENT
 		bool IsValid() const { return nullptr != Buffer; }
 	};
 
+	class ITextureBase 
+	{
+	public:
+		ITextureBase() : _texture_id(0){}
+		virtual ~ITextureBase();
 
-	class ITexture2D 
+		virtual void Bind() const = 0;
+		virtual void BindUnit(unsigned int slot = 0) const;
+		virtual void InitTextureID() = 0;
+
+	public:
+		std::atomic_bool IsValid = false;
+
+	protected:
+		unsigned int _texture_id;
+	};
+
+
+	class ITextureCubeMap : public ITextureBase
+	{
+	public:
+		~ITextureCubeMap();
+
+		virtual void Bind() const override;
+		virtual void InitTextureID() override;
+
+		const std::string& Name() { return _name; }
+
+	private:
+		ITextureCubeMap(const std::string& name, const std::vector<std::string>& face_pathes);
+
+
+	private:
+		std::string _name;
+
+		unsigned int* _width = nullptr;
+		unsigned int* _height = nullptr;
+		unsigned int* _channels = nullptr;
+
+		unsigned int _face_num = 0;
+
+		unsigned char** _tex_data = nullptr;
+	};
+
+
+	class ITexture2D : public ITextureBase
 	{
 		friend class ITexture2DManagement;
 	public:
@@ -58,8 +102,7 @@ namespace INVENT
 			bool IsZore() const { return (*this) == 0; }
 		};
 
-		void Bind() const;
-		void BindUnit(unsigned int slot = 0) const;
+		virtual void Bind() const override;
 		const std::string& Name() const { return _name; }
 
 		void SetBreakNum(unsigned int w, unsigned int h);
@@ -68,15 +111,12 @@ namespace INVENT
 		const unsigned int& GetBreakWNum() const { return _texture_breakup.width; }
 		const unsigned int& GetBreakHNum() const { return _texture_breakup.height; }
 
-		void InitTextureID();
+		virtual void InitTextureID() override;
 
 	private:
 		ITexture2D();
 		ITexture2D(const std::string& name, const std::string& path, const _UInt2& breakup = _UInt2());
 		ITexture2D(const std::string& name, const CharCharacter& character, const _UInt2& breakup = _UInt2());
-
-	public:
-		std::atomic_bool IsValid = false;
 
 	private:
 		std::string _name;
@@ -89,11 +129,14 @@ namespace INVENT
 		unsigned int _height = 0;
 		unsigned int _channels = 0;
 
-		unsigned int _texture_id = 0;
-
 		unsigned char* _tex_data = nullptr;
 
 	};
+
+	namespace TEXTURE_MANAGEMENT
+	{
+		std::vector<ITextureBase*>& GetUninitTextures();
+	}
 
 	class ITexture2DManagement 
 	{
@@ -132,16 +175,12 @@ namespace INVENT
 
 		static ITexture2D* GetWhiteTexture();
 
-		std::vector<ITexture2D*>& GetUninitTextures() { return _uninit_textrues; }
-
 	private:
 		ITexture2DManagement();
 
 	private:
 		std::unordered_map<std::string, std::pair<ITexture2D*,size_t>> _textrues;
 		std::vector<ITexture2D*> _vector_textrues;
-
-		std::vector<ITexture2D*> _uninit_textrues;
 
 		std::mutex _mutex;
 

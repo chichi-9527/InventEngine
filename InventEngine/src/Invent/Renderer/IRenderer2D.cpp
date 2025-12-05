@@ -357,9 +357,15 @@ namespace INVENT
 
 	}
 
-	void IRenderer2D::DrawString(const std::string& string, const glm::vec4& color, const glm::vec2& position, float scale)
+	void IRenderer2D::DrawString(const std::string& string, const glm::vec4& color, const glm::vec2& position, float px, unsigned int model)
 	{
 		glm::vec2 Position = position;
+		if (model)
+		{
+			Position = { position.x * IEngine::InstancePtr()->GetWindowSizeX(), position.y * IEngine::InstancePtr()->GetWindowSizeY() };
+		}
+		
+		float scale = px / 64.0f;
 
 		for (auto c = string.begin(); c != string.end(); ++c)
 		{
@@ -435,9 +441,15 @@ namespace INVENT
 		}
 	}
 
-	void IRenderer2D::DrawWString(const std::wstring& wstring, const glm::vec4& color, const glm::vec2& position, float scale)
+	void IRenderer2D::DrawWString(const std::wstring& wstring, const glm::vec4& color, const glm::vec2& position, float px, unsigned int model)
 	{
 		glm::vec2 Position = position;
+		if (model)
+		{
+			Position = { position.x * IEngine::InstancePtr()->GetWindowSizeX(), position.y * IEngine::InstancePtr()->GetWindowSizeY() };
+		}
+
+		float scale = px / 64.0f;
 
 		for (auto c = wstring.begin(); c != wstring.end(); ++c)
 		{
@@ -513,9 +525,15 @@ namespace INVENT
 		}
 	}
 
-	void IRenderer2D::DrawString(const std::string& string, const glm::vec4& color, const glm::vec2& position, float scale, unsigned int index)
+	void IRenderer2D::DrawString(const std::string& string, const glm::vec4& color, const glm::vec2& position, float px, unsigned int index, unsigned int model)
 	{
 		glm::vec2 Position = position;
+		if (model)
+		{
+			Position = { position.x * IEngine::InstancePtr()->GetWindowSizeX(), position.y * IEngine::InstancePtr()->GetWindowSizeY() };
+		}
+
+		float scale = px / 64.0f;
 
 		for (auto c = string.begin(); c != string.end(); ++c)
 		{
@@ -591,9 +609,15 @@ namespace INVENT
 		}
 	}
 
-	void IRenderer2D::DrawWString(const std::wstring & wstring, const glm::vec4 & color, const glm::vec2 & position, float scale, unsigned int index)
+	void IRenderer2D::DrawWString(const std::wstring & wstring, const glm::vec4 & color, const glm::vec2 & position, float px, unsigned int index, unsigned int model)
 	{
 		glm::vec2 Position = position;
+		if (model)
+		{
+			Position = { position.x * IEngine::InstancePtr()->GetWindowSizeX(), position.y * IEngine::InstancePtr()->GetWindowSizeY() };
+		}
+
+		float scale = px / 64.0f;
 
 		for (auto c = wstring.begin(); c != wstring.end(); ++c)
 		{
@@ -668,5 +692,17 @@ namespace INVENT
 
 		}
 	}
+
+	void IRenderer2D::DrawString(const std::string& string, const glm::vec4& color, const glm::vec3& position, const glm::vec3& rotation, float px)
+	{}
+
+	void IRenderer2D::DrawWString(const std::wstring & wstring, const glm::vec4 & color, const glm::vec3 & position, const glm::vec3 & rotation, float px)
+	{}
+
+	void IRenderer2D::DrawString(const std::string & string, const glm::vec4 & color, const glm::vec3 & position, const glm::vec3 & rotation, float px, unsigned int index)
+	{}
+
+	void IRenderer2D::DrawWString(const std::wstring & wstring, const glm::vec4 & color, const glm::vec3 & position, const glm::vec3 & rotation, float px, unsigned int index)
+	{}
 
 }

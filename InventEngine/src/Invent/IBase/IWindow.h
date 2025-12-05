@@ -39,6 +39,9 @@ namespace INVENT
 
 		void Close() const;
 
+		bool IsFullScreen();
+		void SetFullScreen(bool fullscreen);
+
 		void SetLevel(IBaseLevel* level);
 
 		std::queue<std::function<void()>>& GetMainThreadInitQueue() { return _main_thread_init_queue; }
@@ -69,10 +72,15 @@ namespace INVENT
 		std::string Title;
 
 		GLFWwindow* Window;
+		GLFWmonitor* Monitor;
 	private:
 		std::shared_ptr<IBaseGameInstance> _game_instance_ptr;
 
 		std::queue<std::function<void()>> _main_thread_init_queue;
+
+		// 0,1: old position
+		// 2,3: old size
+		int _pos_size[4] = { 20,20,800,600 };
 
 		IThreadPool* _threadpool;
 

@@ -500,6 +500,7 @@ namespace INVENT
 		, Height(height)
 		, Title(title)
 		, Window(nullptr)
+		, Monitor(nullptr)
 		, Level(nullptr)
 		, delta_time(0.0f)
 	{
@@ -509,7 +510,7 @@ namespace INVENT
 
 		IEngine::InstancePtr()->SetIWindow(this);
 
-		UI::IDrawString::Init("./Assets/TTF/huawenxingkai.ttf");
+		UI::IDrawString::Init("./Assets/TTF/VictorMono-Bold-2.otf");
 		UI::IDrawString::Init({ "./Assets/TTF/huawencaiyun.ttf", "./Assets/TTF/huawenfangsong.ttf" });
 
 		_threadpool = new IThreadPool();
@@ -553,12 +554,12 @@ namespace INVENT
 			last_frame = current_frame;
 
 			// init textures
-			for (auto iter = ITexture2DManagement::Instance().GetUninitTextures().begin(); iter != ITexture2DManagement::Instance().GetUninitTextures().end(); )
+			for (auto iter = TEXTURE_MANAGEMENT::GetUninitTextures().begin(); iter != TEXTURE_MANAGEMENT::GetUninitTextures().end(); )
 			{
 				(*iter)->InitTextureID();
 				if ((*iter)->IsValid)
 				{
-					iter = ITexture2DManagement::Instance().GetUninitTextures().erase(iter);
+					iter = TEXTURE_MANAGEMENT::GetUninitTextures().erase(iter);
 					continue;
 				}
 				++iter;
@@ -618,6 +619,28 @@ namespace INVENT
 		glfwSetWindowShouldClose(Window, true);
 	}
 
+	bool IWindow::IsFullScreen()
+	{
+		return glfwGetWindowMonitor(Window) != nullptr;
+	}
+
+	void IWindow::SetFullScreen(bool fullscreen)
+	{
+		if (IsFullScreen() == fullscreen) return;
+		if (fullscreen)
+		{
+			glfwGetWindowPos(Window, &_pos_size[0], &_pos_size[1]);
+			glfwGetWindowSize(Window, &_pos_size[2], &_pos_size[3]);
+			auto mode = glfwGetVideoMode(Monitor);
+			glfwSetWindowMonitor(Window, Monitor, 0, 0, mode->width, mode->height, 0);
+		}
+		else
+		{
+			glfwSetWindowMonitor(Window, nullptr, _pos_size[0], _pos_size[1], _pos_size[2], _pos_size[3], 0);
+		}
+
+	}
+
 	void IWindow::SetLevel(IBaseLevel* level)
 	{
 		if (level)
@@ -659,9 +682,10 @@ namespace INVENT
 		IRenderer2D::DrawString("(C) LearnOpenGL.com", { 0.5f, 0.8f, 0.2f, 1.0f }, {540.0f, 570.0f }, 1.0f);
 		IRenderer2D::DrawString("BACADA", { 0.5f, 0.8f, 0.2f, 1.0f }, {25.0f, 570.0f }, 1.0f);*/
 
-		IRenderer2D::DrawWString(L"你好，世界", { 0.5f, 0.8f, 0.2f, 1.0f }, { 25.0f, 25.0f }, 1.0f);
-		IRenderer2D::DrawWString(L"你好，世界", { 0.5f, 0.8f, 0.2f, 1.0f }, { 25.0f, 100.0f }, 1.0f, 0);
-		IRenderer2D::DrawWString(L"你好，世界", { 0.5f, 0.8f, 0.2f, 1.0f }, { 25.0f, 175.0f }, 1.0f, 1);
+		IRenderer2D::DrawString("abcdefghijklmnopqrstuvwxyz", { 0.5f, 0.8f, 0.2f, 1.0f }, { 25.0f, 25.0f }, 32.0f, 0);
+		IRenderer2D::DrawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", { 0.5f, 0.8f, 0.2f, 1.0f }, { 25.0f, 225.0f }, 32.0f, 0);
+		IRenderer2D::DrawWString(L"你好，世界", { 0.5f, 0.8f, 0.2f, 1.0f }, { 25.0f, 100.0f }, 32.0f, 0, 0);
+		IRenderer2D::DrawWString(L"你好，世界", { 0.5f, 0.8f, 0.2f, 1.0f }, {0.8f, 0.8f }, 32.0f, 1, 1);
 
 		IRenderer2D::EndRender();
 
@@ -681,6 +705,24 @@ namespace INVENT
 			if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 			{
 				glViewport(0, 0, Width, Height);
+
+				GLint max_combined;       // 总可用纹理单元数
+				GLint max_fragment;       // 片段着色器可用数
+				GLint max_vertex;         // 顶点着色器可用数
+				GLint max_geometry;       // 几何着色器可用数
+				GLint max_compute;        // 计算着色器可用数
+
+				glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_combined);
+				glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_fragment);
+				glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &max_vertex);
+				glGetIntegerv(GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS, &max_geometry);
+				glGetIntegerv(GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS, &max_compute);
+
+				INVENT_LOG_INFO(std::string("总可用纹理单元数: ") + std::to_string(max_combined));
+				INVENT_LOG_INFO(std::string("片段着色器可用数: ") + std::to_string(max_fragment));
+				INVENT_LOG_INFO(std::string("顶点着色器可用数: ") + std::to_string(max_vertex));
+				INVENT_LOG_INFO(std::string("几何着色器可用数: ") + std::to_string(max_geometry));
+				INVENT_LOG_INFO(std::string("计算着色器可用数: ") + std::to_string(max_compute));
 			}
 			else
 				INVENT_LOG_ERROR("Failed to initialize GLAD");
@@ -691,12 +733,12 @@ namespace INVENT
 			glfwSetMouseButtonCallback(Window, mouse_button_callback);
 			glfwSetScrollCallback(Window, scroll_callback);
 			glfwSetCursorEnterCallback(Window, cursor_enter_callback);
-			return;
+
+			Monitor = glfwGetPrimaryMonitor();
 		}
 		else
 		{
 			INVENT_LOG_ERROR("Failed to create GLFW window");
-			return;
 		}
 	}
 

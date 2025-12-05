@@ -9,25 +9,28 @@
 
 namespace INVENT
 {
-	ITexture2D::~ITexture2D()
+	ITextureBase::~ITextureBase()
 	{
 #ifdef USE_OPENGL
 		glDeleteTextures(1, &_texture_id);
 #endif // USE_OPENGL
+	}
 
+	void ITextureBase::BindUnit(unsigned int slot) const
+	{
+#ifdef USE_OPENGL
+		glBindTextureUnit(slot, _texture_id);
+#endif // USE_OPENGL
+	}
+
+	ITexture2D::~ITexture2D()
+	{
 	}
 
 	void ITexture2D::Bind() const
 	{
 #ifdef USE_OPENGL
 		glBindTexture(GL_TEXTURE_2D, _texture_id);
-#endif // USE_OPENGL
-	}
-
-	void ITexture2D::BindUnit(unsigned int slot) const
-	{
-#ifdef USE_OPENGL
-		glBindTextureUnit(slot, _texture_id);
 #endif // USE_OPENGL
 	}
 
@@ -95,7 +98,8 @@ namespace INVENT
 	}
 
 	ITexture2D::ITexture2D()
-		: _width(1)
+		: ITextureBase()
+		, _width(1)
 		, _height(1)
 	{
 		_texture_breakup.is_valid = false;
@@ -121,6 +125,7 @@ namespace INVENT
 	}
 
 	ITexture2D::ITexture2D(const std::string& name, const std::string& path, const _UInt2& breakup)
+		: ITextureBase()
 	{
 		_name = name;
 		_texture_breakup = breakup;
@@ -136,11 +141,12 @@ namespace INVENT
 		_height = height;
 		_channels = channels;
 
-		ITexture2DManagement::Instance().GetUninitTextures().push_back(this);
+		TEXTURE_MANAGEMENT::GetUninitTextures().push_back((ITextureBase*)this);
 		
 	}
 
 	ITexture2D::ITexture2D(const std::string& name, const CharCharacter& character, const _UInt2& breakup)
+		: ITextureBase()
 	{
 		_name = name;
 		_texture_breakup = breakup;
@@ -154,7 +160,7 @@ namespace INVENT
 		memcpy(_tex_data, character.Buffer, (size_t)_width * (size_t)_height);
 		_charcharacter = character;
 
-		ITexture2DManagement::Instance().GetUninitTextures().push_back(this);
+		TEXTURE_MANAGEMENT::GetUninitTextures().push_back((ITextureBase*)this);
 	}
 
 	/// <summary>
@@ -375,4 +381,70 @@ namespace INVENT
 	{
 		_vector_textrues.push_back(nullptr);
 	}
+
+	/// <summary>
+	/// ////////////  ITextureCubeMap  ////////////////////////////////////////////
+	/// </summary>
+	
+	ITextureCubeMap::~ITextureCubeMap()
+	{}
+
+	ITextureCubeMap::ITextureCubeMap(const std::string& name, const std::vector<std::string>& face_pathes)
+		: ITextureBase()
+	{
+		_name = name;
+
+		auto size = face_pathes.size();
+		_face_num = (unsigned int)size;
+
+		_width = new unsigned int[size];
+		_height = new unsigned int[size];
+		_channels = new unsigned int[size];
+		_tex_data = new unsigned char* [size];
+
+		for (unsigned int i = 0; i < _face_num; ++i)
+		{
+			int width = 0, height = 0, channels = 0;
+			_tex_data[i] = stbi_load(face_pathes[i].c_str(), &width, &height, &channels, 0);
+			_width[i] = (unsigned int)width;
+			_height[i] = (unsigned int)height;
+			_channels[i] = (unsigned int)channels;
+		}
+	}
+
+	void ITextureCubeMap::Bind() const
+	{
+#ifdef USE_OPENGL
+		glBindTexture(GL_TEXTURE_CUBE_MAP, _texture_id);
+#endif // USE_OPENGL
+	}
+
+	void ITextureCubeMap::InitTextureID()
+	{
+#ifdef USE_OPENGL
+		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &_texture_id);
+
+		if (_face_num)
+		{
+			for (unsigned int i = 0; i < _face_num; ++i)
+			{
+				if (4 == _channels[i])
+				{
+
+				}
+			}
+		}
+
+#endif // USE_OPENGL
+	}
+
+
+	static std::vector<ITextureBase*> UninitTextrues;
+
+	std::vector<ITextureBase*>& TEXTURE_MANAGEMENT::GetUninitTextures()
+	{
+		return UninitTextrues;
+	}
+
+
 }
