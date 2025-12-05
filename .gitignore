@@ -364,3 +364,4 @@ FodyWeavers.xsd
 /boost1_87_0
 *.tlog
 
+/bin/x64-Release/Test/Assets
