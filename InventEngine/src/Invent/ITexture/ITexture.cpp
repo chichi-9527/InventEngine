@@ -395,21 +395,35 @@ namespace INVENT
 		_name = name;
 
 		auto size = face_pathes.size();
+		if (0 == size)return;
 		_face_num = (unsigned int)size;
 
-		_width = new unsigned int[size];
-		_height = new unsigned int[size];
-		_channels = new unsigned int[size];
 		_tex_data = new unsigned char* [size];
 
-		for (unsigned int i = 0; i < _face_num; ++i)
+		int width = 0, height = 0, channels = 0;
+		_tex_data[0] = stbi_load(face_pathes[0].c_str(), &width, &height, &channels, 0);
+		_width = (unsigned int)width;
+		_height = (unsigned int)height;
+		_channels = (unsigned int)channels;
+		if (_width != _height)
+		{
+			INVENT_LOG_WARNING(std::string("TEXTURE_CUBEMAP: _width != _height: ") + _name);
+		}
+
+		for (unsigned int i = 1; i < _face_num; ++i)
 		{
 			int width = 0, height = 0, channels = 0;
 			_tex_data[i] = stbi_load(face_pathes[i].c_str(), &width, &height, &channels, 0);
-			_width[i] = (unsigned int)width;
-			_height[i] = (unsigned int)height;
-			_channels[i] = (unsigned int)channels;
+			if (_width != width || _height != height || _channels != channels)
+			{
+				INVENT_LOG_ERROR(std::string("TEXTURE_CUBEMAP: _width != width || _height != height || _channels != channels: ") + _name);
+				return;
+			}
+			
 		}
+
+		TEXTURE_MANAGEMENT::GetUninitTextures().push_back((ITextureBase*)this);
+
 	}
 
 	void ITextureCubeMap::Bind() const
@@ -426,16 +440,41 @@ namespace INVENT
 
 		if (_face_num)
 		{
-			for (unsigned int i = 0; i < _face_num; ++i)
-			{
-				if (4 == _channels[i])
-				{
 
+			if (4 == _channels)
+			{
+				glTextureStorage2D(_texture_id, 1, GL_RGBA8, _width, _height);
+				glTextureParameteri(_texture_id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTextureParameteri(_texture_id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+				glTextureParameteri(_texture_id, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+				for (unsigned int i = 0; i < _face_num; ++i)
+				{
+					glTextureSubImage3D(_texture_id, 0, 0, 0, i, _width, _height, 1, GL_RGBA, GL_UNSIGNED_BYTE, _tex_data[i]);
 				}
+				
+			}
+			else if(3 == _channels)
+			{
+				glTextureStorage2D(_texture_id, 1, GL_RGB8, _width, _height);
+				glTextureParameteri(_texture_id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTextureParameteri(_texture_id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+				glTextureParameteri(_texture_id, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+				for (unsigned int i = 0; i < _face_num; ++i)
+				{
+					glTextureSubImage3D(_texture_id, 0, 0, 0, i, _width, _height, 1, GL_RGB, GL_UNSIGNED_BYTE, _tex_data[i]);
+				}
+			}
+			else
+			{
+				INVENT_LOG_ERROR(std::string("TEXTURE_CUBEMAP: channels not 3 and not 4: ") + _name);
+				return;
 			}
 		}
 
 #endif // USE_OPENGL
+
+		IsValid = true;
+
 	}
 
 
@@ -446,5 +485,18 @@ namespace INVENT
 		return UninitTextrues;
 	}
 
+	/// <summary>
+	/// ////////////  ITextureManagement  ////////////////////////////////////////////
+	/// </summary>
+
+	ITextureManagement::~ITextureManagement()
+	{
+		
+	}
+
+	ITextureManagement::ITextureManagement()
+	{
+
+	}
 
 }

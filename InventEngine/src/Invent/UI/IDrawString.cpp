@@ -112,7 +112,7 @@ namespace INVENT
 
 			if (library_num)
 			{
-				for (int i = 0; i < library_num; ++i)
+				for (unsigned int i = 0; i < library_num; ++i)
 				{
 					FT_Done_Face(faces[i]);
 					FT_Done_FreeType(libraries[i]);

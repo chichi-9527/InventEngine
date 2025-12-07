@@ -32,6 +32,12 @@ namespace INVENT
 		ITextureBase() : _texture_id(0){}
 		virtual ~ITextureBase();
 
+		enum class TextureType : unsigned int 
+		{
+			TEXTURE_2D,
+			TEXTURE_CUBE_MAP
+		};
+
 		virtual void Bind() const = 0;
 		virtual void BindUnit(unsigned int slot = 0) const;
 		virtual void InitTextureID() = 0;
@@ -61,9 +67,9 @@ namespace INVENT
 	private:
 		std::string _name;
 
-		unsigned int* _width = nullptr;
-		unsigned int* _height = nullptr;
-		unsigned int* _channels = nullptr;
+		unsigned int _width = 0;
+		unsigned int _height = 0;
+		unsigned int _channels = 0;
 
 		unsigned int _face_num = 0;
 
@@ -185,6 +191,23 @@ namespace INVENT
 		std::mutex _mutex;
 
 	};
+
+	class ITextureManagement
+	{
+	public:
+		~ITextureManagement();
+
+	private:
+		ITextureManagement();
+
+	private:
+		std::unordered_map<std::string, std::pair<ITextureCubeMap*, size_t>> _map_textrues_cube_map;
+		std::vector<ITexture2D*> _vector_textrues_cube_map;
+		std::mutex _mutex_cub_map;
+
+
+	};
+
 }
 
 #endif // !_IITEXTURE_
