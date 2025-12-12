@@ -542,7 +542,7 @@ namespace INVENT
 			if (renderer2d_data.TextIndexCount >= INVENT_MAX_INDEX_RENDER_ONCE)
 				NextARender();
 
-			auto texture = ITexture2DManagement::Instance().CreateTexture(std::string("Char_") + std::string((*c), sizeof(char)) + std::to_string(index), ch);
+			auto texture = ITexture2DManagement::Instance().CreateTexture(std::string("Char_") + std::string(&(*c), sizeof(char)) + std::to_string(index), ch);
 			float texture_index = .0f;
 
 			if (texture)
