@@ -29,11 +29,15 @@ namespace INVENT
 	class ITextureBase 
 	{
 	public:
-		ITextureBase() : _texture_id(0){}
+		ITextureBase()
+			: _texture_id(0)
+			, _type(TextureType::TEXTURE_NONE)
+		{}
 		virtual ~ITextureBase();
 
 		enum class TextureType : unsigned int 
 		{
+			TEXTURE_NONE,
 			TEXTURE_2D,
 			TEXTURE_CUBE_MAP
 		};
@@ -42,11 +46,15 @@ namespace INVENT
 		virtual void BindUnit(unsigned int slot = 0) const;
 		virtual void InitTextureID() = 0;
 
+		const TextureType& Type()const { return _type; }
+
 	public:
 		std::atomic_bool IsValid = false;
 
 	protected:
 		unsigned int _texture_id;
+
+		TextureType _type;
 	};
 
 
@@ -167,16 +175,11 @@ namespace INVENT
 		ITexture2D* CreateWhiteTexture();
 
 		ITexture2D* GetTexture(const std::string& name);
-		ITexture2D* GetTexture(TextureID id)
-		{
-			return (*this)[id];
-		}
+		ITexture2D* GetTexture(TextureID id);
 
 		ITexture2D* operator[](TextureID id)
 		{
-			if (_vector_textrues.size() > id)
-				return _vector_textrues[id];
-			return nullptr;
+			return GetTexture(id);
 		}
 
 		static ITexture2D* GetWhiteTexture();
@@ -185,10 +188,6 @@ namespace INVENT
 		ITexture2DManagement();
 
 	private:
-		std::unordered_map<std::string, std::pair<ITexture2D*,size_t>> _textrues;
-		std::vector<ITexture2D*> _vector_textrues;
-
-		std::mutex _mutex;
 
 	};
 
@@ -196,15 +195,14 @@ namespace INVENT
 	{
 	public:
 		~ITextureManagement();
+		typedef size_t TextureID;
+
+		static ITextureManagement& Instance();
 
 	private:
 		ITextureManagement();
 
 	private:
-		std::unordered_map<std::string, std::pair<ITextureCubeMap*, size_t>> _map_textrues_cube_map;
-		std::vector<ITexture2D*> _vector_textrues_cube_map;
-		std::mutex _mutex_cub_map;
-
 
 	};
 

@@ -9,6 +9,12 @@
 
 namespace INVENT
 {
+
+	static std::unordered_map<std::string, std::pair<ITextureBase*, size_t>> _textrues;
+	static std::vector<ITextureBase*> _vector_textrues;
+	static std::mutex _mutex;
+
+
 	ITextureBase::~ITextureBase()
 	{
 #ifdef USE_OPENGL
@@ -120,7 +126,8 @@ namespace INVENT
 
 		glTextureSubImage2D(_texture_id, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, (void*)&_color_white);
 #endif // USE_OPENGL
-
+		
+		_type = ITextureBase::TextureType::TEXTURE_2D;
 		IsValid = true;
 	}
 
@@ -142,7 +149,7 @@ namespace INVENT
 		_channels = channels;
 
 		TEXTURE_MANAGEMENT::GetUninitTextures().push_back((ITextureBase*)this);
-		
+		_type = ITextureBase::TextureType::TEXTURE_2D;
 	}
 
 	ITexture2D::ITexture2D(const std::string& name, const CharCharacter& character, const _UInt2& breakup)
@@ -161,6 +168,7 @@ namespace INVENT
 		_charcharacter = character;
 
 		TEXTURE_MANAGEMENT::GetUninitTextures().push_back((ITextureBase*)this);
+		_type = ITextureBase::TextureType::TEXTURE_2D;
 	}
 
 	/// <summary>
@@ -177,7 +185,7 @@ namespace INVENT
 				kv.second.first = nullptr;
 			}
 		}
-
+		_textrues.clear();
 		_vector_textrues.clear();
 	}
 
@@ -254,7 +262,13 @@ namespace INVENT
 		auto tex = _textrues.find(name);
 		if (tex != _textrues.end())
 		{
-			texture = (*tex).second.first;
+			auto t = (*tex).second.first;
+			if (t->Type() != ITextureBase::TextureType::TEXTURE_2D)
+			{
+				INVENT_LOG_ERROR(std::string("Create texture name already exists, but the name is not 2D texture: ") + name);
+				return 0;
+			}
+			texture = static_cast<ITexture2D*>(t);
 			return (*tex).second.second;
 		}
 
@@ -276,7 +290,13 @@ namespace INVENT
 		auto tex = _textrues.find(name);
 		if (tex != _textrues.end())
 		{
-			texture = (*tex).second.first;
+			auto t = (*tex).second.first;
+			if (t->Type() != ITextureBase::TextureType::TEXTURE_2D)
+			{
+				INVENT_LOG_ERROR(std::string("Create texture name already exists, but the name is not 2D texture: ") + name);
+				return 0;
+			}
+			texture = static_cast<ITexture2D*>(t);
 			return (*tex).second.second;
 		}
 
@@ -320,7 +340,7 @@ namespace INVENT
 		IEngine::InstancePtr()->GetIWindow()->GetThreadPool()->Submit(0, [this, tex_break_width_num, tex_break_height_num, id](const std::string& Name, const std::string& Path) {
 			auto texture = new ITexture2D(Name, Path, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
 			std::lock_guard<std::mutex> lock(_mutex);
-			this->_vector_textrues[id] = texture;
+			_vector_textrues[id] = (ITextureBase*)texture;
 			_textrues[Name] = { texture, id };
 			}, name, path);
 
@@ -345,7 +365,7 @@ namespace INVENT
 		IEngine::InstancePtr()->GetIWindow()->GetThreadPool()->Submit(0, [this, tex_break_width_num, tex_break_height_num, id](const std::string& Name, const CharCharacter& Path) {
 			auto texture = new ITexture2D(Name, Path, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
 			std::lock_guard<std::mutex> lock(_mutex);
-			this->_vector_textrues[id] = texture;
+			_vector_textrues[id] = (ITextureBase*)texture;
 			_textrues[Name] = { texture, id };
 			}, name, character);
 
@@ -367,7 +387,24 @@ namespace INVENT
 	ITexture2D* ITexture2DManagement::GetTexture(const std::string& name)
 	{
 		if (_textrues.find(name) != _textrues.end())
-			return _textrues[name].first;
+		{
+			if (_textrues[name].first->Type() == ITextureBase::TextureType::TEXTURE_2D)
+				return (ITexture2D*)_textrues[name].first;
+			INVENT_LOG_WARNING(std::string("Find texture name ok, but the name is not 2D texture: ") + name);
+		}
+		
+		return nullptr;
+	}
+
+	ITexture2D* ITexture2DManagement::GetTexture(TextureID id)
+	{
+		if (id && id < _vector_textrues.size())
+		{
+			auto texture = _vector_textrues[id];
+			if (texture->Type() == ITextureBase::TextureType::TEXTURE_2D)
+				return (ITexture2D*)texture;
+			INVENT_LOG_WARNING(std::string("Find texture id ok, but the name is not 2D texture: ") + std::to_string(id));
+		}
 		return nullptr;
 	}
 
@@ -379,7 +416,8 @@ namespace INVENT
 
 	ITexture2DManagement::ITexture2DManagement()
 	{
-		_vector_textrues.push_back(nullptr);
+		if (_vector_textrues.empty())
+			_vector_textrues.push_back(nullptr);
 	}
 
 	/// <summary>
@@ -423,7 +461,7 @@ namespace INVENT
 		}
 
 		TEXTURE_MANAGEMENT::GetUninitTextures().push_back((ITextureBase*)this);
-
+		_type = ITextureBase::TextureType::TEXTURE_CUBE_MAP;
 	}
 
 	void ITextureCubeMap::Bind() const
@@ -496,7 +534,14 @@ namespace INVENT
 
 	ITextureManagement::ITextureManagement()
 	{
+		if (_vector_textrues.empty())
+			_vector_textrues.push_back(nullptr);
+	}
 
+	ITextureManagement& ITextureManagement::Instance()
+	{
+		static ITextureManagement m;
+		return m;
 	}
 
 }
