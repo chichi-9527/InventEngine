@@ -12,6 +12,27 @@ namespace INVENT
 		IObject();
 		virtual ~IObject();
 
+		virtual void SetParent(IObject* parent);
+		virtual IObject* GetParent() const { return _parent; }
+
+		virtual void AddChild(IObject* child);
+		virtual void AddChildren(const std::vector<IObject*>& children);
+		virtual void EraseChild(IObject* child);
+		virtual const std::vector<IObject*>& GetChildren() const { return _children; }		
+
+		virtual void SetWorldPosition(const glm::vec3& position) override;
+		//virtual const glm::vec3& GetWorldPosition() override;
+
+		virtual void SetRelativePosition(const glm::vec3& position);
+		virtual const glm::vec3& GetRelativePosition();
+
+		virtual void UpdateWorldPositionAboutParent();
+		virtual void UpdateRelativePositionAboutParent();
+
+	private:
+		std::vector<IObject*> _children;
+
+		IObject* _parent;
 
 	};
 }

@@ -156,7 +156,9 @@ public:
 		auto act = this->CreateActor<MyActor>();
 		auto act2 = this->CreateActor<MyActor>();
 		act->SetWorldPosition({ 0.0f,2.0f,0.0f });
-		act2->SetWorldRotation({ 0.0f,0.0f,45.0f });
+		//act2->SetWorldRotation({ 0.0f,0.0f,45.0f });
+
+		//act->AddChild(act2);
 
 		auto tilemap = this->CreateActor<MyTileMap>();
 
@@ -188,14 +190,14 @@ public:
 		//auto actor = this->GetController<MyController>()->Get2DPlayerController<MyActor>(0);
 		//actor->SetScale({ 1.0f,0.1f });
 
-		INVENT::IEngine::InstancePtr()->GetIWindow()->SetFullScreen(true);
+		//INVENT::IEngine::InstancePtr()->GetIWindow()->SetFullScreen(true);
 
 		return false;
 	}
 
 	virtual bool PRESS_EVENT_KEY_2() override
 	{
-		INVENT::IEngine::InstancePtr()->GetIWindow()->SetFullScreen(false);
+		//INVENT::IEngine::InstancePtr()->GetIWindow()->SetFullScreen(false);
 
 		return false;
 	}
