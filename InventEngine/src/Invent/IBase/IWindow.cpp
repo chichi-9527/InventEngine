@@ -5,6 +5,7 @@
 #include "Renderer/IRenderer2D.h"
 
 #include "IPhysicsCollision//ICollisionPresets.h"
+#include "2D/2DComponent/Invent2DAnimationComponent.h"
 
 #include "IEngine.h"
 
@@ -536,6 +537,7 @@ namespace INVENT
 		ICollisionPresets::Init();
 		IRenderer::Init();
 		IUIImgui::Init(Window);
+		AnimationManagement::Start();
 		
 		_game_instance_ptr->Begin();
 
@@ -604,6 +606,8 @@ namespace INVENT
 		}
 
 		_game_instance_ptr->End();
+
+		AnimationManagement::Shutdown();
 		IUIImgui::End();
 		
 		IRenderer::Shutdown();

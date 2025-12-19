@@ -41,6 +41,47 @@ public:
 
 };
 
+class MyAnimationActor : public INVENT::ISquare2dPawn
+{
+public:
+	MyAnimationActor()
+		: INVENT::ISquare2dPawn()
+	{
+
+		auto& comp = this->AddComponent<INVENT::AnimationComponent>(this);
+
+		comp.AnimationSequences = 
+		{ 
+
+			INVENT::AnimationComponent::AnimationSequence(
+				{
+					INVENT::AnimationComponent::SpriteTextureColorInit({1.0f,0.0f,0.0f,1.0f}),
+					INVENT::AnimationComponent::SpriteTextureColorInit({0.0f,1.0f,0.0f,1.0f}),
+					INVENT::AnimationComponent::SpriteTextureColorInit({0.0f,0.0f,1.0f,1.0f})
+
+				}, 2.0f)
+
+		};
+
+		comp.Start();
+
+
+	}
+
+
+
+	virtual ~MyAnimationActor()
+	{
+		this->GetComponent< INVENT::AnimationComponent>()->Shutdown();
+		this->RemoveComponent< INVENT::AnimationComponent>();
+	}
+
+private:
+
+
+};
+
+
 class MyActor : public INVENT::ISquare2dPawn 
 {
 public:
@@ -159,6 +200,9 @@ public:
 		//act2->SetWorldRotation({ 0.0f,0.0f,45.0f });
 
 		//act->AddChild(act2);
+
+		auto act3 = this->CreateActor<MyAnimationActor>();
+		act3->SetWorldPosition({ 1.0f,-3.0f,1.0f });
 
 		auto tilemap = this->CreateActor<MyTileMap>();
 

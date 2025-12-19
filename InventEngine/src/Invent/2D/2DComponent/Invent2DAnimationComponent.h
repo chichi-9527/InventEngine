@@ -44,6 +44,12 @@ namespace INVENT
 			std::vector<SpriteTextureColorInit> SpriteTextureColorInits;
 			float FrameRate = 0.0f;
 
+			AnimationSequence(){}
+			AnimationSequence(const std::vector<SpriteTextureColorInit>& spriteInits, float rate)
+				: SpriteTextureColorInits(spriteInits)
+				, FrameRate(rate)
+			{}
+
 		};
 
 		AnimationComponent() = default;

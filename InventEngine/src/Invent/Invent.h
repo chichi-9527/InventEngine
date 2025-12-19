@@ -16,6 +16,7 @@
 #include "3D/IObject.h"
 
 #include "2D/ISquare2dPawn.h"
+#include "2D/2DComponent/Invent2DAnimationComponent.h"
 
 #include "IPhysicsCollision/ICollisionDetection.h"
 

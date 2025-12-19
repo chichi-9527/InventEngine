@@ -101,7 +101,9 @@ namespace INVENT
 				: width(w)
 				, height(h)
 				, is_valid(valid)
-			{}
+			{
+				if (IsZore()) is_valid = false;
+			}
 
 			bool operator==(unsigned int value) const
 			{

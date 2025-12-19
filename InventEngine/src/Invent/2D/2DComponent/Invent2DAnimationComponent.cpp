@@ -100,13 +100,15 @@ namespace INVENT
                 }
             }
             });
+
+        INVENT_LOG_INFO("AnimationManagement Started");
     }
 
     void AnimationManagement::Shutdown()
     {
+        ThreadRunning = false;
         if (AnimationThread->joinable())
             AnimationThread->join();
-        ThreadRunning = false;
         delete AnimationThread;
         AnimationThread = nullptr;
     }
