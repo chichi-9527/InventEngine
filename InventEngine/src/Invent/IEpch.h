@@ -54,6 +54,7 @@
 
 #ifdef INVENT_USE_WINDOWS
 #include "Windows.h"
+#include "Extended/wglext.h"
 #endif // INVENT_USE_WINDOWS
 
 

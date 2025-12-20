@@ -280,6 +280,14 @@ public:
 	MyWindow(unsigned int width = 800, unsigned int height = 600, std::string title = "title")
 		: IWindow(width, height, title)
 	{
+		this->SwapIntervalEXT = 0;
+		
+	}
+
+	virtual void Begin() override
+	{
+		INVENT::IWindow::Begin();
+
 		this->SetGameInstance(std::static_pointer_cast<INVENT::IBaseGameInstance>(MyGameInstance::GetGameInstancePtr()));
 		this->StartThreadPool();
 
@@ -290,7 +298,6 @@ public:
 			});
 
 		create_level.detach();
-
 	}
 
 	virtual ~MyWindow()

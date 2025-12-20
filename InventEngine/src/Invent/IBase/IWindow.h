@@ -52,7 +52,7 @@ namespace INVENT
 		void StartThreadPool() { _threadpool->Start(); }
 		void ShutdownThreadPool() { _threadpool->Shutdown(); }
 
-		
+		virtual void Begin();
 
 		// 异步
 		// CreateLevel
@@ -73,6 +73,10 @@ namespace INVENT
 
 		GLFWwindow* Window;
 		GLFWmonitor* Monitor;
+
+		// 限制帧率为与显示器帧率的反比，0 为不限制
+		// 仅 Windows 下有效
+		int SwapIntervalEXT = 1;
 	private:
 		std::shared_ptr<IBaseGameInstance> _game_instance_ptr;
 

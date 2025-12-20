@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Extended\wglext.h" />
     <ClInclude Include="src\Invent\2D\2DComponent\Invent2DAnimationComponent.h" />
     <ClInclude Include="src\Invent\2D\2DComponent\Invent2DComponent.h" />
     <ClInclude Include="src\Invent\2D\IActor2D.h" />
@@ -245,7 +246,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>IEpch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\InventEngine\src\Invent;$(SolutionDir)\InventEngine\src\Glad;$(SolutionDir)\InventEngine\src\StbImage;$(SolutionDir)\InventEngine\src\Imgui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\InventEngine\src\Invent;$(SolutionDir)\InventEngine\src\Glad;$(SolutionDir)\InventEngine\src\StbImage;$(SolutionDir)\InventEngine\src\Imgui;$(SolutionDir)\InventEngine\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

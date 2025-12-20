@@ -17,6 +17,49 @@
 
 namespace INVENT
 {
+
+#ifdef INVENT_USE_WINDOWS
+// Source - https://stackoverflow.com/a/589232
+// Posted by eugensk, modified by community. See post 'Timeline' for change history
+// Retrieved 2025-12-20, License - CC BY-SA 4.0
+
+	bool WGLExtensionSupported(const char* extension_name)
+	{
+		// this is pointer to function which returns pointer to string with list of all wgl extensions
+		PFNWGLGETEXTENSIONSSTRINGEXTPROC _wglGetExtensionsStringEXT = NULL;
+
+		// determine pointer to wglGetExtensionsStringEXT function
+		_wglGetExtensionsStringEXT = (PFNWGLGETEXTENSIONSSTRINGEXTPROC)wglGetProcAddress("wglGetExtensionsStringEXT");
+
+		if (strstr(_wglGetExtensionsStringEXT(), extension_name) == NULL)
+		{
+			// string was not found
+			return false;
+		}
+
+		// extension is supported
+		return true;
+	}
+
+	static PFNWGLSWAPINTERVALEXTPROC       wglSwapIntervalEXT = NULL;
+	static PFNWGLGETSWAPINTERVALEXTPROC    wglGetSwapIntervalEXT = NULL;
+
+	static void InitWGL()
+	{
+
+		if (WGLExtensionSupported("WGL_EXT_swap_control"))
+		{
+			// Extension is supported, init pointers.
+			wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
+
+			// this is another function from WGL_EXT_swap_control extension
+			wglGetSwapIntervalEXT = (PFNWGLGETSWAPINTERVALEXTPROC)wglGetProcAddress("wglGetSwapIntervalEXT");
+		}
+	}
+	
+#endif // INVENT_USE_WINDOWS
+
+
 	void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	{
 		IWindow* iwindow = static_cast<IWindow*>(glfwGetWindowUserPointer(window));
@@ -505,16 +548,21 @@ namespace INVENT
 		, Level(nullptr)
 		, delta_time(0.0f)
 	{
-		_create();
-		_default_level = new IBaseLevel;
-		Level = _default_level;
-
 		IEngine::InstancePtr()->SetIWindow(this);
+		_threadpool = new IThreadPool();
+	}
 
+	void IWindow::Begin()
+	{
+		_create();
+		if (nullptr == Level)
+		{
+			_default_level = new IBaseLevel;
+			Level = _default_level;
+		}
+	
 		UI::IDrawString::Init("./Assets/TTF/VictorMono-Bold-2.otf");
 		UI::IDrawString::Init({ "./Assets/TTF/huawencaiyun.ttf", "./Assets/TTF/huawenfangsong.ttf" });
-
-		_threadpool = new IThreadPool();
 	}
 
 	IWindow::~IWindow()
@@ -534,12 +582,15 @@ namespace INVENT
 	// ----------------------Start--------------------------------------
 	void IWindow::Start()
 	{
+		Begin();
+
 		ICollisionPresets::Init();
 		IRenderer::Init();
 		IUIImgui::Init(Window);
 		AnimationManagement::Start();
 		
-		_game_instance_ptr->Begin();
+		if (_game_instance_ptr)
+			_game_instance_ptr->Begin();
 
 		
 
@@ -580,7 +631,7 @@ namespace INVENT
 
 			IUIImgui::StartFrame();
 
-			//INVENT_LOG_DEBUG(std::to_string(delta_time));
+			INVENT_LOG_DEBUG(std::to_string(delta_time));
 
 			Level->_clear_color();
 			Level->_clear();
@@ -596,7 +647,8 @@ namespace INVENT
 
 			_process_input(delta_time);
 
-			_game_instance_ptr->Update(delta_time);
+			if (_game_instance_ptr)
+				_game_instance_ptr->Update(delta_time);
 
 			IUIImgui::Render();
 
@@ -605,7 +657,8 @@ namespace INVENT
 			glfwPollEvents();
 		}
 
-		_game_instance_ptr->End();
+		if (_game_instance_ptr)
+			_game_instance_ptr->End();
 
 		AnimationManagement::Shutdown();
 		IUIImgui::End();
@@ -700,10 +753,17 @@ namespace INVENT
 	{
 		if (-1 == _glfw_init())
 			return;
+		//glfwSwapInterval(0);
 		Window = glfwCreateWindow(Width, Height, Title.c_str(), NULL, NULL);
 		if (Window)
 		{
 			glfwMakeContextCurrent(Window);
+#ifdef INVENT_USE_WINDOWS
+			InitWGL();
+			if (wglGetSwapIntervalEXT() != SwapIntervalEXT)
+				wglSwapIntervalEXT(SwapIntervalEXT);
+			INVENT_LOG_DEBUG(std::string("当前 swap interval: ") + std::to_string(wglGetSwapIntervalEXT()));
+#endif // INVENT_USE_WINDOWS
 			glfwSetWindowUserPointer(Window, this);
 #ifdef USE_OPENGL
 			if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
