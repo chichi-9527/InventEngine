@@ -82,6 +82,8 @@ namespace INVENT
 
 		std::array<ITexture2D*, INVENT_MAX_TEXTURE_RENDER_ONCE> TextureArray;
 		size_t TextureSlotIndex = 0;
+		std::array<ITexture2D*, INVENT_MAX_TEXTURE_RENDER_ONCE> TextureTextArray;
+		size_t TextureTextSlotIndex = 0;
 
 		glm::vec4 SquareVertexPosition[4]{};
 
@@ -97,6 +99,7 @@ namespace INVENT
 		Renderer2DData()
 		{
 			TextureArray.fill(nullptr);
+			TextureTextArray.fill(nullptr);
 		}
 	};
 
@@ -121,6 +124,8 @@ namespace INVENT
 
 		renderer2d_data.TextureArray[0] = renderer2d_data.WhiteTexture;
 		renderer2d_data.TextureSlotIndex = 1;
+		renderer2d_data.TextureTextArray[0] = renderer2d_data.WhiteTexture;
+		renderer2d_data.TextureTextSlotIndex = 1;
 
 		renderer2d_data.SquareVertexBuffers = new SquareVertex[INVENT_MAX_VERTEX_RENDER_ONCE];
 		unsigned int* square_indices = new unsigned int[INVENT_MAX_INDEX_RENDER_ONCE];
@@ -205,6 +210,7 @@ namespace INVENT
 		renderer2d_data.TextVertexBufferBack = renderer2d_data.TextVertexBuffers;
 
 		renderer2d_data.TextureSlotIndex = 1;
+		renderer2d_data.TextureTextSlotIndex = 1;
 	}
 
 	void IRenderer2D::NextARender()
@@ -235,9 +241,9 @@ namespace INVENT
 			unsigned int data_size = (unsigned int)((unsigned char*)renderer2d_data.TextVertexBufferBack - (unsigned char*)renderer2d_data.TextVertexBuffers);
 			renderer2d_data.TextVertexBuffer->SetData((void*)renderer2d_data.TextVertexBuffers, data_size);
 
-			for (unsigned int i = 0; i < renderer2d_data.TextureSlotIndex; ++i)
+			for (unsigned int i = 0; i < renderer2d_data.TextureTextSlotIndex; ++i)
 			{
-				renderer2d_data.TextureArray[i]->BindUnit(i);
+				renderer2d_data.TextureTextArray[i]->BindUnit(i);
 			}
 			renderer2d_data.TextShader->Bind();
 			IRendererCommend::DrawIndexed(renderer2d_data.TextVertexArray, renderer2d_data.TextIndexCount);
@@ -370,6 +376,11 @@ namespace INVENT
 		for (auto c = string.begin(); c != string.end(); ++c)
 		{
 			auto ch = UI::IDrawString::LoadChar(*c);
+			if (!ch.IsValid())
+			{
+				Position.x += (UI::IDrawString::LoadChar('A').AdvanceX >> 6) * scale;
+				continue;
+			}
 
 			if (renderer2d_data.TextIndexCount >= INVENT_MAX_INDEX_RENDER_ONCE)
 				NextARender();
@@ -381,9 +392,9 @@ namespace INVENT
 			{
 				if (texture->IsValid)
 				{
-					for (unsigned int i = 1; i < renderer2d_data.TextureSlotIndex; ++i)
+					for (unsigned int i = 1; i < renderer2d_data.TextureTextSlotIndex; ++i)
 					{
-						if (renderer2d_data.TextureArray[i] == texture)
+						if (renderer2d_data.TextureTextArray[i] == texture)
 							texture_index = (float)i; break;
 					}
 				}
@@ -393,12 +404,12 @@ namespace INVENT
 			{
 				if (texture->IsValid)
 				{
-					if (renderer2d_data.TextureSlotIndex >= INVENT_MAX_TEXTURE_RENDER_ONCE - 1)
+					if (renderer2d_data.TextureTextSlotIndex >= INVENT_MAX_TEXTURE_RENDER_ONCE - 1)
 						NextARender();
 
-					texture_index = (float)renderer2d_data.TextureSlotIndex;
-					renderer2d_data.TextureArray[renderer2d_data.TextureSlotIndex] = texture;
-					renderer2d_data.TextureSlotIndex++;
+					texture_index = (float)renderer2d_data.TextureTextSlotIndex;
+					renderer2d_data.TextureTextArray[renderer2d_data.TextureTextSlotIndex] = texture;
+					renderer2d_data.TextureTextSlotIndex++;
 				}
 
 			}
@@ -454,6 +465,11 @@ namespace INVENT
 		for (auto c = wstring.begin(); c != wstring.end(); ++c)
 		{
 			auto ch = UI::IDrawString::LoadWChar(*c);
+			if (!ch.IsValid())
+			{
+				Position.x += (UI::IDrawString::LoadChar('A').AdvanceX >> 6) * scale;
+				continue;
+			}
 
 			if (renderer2d_data.TextIndexCount >= INVENT_MAX_INDEX_RENDER_ONCE)
 				NextARender();
@@ -465,9 +481,9 @@ namespace INVENT
 			{
 				if (texture->IsValid)
 				{
-					for (unsigned int i = 1; i < renderer2d_data.TextureSlotIndex; ++i)
+					for (unsigned int i = 1; i < renderer2d_data.TextureTextSlotIndex; ++i)
 					{
-						if (renderer2d_data.TextureArray[i] == texture)
+						if (renderer2d_data.TextureTextArray[i] == texture)
 							texture_index = (float)i; break;
 					}
 				}
@@ -477,12 +493,12 @@ namespace INVENT
 			{
 				if (texture->IsValid)
 				{
-					if (renderer2d_data.TextureSlotIndex >= INVENT_MAX_TEXTURE_RENDER_ONCE - 1)
+					if (renderer2d_data.TextureTextSlotIndex >= INVENT_MAX_TEXTURE_RENDER_ONCE - 1)
 						NextARender();
 
-					texture_index = (float)renderer2d_data.TextureSlotIndex;
-					renderer2d_data.TextureArray[renderer2d_data.TextureSlotIndex] = texture;
-					renderer2d_data.TextureSlotIndex++;
+					texture_index = (float)renderer2d_data.TextureTextSlotIndex;
+					renderer2d_data.TextureTextArray[renderer2d_data.TextureTextSlotIndex] = texture;
+					renderer2d_data.TextureTextSlotIndex++;
 				}
 
 			}
@@ -538,6 +554,11 @@ namespace INVENT
 		for (auto c = string.begin(); c != string.end(); ++c)
 		{
 			auto ch = UI::IDrawString::LoadChar(*c, index);
+			if (!ch.IsValid())
+			{
+				Position.x += (UI::IDrawString::LoadChar('A', index).AdvanceX >> 6) * scale;
+				continue;
+			}
 
 			if (renderer2d_data.TextIndexCount >= INVENT_MAX_INDEX_RENDER_ONCE)
 				NextARender();
@@ -549,9 +570,9 @@ namespace INVENT
 			{
 				if (texture->IsValid)
 				{
-					for (unsigned int i = 1; i < renderer2d_data.TextureSlotIndex; ++i)
+					for (unsigned int i = 1; i < renderer2d_data.TextureTextSlotIndex; ++i)
 					{
-						if (renderer2d_data.TextureArray[i] == texture)
+						if (renderer2d_data.TextureTextArray[i] == texture)
 							texture_index = (float)i; break;
 					}
 				}
@@ -561,12 +582,12 @@ namespace INVENT
 			{
 				if (texture->IsValid)
 				{
-					if (renderer2d_data.TextureSlotIndex >= INVENT_MAX_TEXTURE_RENDER_ONCE - 1)
+					if (renderer2d_data.TextureTextSlotIndex >= INVENT_MAX_TEXTURE_RENDER_ONCE - 1)
 						NextARender();
 
-					texture_index = (float)renderer2d_data.TextureSlotIndex;
-					renderer2d_data.TextureArray[renderer2d_data.TextureSlotIndex] = texture;
-					renderer2d_data.TextureSlotIndex++;
+					texture_index = (float)renderer2d_data.TextureTextSlotIndex;
+					renderer2d_data.TextureTextArray[renderer2d_data.TextureTextSlotIndex] = texture;
+					renderer2d_data.TextureTextSlotIndex++;
 				}
 
 			}
@@ -622,6 +643,11 @@ namespace INVENT
 		for (auto c = wstring.begin(); c != wstring.end(); ++c)
 		{
 			auto ch = UI::IDrawString::LoadWChar(*c, index);
+			if (!ch.IsValid())
+			{
+				Position.x += (UI::IDrawString::LoadChar('A', index).AdvanceX >> 6) * scale;
+				continue;
+			}
 
 			if (renderer2d_data.TextIndexCount >= INVENT_MAX_INDEX_RENDER_ONCE)
 				NextARender();
@@ -633,9 +659,9 @@ namespace INVENT
 			{
 				if (texture->IsValid)
 				{
-					for (unsigned int i = 1; i < renderer2d_data.TextureSlotIndex; ++i)
+					for (unsigned int i = 1; i < renderer2d_data.TextureTextSlotIndex; ++i)
 					{
-						if (renderer2d_data.TextureArray[i] == texture)
+						if (renderer2d_data.TextureTextArray[i] == texture)
 							texture_index = (float)i; break;
 					}
 				}
@@ -645,12 +671,12 @@ namespace INVENT
 			{
 				if (texture->IsValid)
 				{
-					if (renderer2d_data.TextureSlotIndex >= INVENT_MAX_TEXTURE_RENDER_ONCE - 1)
+					if (renderer2d_data.TextureTextSlotIndex >= INVENT_MAX_TEXTURE_RENDER_ONCE - 1)
 						NextARender();
 
-					texture_index = (float)renderer2d_data.TextureSlotIndex;
-					renderer2d_data.TextureArray[renderer2d_data.TextureSlotIndex] = texture;
-					renderer2d_data.TextureSlotIndex++;
+					texture_index = (float)renderer2d_data.TextureTextSlotIndex;
+					renderer2d_data.TextureTextArray[renderer2d_data.TextureTextSlotIndex] = texture;
+					renderer2d_data.TextureTextSlotIndex++;
 				}
 
 			}

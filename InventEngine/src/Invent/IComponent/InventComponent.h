@@ -3,6 +3,8 @@
 
 #include <glm/glm.hpp>
 
+#include <vector>
+
 namespace INVENT
 {
 	struct IActionComponent 
@@ -53,6 +55,18 @@ namespace INVENT
 		WorldRotationComponent(const glm::vec3& rotation)
 			: Rotation(rotation)
 		{}
+	};
+
+	struct MeshVertex
+	{
+		glm::vec3 Position;
+		glm::vec3 Normal;
+		glm::vec2 TexCoords;
+	};
+
+	struct MeshComponent
+	{
+		std::vector<size_t> TextureIDs;
 	};
 
 

@@ -171,6 +171,9 @@
     <ClInclude Include="src\Invent\3D\IActor.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Invent\3D\IActor3D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\Invent.cpp">
@@ -309,6 +312,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Invent\3D\IActor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\3D\IActor3D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
