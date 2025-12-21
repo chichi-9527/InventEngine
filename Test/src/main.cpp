@@ -125,7 +125,7 @@ public:
 	}
 
 private:
-	INVENT::IActor2D::AColliderID collider_id;
+	INVENT::AColliderID collider_id;
 };
 
 class MyController : public INVENT::IPlayerController2D

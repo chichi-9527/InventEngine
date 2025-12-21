@@ -11,11 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Invent\3D\IActor.h" />
     <ClInclude Include="src\Extended\wglext.h" />
     <ClInclude Include="src\Invent\2D\2DComponent\Invent2DAnimationComponent.h" />
     <ClInclude Include="src\Invent\2D\2DComponent\Invent2DComponent.h" />
     <ClInclude Include="src\Invent\2D\IActor2D.h" />
-    <ClInclude Include="src\Invent\2D\IObject2D.h" />
     <ClInclude Include="src\Invent\2D\ISquare2dActor.h" />
     <ClInclude Include="src\Invent\2D\ISquare2dPawn.h" />
     <ClInclude Include="src\Invent\2D\ITileMap.h" />
@@ -65,12 +65,12 @@
     <ClInclude Include="src\Invent\ThreadPool\IThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Invent\3D\IActor.cpp" />
     <ClCompile Include="src\Invent\2D\2DComponent\Invent2DAnimationComponent.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Invent\2D\IActor2D.cpp" />
-    <ClCompile Include="src\Invent\2D\IObject2D.cpp" />
     <ClCompile Include="src\Invent\2D\ISquare2dActor.cpp" />
     <ClCompile Include="src\Invent\2D\ISquare2dPawn.cpp" />
     <ClCompile Include="src\Invent\2D\ITileMap.cpp" />

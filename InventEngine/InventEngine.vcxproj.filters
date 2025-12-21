@@ -48,9 +48,6 @@
     <ClInclude Include="src\Invent\3D\IObject.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\Invent\2D\IObject2D.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="src\Invent\IBase\IObjectBase.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -171,6 +168,9 @@
     <ClInclude Include="src\Extended\wglext.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Invent\3D\IActor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\Invent.cpp">
@@ -201,9 +201,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Invent\3D\IObject.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Invent\2D\IObject2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Invent\IBase\IObjectBase.cpp">
@@ -309,6 +306,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Invent\UI\IUIText.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\3D\IActor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

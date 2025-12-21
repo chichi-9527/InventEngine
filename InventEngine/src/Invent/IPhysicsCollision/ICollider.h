@@ -158,6 +158,18 @@ namespace INVENT
 
 	};
 
+	struct AColliderID
+	{
+		size_t Id = 0;
+		IColliderBase::ColliderType Type = IColliderBase::ColliderType::NONE;
+
+		AColliderID() = default;
+		AColliderID(size_t id, IColliderBase::ColliderType type)
+			: Id(id)
+			, Type(type)
+		{}
+	};
+
 }
 
 #endif // !_ICOLLIDER_

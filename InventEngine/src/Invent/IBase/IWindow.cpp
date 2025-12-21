@@ -739,7 +739,7 @@ namespace INVENT
 		IRenderer2D::DrawString("(C) LearnOpenGL.com", { 0.5f, 0.8f, 0.2f, 1.0f }, {540.0f, 570.0f }, 1.0f);
 		IRenderer2D::DrawString("BACADA", { 0.5f, 0.8f, 0.2f, 1.0f }, {25.0f, 570.0f }, 1.0f);*/
 
-		IRenderer2D::DrawString("abcdefghijklmnopqrstuvwxyz", { 0.5f, 0.8f, 0.2f, 1.0f }, { 25.0f, 25.0f }, 32.0f, 0);
+		IRenderer2D::DrawWString(L"abcdefghijklmnopqrstuvwxyz", { 0.5f, 0.8f, 0.2f, 1.0f }, { 25.0f, 25.0f }, 32.0f, 0);
 		IRenderer2D::DrawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", { 0.5f, 0.8f, 0.2f, 1.0f }, { 25.0f, 225.0f }, 32.0f, 0);
 		IRenderer2D::DrawWString(L"你好，世界", { 0.5f, 0.8f, 0.2f, 1.0f }, { 25.0f, 100.0f }, 32.0f, 0, 0);
 		IRenderer2D::DrawWString(L"你好，世界", { 0.5f, 0.8f, 0.2f, 1.0f }, {0.8f, 0.8f }, 32.0f, 1, 1);

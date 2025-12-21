@@ -133,7 +133,7 @@ namespace INVENT
 			INVENT_LOG_ERROR("collider type error");
 			break;
 		}
-		
+		_colliders.clear();
 	}
 
 	bool IBaseActor::HasCollider()
