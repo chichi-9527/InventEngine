@@ -2,6 +2,8 @@
 #include "IBaseActor.h"
 #include "IBaseLevel.h"
 
+#include "IComponent/InventComponent.h"
+
 namespace INVENT
 {
 	IBaseActor::~IBaseActor()

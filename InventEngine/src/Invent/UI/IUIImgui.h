@@ -3,8 +3,6 @@
 
 #include "IBase/IEventLayer.h"
 
-#include "imgui.h"
-
 struct GLFWwindow;
 
 namespace INVENT

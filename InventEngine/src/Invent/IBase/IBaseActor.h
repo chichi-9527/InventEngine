@@ -3,14 +3,13 @@
 
 #include <vector>
 
-#include "IComponent/InventComponent.h"
-
 #include "IPhysicsCollision/ICollider.h"
 
 #include "IBaseEventFunction.h"
 
 namespace INVENT
 {
+	struct IActionComponent;
 	class IBaseLevel;
 	class IBaseActor : public IBaseEventFunction
 	{

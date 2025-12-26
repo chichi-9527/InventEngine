@@ -2,11 +2,13 @@
 #define _INVENT_ENGINE_PCH_
 
 
-
-#ifdef USE_BOOST
+#ifdef INVENT_USE_WINDOWS
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include "Windows.h"
+#endif // INVENT_USE_WINDOWS
 
 #include <boost/asio.hpp>
-
 #include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
@@ -17,7 +19,6 @@
 #include <boost/log/sinks/async_frontend.hpp>
 #include <boost/log/sinks/sync_frontend.hpp>
 
-#endif // USE_BOOST
 
 #include <string>
 #include <vector>
@@ -52,10 +53,12 @@
 
 #endif // USE_OPENGL
 
-#ifdef INVENT_USE_WINDOWS
-#include "Windows.h"
+
+
+
+#if defined(INVENT_USE_WINDOWS) && defined(USE_OPENGL)
 #include "Extended/wglext.h"
-#endif // INVENT_USE_WINDOWS
+#endif
 
 
 #endif // !_INVENT_ENGINE_PCH_

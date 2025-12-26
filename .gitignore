@@ -365,3 +365,4 @@ FodyWeavers.xsd
 *.tlog
 
 /bin/x64-Release/Test/Assets
+/Assimp543/lib

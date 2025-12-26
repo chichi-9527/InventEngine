@@ -20,8 +20,9 @@
 
 #include <vector>
 #include <mutex>
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+
+struct GLFWwindow;
 
 namespace INVENT
 {

@@ -3,6 +3,11 @@
 
 #include "IRenderer2D.h"
 
+
+#define INVENT_MAX_VERTEX_RENDER_ONCE 20000 * 6
+#define INVENT_MAX_INDEX_RENDER_ONCE INVENT_MAX_VERTEX_RENDER_ONCE
+#define INVENT_MAX_TEXTURE_RENDER_ONCE 32
+
 namespace INVENT
 {
 	std::unique_ptr<IRenderer::SceneData> IRenderer::_scene_data = std::make_unique<IRenderer::SceneData>();

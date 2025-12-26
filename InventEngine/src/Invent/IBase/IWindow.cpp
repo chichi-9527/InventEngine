@@ -18,7 +18,7 @@
 namespace INVENT
 {
 
-#ifdef INVENT_USE_WINDOWS
+#if defined(INVENT_USE_WINDOWS) && defined(USE_OPENGL)
 // Source - https://stackoverflow.com/a/589232
 // Posted by eugensk, modified by community. See post 'Timeline' for change history
 // Retrieved 2025-12-20, License - CC BY-SA 4.0
@@ -57,7 +57,7 @@ namespace INVENT
 		}
 	}
 	
-#endif // INVENT_USE_WINDOWS
+#endif // defined(INVENT_USE_WINDOWS) && defined(USE_OPENGL)
 
 
 	void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -545,6 +545,7 @@ namespace INVENT
 		, Title(title)
 		, Window(nullptr)
 		, Monitor(nullptr)
+		, _default_level(nullptr)
 		, Level(nullptr)
 		, delta_time(0.0f)
 	{
@@ -754,12 +755,12 @@ namespace INVENT
 		if (Window)
 		{
 			glfwMakeContextCurrent(Window);
-#ifdef INVENT_USE_WINDOWS
+#if defined(INVENT_USE_WINDOWS) && defined(USE_OPENGL)
 			InitWGL();
 			if (wglGetSwapIntervalEXT() != SwapIntervalEXT)
 				wglSwapIntervalEXT(SwapIntervalEXT);
 			INVENT_LOG_DEBUG(std::string("当前 swap interval: ") + std::to_string(wglGetSwapIntervalEXT()));
-#endif // INVENT_USE_WINDOWS
+#endif // defined(INVENT_USE_WINDOWS) && defined(USE_OPENGL)
 			glfwSetWindowUserPointer(Window, this);
 #ifdef USE_OPENGL
 			if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))

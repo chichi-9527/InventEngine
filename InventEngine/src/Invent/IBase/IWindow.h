@@ -10,7 +10,9 @@
 #include "Renderer/IRenderer2D.h"
 
 #include <string>
-#include <GLFW/glfw3.h>
+
+struct GLFWwindow;
+struct GLFWmonitor;
 
 namespace INVENT
 {

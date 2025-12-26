@@ -39,6 +39,13 @@ namespace INVENT
 			INVENT_ASSERT(HasComponent<T>(), "obj does not have component!\n");
 			return ITools::IDefaultComponentManagement::GetCompomemtManagement().Get<T>(_entity);
 		}
+		template<typename T>
+
+		T& GetComponentNotSafe()
+		{
+			INVENT_ASSERT(HasComponent<T>(), "obj does not have component!\n");
+			return ITools::IDefaultComponentManagement::GetCompomemtManagement().GetNotSafe<T>(_entity);
+		}
 
 		template<typename T>
 		bool HasComponent()
