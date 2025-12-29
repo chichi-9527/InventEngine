@@ -632,7 +632,7 @@ namespace INVENT
 
 			IUIImgui::StartFrame();
 
-			INVENT_LOG_DEBUG(std::to_string(delta_time));
+			//INVENT_LOG_DEBUG(std::to_string(delta_time));
 
 			Level->_clear_color();
 			Level->_clear();

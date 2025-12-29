@@ -180,6 +180,9 @@
     <ClInclude Include="src\Invent\ITools\ILoadModel.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Invent\Renderer\IShaderStorageBuffer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\Invent.cpp">
@@ -327,6 +330,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Invent\ITools\ILoadModel.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\Renderer\IShaderStorageBuffer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

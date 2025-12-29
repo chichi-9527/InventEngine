@@ -16,7 +16,6 @@ namespace INVENT
 
 		// no invalid
 		virtual void SetWorldPosition(const glm::vec3&) override{}
-		virtual const glm::vec3& GetWorldPosition() override{}
 
 		MeshComponent* GetMesh();
 

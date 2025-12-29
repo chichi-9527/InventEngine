@@ -115,7 +115,10 @@ namespace INVENT
 	{
 	public:
 		IIndexBuffer(unsigned int* indices, unsigned int count);
+		IIndexBuffer(unsigned int count);
 		~IIndexBuffer();
+
+		void SetData(const void* data, unsigned int size, unsigned int offset = 0U) const;
 
 		void Bind() const;
 		void UnBind() const;
@@ -123,11 +126,34 @@ namespace INVENT
 		unsigned int GetCount() const { return _count; }
 
 		static std::shared_ptr<IIndexBuffer> CreatePtr(unsigned int* indices, unsigned int count);
+		static std::shared_ptr<IIndexBuffer> CreatePtr(unsigned int count);
 
 	private:
 		unsigned int _ebo = 0;
 		unsigned int _count;
 	};
+
+
+	// 
+	class IDrawIndirectBuffer 
+	{
+	public:
+		IDrawIndirectBuffer(unsigned int size);
+		IDrawIndirectBuffer(void* cmds, unsigned int size);
+		~IDrawIndirectBuffer();
+
+		void SetData(const void* data, unsigned int size, unsigned int offset = 0U) const;
+
+		void Bind() const;
+		void UnBind() const;
+
+		static std::shared_ptr<IDrawIndirectBuffer> CreatePtr(unsigned int size);
+		static std::shared_ptr<IDrawIndirectBuffer> CreatePtr(void* cmds, unsigned int size);
+
+	private:
+		unsigned int _indirect_buffer;
+	};
+
 }
 
 #endif // !_IBUFFER_

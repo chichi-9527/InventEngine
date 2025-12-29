@@ -285,7 +285,7 @@ namespace INVENT
 		{
 			if (texture->IsValid)
 			{
-				for (unsigned int i = 1; i < renderer2d_data.TextureSlotIndex; ++i)
+				for (size_t i = 1; i < renderer2d_data.TextureSlotIndex; ++i)
 				{
 					if (renderer2d_data.TextureArray[i] == texture)
 						texture_index = (float)i; break;

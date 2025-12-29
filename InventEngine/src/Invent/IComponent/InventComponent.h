@@ -108,8 +108,12 @@ namespace INVENT
 		* 5 ambient occlusion 环境光遮蔽贴图
 		*/
 		std::vector<size_t> TextureIDs;
+		std::vector<unsigned int> Indeices;
 
-		MeshComponent() = default;
+		MeshComponent()
+		{
+			TextureIDs = { 0,0,0,0,0,0 };
+		}
 		MeshComponent(const MeshComponent&) = default;
 	};
 

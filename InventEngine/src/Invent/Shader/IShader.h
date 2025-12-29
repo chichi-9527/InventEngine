@@ -57,6 +57,7 @@ namespace INVENT
 
 		static IShader* GetDefaultSquare2DShader();
 		static IShader* GetDefaultTextShader();
+		static IShader* GetDefault3DShader();
 
 	private:
 		IShaderManagement() = default;

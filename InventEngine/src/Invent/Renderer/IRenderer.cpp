@@ -1,12 +1,19 @@
-#include "IEpch.h"
+﻿#include "IEpch.h"
 #include "IRenderer.h"
 
 #include "IRenderer2D.h"
 
+#include "3D/IMesh.h"
+#include "IBuffer.h"
+#include "IUniformBuffer.h"
+#include "IShaderStorageBuffer.h"
+#include "IComponent/InventComponent.h"
 
-#define INVENT_MAX_VERTEX_RENDER_ONCE 20000 * 6
-#define INVENT_MAX_INDEX_RENDER_ONCE INVENT_MAX_VERTEX_RENDER_ONCE
-#define INVENT_MAX_TEXTURE_RENDER_ONCE 32
+
+#define INVENT_MAX_VERTEX_RENDER_ONCE  20000 * 6
+#define INVENT_MAX_INDEX_RENDER_ONCE  INVENT_MAX_VERTEX_RENDER_ONCE
+#define INVENT_MAX_TEXTURE_RENDER_ONCE  32
+#define INVENT_MAX_MESH_A_RANDER  32
 
 namespace INVENT
 {
@@ -16,10 +23,12 @@ namespace INVENT
 	{
 		IRendererCommend::Init();
 		IRenderer2D::Init();
+		IRenderer::_init_renderer_data();
 	}
 
 	void IRenderer::Shutdown()
 	{
+		IRenderer::_free_renderer_data();
 		IRenderer2D::Shutdown();
 	}
 
@@ -31,7 +40,9 @@ namespace INVENT
 	}
 
 	void IRenderer::EndRender()
-	{}
+	{
+		Rendering();
+	}
 
 	void IRenderer::Submit(const IShader* shader, const std::shared_ptr<IVertexArray> vertex_array, const glm::mat4& transfrom)
 	{
@@ -41,4 +52,257 @@ namespace INVENT
 
 		IRendererCommend::DrawIndexed(vertex_array, vertex_array->GetIndexBuffer()->GetCount());
 	}
+
+	// 每个 Mesh
+	struct DrawElementsIndirectCommand 
+	{
+		GLuint count; // 索引数量 index count
+		GLuint instanceCount; // 实例数量 always = 1；优化批量渲染时更改代码
+		GLuint firstIndex; // 第一个索引在IBO中的位置（注意：是索引，不是字节偏移）
+		GLuint baseVertex; // 基顶点（顶点索引的偏移）
+		GLuint baseInstance; // 基实例（模型ID）
+
+		DrawElementsIndirectCommand()
+			: count(0)
+			, instanceCount(1)
+			, firstIndex(0)
+			, baseVertex(0)
+			, baseInstance(0)
+		{}
+	};
+
+	struct InstanceData
+	{
+		glm::mat4 modleMartrix;
+		float diffuseTextureID;
+		float normalTextureID;
+		float specularTextureID;
+		float emissionTextureID;
+		float roughnessTextureID;
+		float aoTextureID;
+
+		InstanceData()
+			: modleMartrix(1.0f)
+			, diffuseTextureID(0.0f)
+			, normalTextureID(0.0f)
+			, specularTextureID(0.0f)
+			, emissionTextureID(0.0f)
+			, roughnessTextureID(0.0f)
+			, aoTextureID(0.0f)
+		{}
+	};
+
+	struct RanderMeshVertex
+	{
+		glm::vec3 Position;
+		glm::vec4 Color;
+		// 法线
+		glm::vec3 Normal;
+		glm::vec2 TexCoords;
+		// 切线
+		glm::vec3 Tangent;
+		// 双切线
+		glm::vec3 Bitangent;
+
+		RanderMeshVertex()
+			: Position(0.0f)
+			, Color(1.0f)
+			, Normal(0.0f)
+			, TexCoords(0.0f)
+			, Tangent(0.0f)
+			, Bitangent(0.0f)
+		{}
+	};
+
+	struct RendererData
+	{
+		// once default render
+		std::shared_ptr<IVertexArray> VertexArray;
+		std::shared_ptr<IVertexBuffer> VertexBuffer;
+		std::shared_ptr<IIndexBuffer> IndexBuffer;
+		IShader* Shader = nullptr;
+		ITexture2D* WhiteTexture = nullptr;
+
+		unsigned int VertexCount = 0;
+		unsigned int IndexCount = 0;
+		unsigned int BaseInstance = 0;
+
+		unsigned int* Indices = nullptr;
+		unsigned int IndixOffset = 0;
+
+		std::array<ITextureBase*, INVENT_MAX_TEXTURE_RENDER_ONCE> TextureArray;
+		size_t TextureSlotIndex = 0;
+
+		RanderMeshVertex* VertexBuffers = nullptr;
+		RanderMeshVertex* VertexBufferBack = nullptr;
+
+		unsigned int ModelID = 0;
+
+		std::vector<InstanceData> Instances;
+		std::vector<DrawElementsIndirectCommand> Cmds;
+
+		struct CameraData
+		{
+			glm::mat4 ViewProjection{ 1.0f };
+			glm::mat4 ViewProjection2D{ 1.0f };
+		};
+		CameraData CameraBuffer;
+
+		std::shared_ptr<IUniformBuffer> CameraUniformBuffer;
+		std::shared_ptr<IDrawIndirectBuffer> DrawIndirectBuffer;
+		std::shared_ptr<IShaderStorageBuffer> ShaderStorageBuffer;
+
+		RendererData()
+		{
+			TextureArray.fill(nullptr);
+		}
+	};
+
+	static RendererData renderer_data;
+
+	void IRenderer::_init_renderer_data()
+	{
+		renderer_data.VertexArray = IVertexArray::CreatePtr();
+		renderer_data.VertexBuffer = IVertexBuffer::CreatePtr(INVENT_MAX_VERTEX_RENDER_ONCE * sizeof(RanderMeshVertex));
+		renderer_data.VertexBuffer->SetLayout({
+			{IShaderDataType::Float3, "a_Position"},
+			{IShaderDataType::Float4, "a_Color"},
+			{IShaderDataType::Float3, "a_Normal"},
+			{IShaderDataType::Float2, "a_TexCoord"},
+			{IShaderDataType::Float3, "a_Tangent"},
+			{IShaderDataType::Float3, "a_Bitangent"}
+			});
+		renderer_data.VertexArray->AddVertexBuffer(renderer_data.VertexBuffer);
+
+		renderer_data.Shader = IShaderManagement::GetDefault3DShader();
+		renderer_data.WhiteTexture = ITexture2DManagement::GetWhiteTexture();
+
+		renderer_data.TextureArray[0] = renderer_data.WhiteTexture;
+		renderer_data.TextureSlotIndex = 1;
+
+		renderer_data.VertexBuffers = new RanderMeshVertex[INVENT_MAX_VERTEX_RENDER_ONCE];
+		
+		renderer_data.IndexBuffer = IIndexBuffer::CreatePtr(INVENT_MAX_INDEX_RENDER_ONCE);
+		renderer_data.VertexArray->SetIndexBuffer(renderer_data.IndexBuffer);
+
+		renderer_data.Indices = new unsigned int[INVENT_MAX_INDEX_RENDER_ONCE];
+		
+		renderer_data.CameraUniformBuffer = IUniformBuffer::CreatePtr(sizeof(RendererData::CameraData));
+		renderer_data.DrawIndirectBuffer = IDrawIndirectBuffer::CreatePtr((unsigned int)(INVENT_MAX_MESH_A_RANDER * sizeof(DrawElementsIndirectCommand)));
+		renderer_data.ShaderStorageBuffer = IShaderStorageBuffer::CreatePtr((unsigned int)(INVENT_MAX_MESH_A_RANDER * sizeof(InstanceData)));
+
+	}
+
+	void IRenderer::_free_renderer_data()
+	{
+		if (renderer_data.Indices)
+		{
+			delete[] renderer_data.Indices;
+		}
+		if (renderer_data.VertexBuffers)
+		{
+			delete[] renderer_data.VertexBuffers;
+		}
+	}
+
+	void IRenderer::StartARender()
+	{
+		renderer_data.VertexCount = 0;
+		renderer_data.IndexCount = 0;
+		renderer_data.BaseInstance = 0;
+		renderer_data.VertexBufferBack = renderer_data.VertexBuffers;
+
+		renderer_data.TextureSlotIndex = 1;
+	}
+
+	void IRenderer::NextARender()
+	{
+		Rendering();
+		StartARender();
+	}
+
+	void IRenderer::Rendering()
+	{
+		// 
+		if (renderer_data.IndexCount)
+		{
+			unsigned int data_size = (unsigned int)((unsigned char*)renderer_data.VertexBufferBack - (unsigned char*)renderer_data.VertexBuffers);
+			renderer_data.VertexBuffer->SetData((void*)renderer_data.VertexBuffers, data_size);
+
+			renderer_data.IndexBuffer->SetData(renderer_data.Indices, renderer_data.IndexCount);
+
+			for (unsigned int i = 0; i < renderer_data.TextureSlotIndex; ++i)
+			{
+				renderer_data.TextureArray[i]->BindUnit(i);
+			}
+			renderer_data.Shader->Bind();
+			renderer_data.ShaderStorageBuffer->Bind(0);
+			renderer_data.ShaderStorageBuffer->SetData(renderer_data.Instances.data(), unsigned int(renderer_data.Instances.size() * sizeof(InstanceData)));
+			renderer_data.DrawIndirectBuffer->Bind();
+			renderer_data.DrawIndirectBuffer->SetData(renderer_data.Cmds.data(), unsigned int(renderer_data.Cmds.size() * sizeof(DrawElementsIndirectCommand)));
+			IRendererCommend::MultiDrawElementsIndirect(renderer_data.VertexArray, renderer_data.BaseInstance + 1);
+		}
+
+	}
+
+	void IRenderer::DrawMesh(IMesh* mesh, const glm::mat4& model_martrix)
+	{
+		auto mesh_comp = mesh->GetMesh();
+
+		if (renderer_data.VertexCount + mesh_comp->Vertexes.size() > INVENT_MAX_VERTEX_RENDER_ONCE
+			 || renderer_data.IndexCount + mesh_comp->Indeices.size() > INVENT_MAX_INDEX_RENDER_ONCE
+			 || renderer_data.TextureSlotIndex + mesh_comp->TextureIDs.size() - std::count(mesh_comp->TextureIDs.begin(), mesh_comp->TextureIDs.end(), 0) > INVENT_MAX_TEXTURE_RENDER_ONCE
+			 || renderer_data.BaseInstance >= INVENT_MAX_MESH_A_RANDER)
+		{
+			NextARender();
+		}
+
+		auto& instance = renderer_data.Instances.emplace_back();
+		instance.modleMartrix = model_martrix;
+		// diffuse
+		if (size_t t_id = mesh_comp->TextureIDs[0])
+		{
+			auto texture = ITexture2DManagement::Instance()[t_id];
+			if (texture && texture->IsValid)
+			{
+				float texture_index = .0f;
+				for (size_t i = 1; i < renderer_data.TextureSlotIndex; ++i)
+				{
+					if (renderer_data.TextureArray[i] == texture)
+						texture_index = (float)i; break;
+				}
+				if (texture_index == 0.0f)
+				{
+					texture_index = (float)renderer_data.TextureSlotIndex;
+					renderer_data.TextureArray[renderer_data.TextureSlotIndex] = texture;
+					renderer_data.TextureSlotIndex++;
+				}
+				instance.diffuseTextureID = texture_index;
+			}
+		}
+		// 
+		
+
+
+		auto& cmd = renderer_data.Cmds.emplace_back();
+		cmd.count = unsigned int(mesh_comp->Indeices.size());
+		cmd.firstIndex = renderer_data.IndexCount;
+		cmd.baseVertex = renderer_data.VertexCount;
+		cmd.baseInstance = renderer_data.BaseInstance++;
+
+		renderer_data.IndexCount += (unsigned int)mesh_comp->Indeices.size();
+		renderer_data.VertexCount += (unsigned int)mesh_comp->Vertexes.size();
+
+		for (auto& mesh_vertex : mesh_comp->Vertexes)
+		{
+			renderer_data.VertexBufferBack->Position = model_martrix * glm::vec4(mesh_vertex.Position, 1.0f);
+			renderer_data.VertexBufferBack->Color = mesh_vertex.Color;
+			renderer_data.VertexBufferBack->Normal = mesh_vertex.Normal;
+		}
+
+
+	}
+
+
+
 }

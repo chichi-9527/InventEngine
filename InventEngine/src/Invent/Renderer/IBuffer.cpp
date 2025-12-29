@@ -98,10 +98,26 @@ namespace INVENT
 #endif // USE_OPENGL
 	}
 
+	IIndexBuffer::IIndexBuffer(unsigned int count)
+		: _count(count)
+	{
+#ifdef USE_OPENGL
+		glCreateBuffers(1, &_ebo);
+		glNamedBufferData(_ebo, count, nullptr, GL_DYNAMIC_DRAW);
+#endif // USE_OPENGL
+	}
+
 	IIndexBuffer::~IIndexBuffer()
 	{
 #ifdef USE_OPENGL
 		glDeleteBuffers(1, &_ebo);
+#endif // USE_OPENGL
+	}
+
+	void IIndexBuffer::SetData(const void* data, unsigned int size, unsigned int offset) const
+	{
+#ifdef USE_OPENGL
+		glNamedBufferSubData(_ebo, offset, size, data);
 #endif // USE_OPENGL
 	}
 
@@ -122,6 +138,65 @@ namespace INVENT
 	std::shared_ptr<IIndexBuffer> IIndexBuffer::CreatePtr(unsigned int* indices, unsigned int count)
 	{
 		return std::make_shared<IIndexBuffer>(indices, count);
+	}
+
+	std::shared_ptr<IIndexBuffer> IIndexBuffer::CreatePtr(unsigned int count)
+	{
+		return std::make_shared<IIndexBuffer>(count);
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////
+
+
+	IDrawIndirectBuffer::IDrawIndirectBuffer(unsigned int size)
+	{
+#ifdef USE_OPENGL
+		glCreateBuffers(1, &_indirect_buffer);
+		glNamedBufferData(_indirect_buffer, size, nullptr, GL_DYNAMIC_DRAW);
+#endif // USE_OPENGL
+	}
+
+	IDrawIndirectBuffer::IDrawIndirectBuffer(void* cmds, unsigned int size)
+	{
+#ifdef USE_OPENGL
+		glCreateBuffers(1, &_indirect_buffer);
+		glNamedBufferData(_indirect_buffer, size, cmds, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_DRAW_INDIRECT_BUFFER, _indirect_buffer);
+#endif // USE_OPENGL
+	}
+
+	IDrawIndirectBuffer::~IDrawIndirectBuffer()
+	{}
+
+	void IDrawIndirectBuffer::SetData(const void* data, unsigned int size, unsigned int offset) const
+	{
+#ifdef USE_OPENGL
+		glNamedBufferSubData(_indirect_buffer, offset, size, data);
+#endif // USE_OPENGL
+	}
+
+	void IDrawIndirectBuffer::Bind() const
+	{
+#ifdef USE_OPENGL
+		glBindBuffer(GL_DRAW_INDIRECT_BUFFER, _indirect_buffer);
+#endif // USE_OPENGL
+	}
+
+	void IDrawIndirectBuffer::UnBind() const
+	{
+#ifdef USE_OPENGL
+		glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
+#endif // USE_OPENGL
+	}
+
+	std::shared_ptr<IDrawIndirectBuffer> IDrawIndirectBuffer::CreatePtr(unsigned int size)
+	{
+		return std::make_shared<IDrawIndirectBuffer>(size);
+	}
+
+	std::shared_ptr<IDrawIndirectBuffer> IDrawIndirectBuffer::CreatePtr(void* cmds, unsigned int size)
+	{
+		return std::make_shared<IDrawIndirectBuffer>(cmds, size);
 	}
 
 }

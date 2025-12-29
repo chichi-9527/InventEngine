@@ -12,6 +12,14 @@ namespace INVENT
 #endif // USE_OPENGL
 	}
 
+	IUniformBuffer::IUniformBuffer(unsigned int size)
+	{
+#ifdef USE_OPENGL
+		glCreateBuffers(1, &_ubo);
+		glNamedBufferData(_ubo, size, nullptr, GL_DYNAMIC_DRAW);
+#endif // USE_OPENGL
+	}
+
 	IUniformBuffer::~IUniformBuffer()
 	{
 #ifdef USE_OPENGL
@@ -26,8 +34,20 @@ namespace INVENT
 #endif // USE_OPENGL
 	}
 
+	void IUniformBuffer::Bind(unsigned int binding) const
+	{
+#ifdef USE_OPENGL
+		glBindBufferBase(GL_UNIFORM_BUFFER, binding, _ubo);
+#endif // USE_OPENGL
+	}
+
 	std::shared_ptr<IUniformBuffer> IUniformBuffer::CreatePtr(unsigned int size, unsigned int binding)
 	{
 		return std::make_shared<IUniformBuffer>(size, binding);
+	}
+
+	std::shared_ptr<IUniformBuffer> IUniformBuffer::CreatePtr(unsigned int size)
+	{
+		return std::make_shared<IUniformBuffer>(size);
 	}
 }

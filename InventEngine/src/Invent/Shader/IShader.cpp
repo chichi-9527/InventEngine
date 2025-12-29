@@ -1,9 +1,11 @@
-#include "IEpch.h"
+﻿#include "IEpch.h"
 #include "IShader.h"
 
 #include "IDefaultShader.h"
 
 #include <filesystem>
+
+#include <iostream>
 
 namespace INVENT
 {
@@ -62,25 +64,49 @@ namespace INVENT
 #ifdef USE_OPENGL
 		_shader_program = glCreateProgram();
 
+		int suc = 0;
+
 		auto vertex_shader = glCreateShader(GL_VERTEX_SHADER);
 		const GLchar* source = vertexSrc.c_str();
 		glShaderSource(vertex_shader, 1, &source, NULL);
 		glCompileShader(vertex_shader);
+		glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &suc);
+		if (!suc)
+		{
+			GLint logLength;
+			glGetShaderiv(vertex_shader, GL_INFO_LOG_LENGTH, &logLength);
+			std::vector<GLchar> infoLog(logLength);
+			glGetShaderInfoLog(vertex_shader, logLength, NULL, infoLog.data());
+			INVENT_LOG_ERROR(std::string("ERROR::VERTEXSHADER::COMPILATION_FAILED\n") + std::string(infoLog.data()));
+		}
 
 		auto fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
 		source = fragmentSrc.c_str();
 		glShaderSource(fragment_shader, 1, &source, NULL);
 		glCompileShader(fragment_shader);
+		glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &suc);
+		if (!suc)
+		{
+			GLint logLength;
+			glGetShaderiv(fragment_shader, GL_INFO_LOG_LENGTH, &logLength);
+			std::vector<GLchar> infoLog(logLength);
+			glGetShaderInfoLog(fragment_shader, logLength, NULL, infoLog.data());
+			INVENT_LOG_ERROR(std::string("ERROR::FRAGMENTSHADER::COMPILATION_FAILED\n") + std::string(infoLog.data()));
+		}
 
 		glAttachShader(_shader_program, vertex_shader);
 		glAttachShader(_shader_program, fragment_shader);
 		glLinkProgram(_shader_program);
 
-		int suc = 0;
 		glGetProgramiv(_shader_program, GL_LINK_STATUS, &suc);
 		if (!suc)
 		{
-			INVENT_LOG_ERROR("ERROR::SHADER::VERTEX_OR_FRAGRAM::COMPILATION_FAILED \n");
+			INVENT_LOG_ERROR("ERROR::SHADER::LINK::COMPILATION_FAILED \n");
+			GLint logLength;
+			glGetProgramiv(_shader_program, GL_INFO_LOG_LENGTH, &logLength);
+			std::vector<GLchar> infoLog(logLength);
+			glGetProgramInfoLog(_shader_program, logLength, NULL, infoLog.data());
+			INVENT_LOG_ERROR(std::string(infoLog.data()));
 		}
 		else
 		{
@@ -162,6 +188,12 @@ namespace INVENT
 	IShader* IShaderManagement::GetDefaultTextShader()
 	{
 		static INVENT::IShader* _default_text = INVENT::IShaderManagement::Instance().Load("DefaultText", std::string(IDefaultShader::DefaultTextVertexShader), std::string(IDefaultShader::DefaultTextFragmentShader));
+		return _default_text;
+	}
+
+	IShader* IShaderManagement::GetDefault3DShader()
+	{
+		static INVENT::IShader* _default_text = INVENT::IShaderManagement::Instance().Load("Default3D", std::string(IDefaultShader::Default3DVertexShader), std::string(IDefaultShader::Default3DFragmentShader));
 		return _default_text;
 	}
 

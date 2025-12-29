@@ -1,6 +1,8 @@
 #include "IEpch.h"
 #include "IRendererCommand.h"
 
+#include "IVertexArray.h"
+
 namespace INVENT
 {
 	void IRendererCommend::Init()
@@ -30,6 +32,14 @@ namespace INVENT
 #endif // USE_OPENGL
 	}
 
+
+	void IRendererCommend::MultiDrawElementsIndirect(const std::shared_ptr<IVertexArray>& vertex_array, unsigned int draw_count)
+	{
+#ifdef USE_OPENGL
+		vertex_array->Bind();
+		glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, nullptr, draw_count, 0);
+#endif // USE_OPENGL
+	}
 
 	void IRendererCommend::SetLineWidth(float width)
 	{

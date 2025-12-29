@@ -197,6 +197,155 @@ void main()
 		color = Input.Color * sampled;
 }  
 		)";
+
+		constexpr static const char* Default3DVertexShader = R"(
+			#version 460 core
+layout (location = 0) in vec3 a_Position;
+layout (location = 1) in vec4 a_Color;
+layout (location = 2) in vec3 a_Normal;
+layout (location = 3) in vec2 a_TexCoords;
+layout (location = 4) in vec3 a_Tangent;
+layout (location = 5) in vec3 a_Bitangent;
+
+struct InstanceData
+{
+	mat4 normalMatrix;
+	float diffuseTextureID;
+	float normalTextureID;
+	float specularTextureID;
+	float emissionTextureID;
+	float roughnessTextureID;
+	float aoTextureID;
+};
+
+layout(std430, binding = 0) buffer InstanceDataBuffer
+{
+	InstanceData instances[];
+};
+
+layout(std140, binding = 0) uniform Camera
+{
+	mat4 u_ViewProjection;
+	mat4 u_ViewProjection2D;
+	vec3 u_LightColor;
+	vec3 u_CameraPosition;
+};
+
+struct VertexOutput
+{
+	vec3 LightColor;
+	vec2 TexCoord;
+	vec3 Normal;
+	vec3 FragPos;
+	mat3 TBN;
+	vec3 CameraPos;
+	float diffuseTextureID;
+	float normalTextureID;
+	float specularTextureID;
+	float emissionTextureID;
+	float roughnessTextureID;
+	float aoTextureID;
+};
+
+layout (location = 0) out VertexOutput Output;
+
+void main()
+{
+	InstanceData data = instances[gl_BaseInstance];
+
+	Output.diffuseTextureID = data.diffuseTextureID;
+	Output.normalTextureID = data.normalTextureID;
+	Output.specularTextureID = data.specularTextureID;
+	Output.emissionTextureID = data.emissionTextureID;
+	Output.roughnessTextureID = data.roughnessTextureID;
+	Output.aoTextureID = data.aoTextureID;
+	
+	Output.LightColor = u_LightColor;
+    Output.TexCoord = a_TexCoords;
+	Output.Normal = normalize(mat3(data.normalMatrix) * a_Normal);
+	Output.FragPos = a_Position;
+	Output.CameraPos = u_CameraPosition;
+	
+	vec3 T = normalize(mat3(data.normalMatrix) * a_Tangent);
+	vec3 N = normalize(mat3(data.normalMatrix) * a_Normal);
+	T = normalize(T - dot(T, N) * N);
+	vec3 B = cross(N, T);
+	Output.TBN = mat3(T, B, N);
+	
+	gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+}
+		)";
+
+		constexpr static const char* Default3DFragmentShader = R"(
+			#version 460 core
+layout (binding = 0) uniform sampler2D u_Textures[32];
+
+uniform vec3 uLightPos;
+uniform float uShininess;
+uniform vec3 uEmissionColor;
+uniform float uEmissionStrength;
+
+struct VertexOutput
+{
+	vec3 LightColor;
+	vec2 TexCoord;
+	vec3 Normal;
+	vec3 FragPos;
+	mat3 TBN;
+	vec3 CameraPos;
+	float diffuseTextureID;
+	float normalTextureID;
+	float specularTextureID;
+	float emissionTextureID;
+	float roughnessTextureID;
+	float aoTextureID;
+};
+
+layout (location = 0) in VertexOutput Input;
+
+vec3 getNormalFromMap(int normalTextureID)
+{
+	vec3 tangentNormal = texture(u_Textures[normalTextureID], Input.TexCoord).xyz * 2.0 - 1.0;
+	return normalize(Input.TBN * tangentNormal);
+}
+
+layout (location = 0) out vec4 FragColor;
+
+void main()
+{
+	
+    vec4 diffuse = texture(u_Textures[int(Input.diffuseTextureID)], Input.TexCoord);
+    float specularIntensity = texture(u_Textures[int(Input.specularTextureID)], Input.TexCoord).r;
+    vec3 emission = texture(u_Textures[int(Input.emissionTextureID)], Input.TexCoord).rgb;
+    float roughness = texture(u_Textures[int(Input.roughnessTextureID)], Input.TexCoord).r;
+    float ao = texture(u_Textures[int(Input.aoTextureID)], Input.TexCoord).r;
+	
+    vec3 normal;
+    if (Input.normalTextureID >= 0) {
+        normal = getNormalFromMap(int(Input.normalTextureID));
+    } else {
+        normal = normalize(Input.Normal);
+    }
+    
+    vec3 lightDir = normalize(uLightPos - Input.FragPos);
+    vec3 viewDir = normalize(Input.CameraPos - Input.FragPos);
+    
+    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 diffuseColor = diff * Input.LightColor * diffuse.rgb;
+    
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), uShininess * (1.0 - roughness));
+    vec3 specularColor = spec * specularIntensity * Input.LightColor;
+    
+    vec3 emissionColor = emission * uEmissionColor * uEmissionStrength;
+    
+    vec3 ambientColor = vec3(0.1) * diffuse.rgb * ao;
+    
+    vec3 result = ambientColor + diffuseColor + specularColor + emissionColor;
+    
+    FragColor = vec4(result, diffuse.a);
+}
+		)";
 		
 	};
 }
