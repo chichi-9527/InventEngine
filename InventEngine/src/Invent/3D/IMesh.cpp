@@ -8,7 +8,7 @@ namespace INVENT
 	IMesh::IMesh()
 		: IObjectBase()
 	{
-		this->AddComponent<MeshComponent>();
+		this->AddComponent<MeshComponent>().PreExpansion((size_t)2 << 11);
 	}
 
 	IMesh::~IMesh()

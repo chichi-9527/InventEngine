@@ -89,7 +89,7 @@ public:
 		: INVENT::ISquare2dPawn()
 	{
 		this->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
-		this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("./Assets/Textures/test.png"));
+		this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("./Assets/Textures/test.png/../test.png"));
 		//this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("charX",INVENT::UI::IDrawString::LoadChar('x')));
 
 		this->SetMoveSpeed(1.0f);

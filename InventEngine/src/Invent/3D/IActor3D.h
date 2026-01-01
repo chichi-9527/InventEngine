@@ -4,6 +4,8 @@
 #include "IActor.h"
 #include "IMesh.h"
 
+#include <string>
+
 namespace INVENT
 {
 	class IActor3D : public IActor
@@ -21,6 +23,8 @@ namespace INVENT
 		const glm::vec3& GetScale();
 
 		virtual void SetWorldPosition(const glm::vec3& position) override;
+
+		void LoadModel(const std::string& path);
 
 	public:
 

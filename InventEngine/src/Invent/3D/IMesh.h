@@ -3,6 +3,7 @@
 
 #include "IBase/IObjectBase.h"
 
+#include <string>
 
 namespace INVENT
 {
@@ -10,6 +11,7 @@ namespace INVENT
 	class IMesh :
 		public IObjectBase
 	{
+		friend class ILoadModel;
 	public:
 		IMesh();
 		virtual ~IMesh();
@@ -19,9 +21,9 @@ namespace INVENT
 
 		MeshComponent* GetMesh();
 
-
+		const std::string& Name() const { return _name; }
 	private:
-
+		std::string _name;
 	};
 
 

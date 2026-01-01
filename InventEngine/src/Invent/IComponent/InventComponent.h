@@ -80,10 +80,10 @@ namespace INVENT
 		// 双切线
 		glm::vec3 Bitangent;
 
-		bool HasNormal = false;
-		bool HasTexCoords = false;
-		bool HasTangent = false;
-		bool HasBitangent = false;
+		float HasNormal = 0.0f;
+		float HasTexCoords = 0.0f;
+		float HasTangent = 0.0f;
+		float HasBitangent = 0.0f;
 
 		MeshVertex()
 			: Position(0.0f)
@@ -115,6 +115,12 @@ namespace INVENT
 			TextureIDs = { 0,0,0,0,0,0 };
 		}
 		MeshComponent(const MeshComponent&) = default;
+
+		void PreExpansion(size_t capacity)
+		{
+			Vertexes.reserve(capacity);
+			Indeices.reserve(capacity);
+		}
 	};
 
 

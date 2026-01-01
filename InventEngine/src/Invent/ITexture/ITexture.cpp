@@ -319,29 +319,30 @@ namespace INVENT
 		auto lastcount = path.find_last_of('.');
 		std::string name = path.substr(startcount, lastcount - startcount);
 
+		return CreateTextureDynamic(name, path, tex_break_width_num, tex_break_height_num);
+	}
+
+	ITexture2DManagement::TextureID ITexture2DManagement::CreateTextureDynamic(const std::string& name, const std::string& path, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
+	{
 		auto tex = _textrues.find(name);
 		if (tex != _textrues.end())
 		{
 			return (*tex).second.second;
 		}
 
-		return CreateTextureDynamic(name, path, tex_break_width_num, tex_break_height_num);
-	}
-
-	ITexture2DManagement::TextureID ITexture2DManagement::CreateTextureDynamic(const std::string& name, const std::string& path, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
-	{
 		size_t id = 0;
 		{
 			std::lock_guard<std::mutex> lock(_mutex);
 			id = _vector_textrues.size();
 			_vector_textrues.push_back(nullptr);
+			_textrues[name] = { nullptr, id };
 		}
 
 		IEngine::InstancePtr()->GetIWindow()->GetThreadPool()->Submit(0, [this, tex_break_width_num, tex_break_height_num, id](const std::string& Name, const std::string& Path) {
 			auto texture = new ITexture2D(Name, Path, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
 			std::lock_guard<std::mutex> lock(_mutex);
 			_vector_textrues[id] = (ITextureBase*)texture;
-			_textrues[Name] = { texture, id };
+			_textrues[Name].first = (ITextureBase*)texture;
 			}, name, path);
 
 		return id;
@@ -360,13 +361,14 @@ namespace INVENT
 			std::lock_guard<std::mutex> lock(_mutex);
 			id = _vector_textrues.size();
 			_vector_textrues.push_back(nullptr);
+			_textrues[name] = { nullptr, id };
 		}
 
 		IEngine::InstancePtr()->GetIWindow()->GetThreadPool()->Submit(0, [this, tex_break_width_num, tex_break_height_num, id](const std::string& Name, const CharCharacter& Path) {
 			auto texture = new ITexture2D(Name, Path, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
 			std::lock_guard<std::mutex> lock(_mutex);
 			_vector_textrues[id] = (ITextureBase*)texture;
-			_textrues[Name] = { texture, id };
+			_textrues[Name].first = (ITextureBase*)texture;
 			}, name, character);
 
 		return id;
