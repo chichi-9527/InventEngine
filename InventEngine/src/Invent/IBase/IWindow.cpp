@@ -639,6 +639,10 @@ namespace INVENT
 
 			IWindow::Render(Level);
 
+			IRenderer::BeginRender(Level->GetController() ? Level->GetController()->GetSceneCamera() : nullptr);
+			Render3d();
+			IRenderer::EndRender();
+
 			///////////// Render End
 			//////////////////////////////////////////////////////////
 
@@ -738,6 +742,7 @@ namespace INVENT
 		IRenderer2D::DrawWString(L"你 好，世界", { 0.5f, 0.8f, 0.2f, 1.0f }, {0.8f, 0.8f }, 32.0f, 1, 1);
 
 		IRenderer2D::EndRender();
+
 
 		
 	}

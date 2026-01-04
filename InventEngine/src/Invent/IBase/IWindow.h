@@ -66,6 +66,9 @@ namespace INVENT
 
 		static void Render(IBaseLevel* level);
 
+		// TEST
+		virtual void Render3d(){}
+
 	protected:
 		IBaseLevel* Level;
 

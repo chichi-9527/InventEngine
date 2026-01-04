@@ -40,6 +40,12 @@ namespace INVENT
 		glBindBufferBase(GL_UNIFORM_BUFFER, binding, _ubo);
 #endif // USE_OPENGL
 	}
+	void IUniformBuffer::UnBind(unsigned int binding) const
+	{
+#ifdef USE_OPENGL
+		glBindBufferBase(GL_UNIFORM_BUFFER, binding, 0);
+#endif // USE_OPENGL
+	}
 
 	std::shared_ptr<IUniformBuffer> IUniformBuffer::CreatePtr(unsigned int size, unsigned int binding)
 	{

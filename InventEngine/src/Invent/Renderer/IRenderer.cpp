@@ -11,7 +11,7 @@
 
 
 #define INVENT_MAX_VERTEX_RENDER_ONCE  20000 * 6
-#define INVENT_MAX_INDEX_RENDER_ONCE  INVENT_MAX_VERTEX_RENDER_ONCE
+#define INVENT_MAX_INDEX_RENDER_ONCE  INVENT_MAX_VERTEX_RENDER_ONCE * 4
 #define INVENT_MAX_TEXTURE_RENDER_ONCE  32
 #define INVENT_MAX_MESH_A_RANDER  1000
 
@@ -30,18 +30,6 @@ namespace INVENT
 	{
 		IRenderer::_free_renderer_data();
 		IRenderer2D::Shutdown();
-	}
-
-	void IRenderer::BeginRender(const ICamera* camera)
-	{
-		if (camera)
-			_scene_data->ViewProjectionMatrix = camera->GetViewProjectionMatrix();
-		_scene_data->ViewProjectionMatrix = glm::mat4(1.0f);
-	}
-
-	void IRenderer::EndRender()
-	{
-		Rendering();
 	}
 
 	void IRenderer::Submit(const IShader* shader, const std::shared_ptr<IVertexArray> vertex_array, const glm::mat4& transfrom)
@@ -75,44 +63,45 @@ namespace INVENT
 	{
 		glm::mat4 modleMartrix;
 		float diffuseTextureID;
-		float normalTextureID;
-		float specularTextureID;
-		float emissionTextureID;
-		float roughnessTextureID;
-		float aoTextureID;
+		float padding[3];
 
 		InstanceData()
 			: modleMartrix(1.0f)
 			, diffuseTextureID(0.0f)
-			, normalTextureID(0.0f)
-			, specularTextureID(0.0f)
-			, emissionTextureID(0.0f)
-			, roughnessTextureID(0.0f)
-			, aoTextureID(0.0f)
 		{}
 	};
 
 	struct RanderMeshVertex
 	{
 		glm::vec3 Position;
-		glm::vec4 Color;
-		// 法线
-		glm::vec3 Normal;
 		glm::vec2 TexCoords;
-		// 切线
-		glm::vec3 Tangent;
-		// 双切线
-		glm::vec3 Bitangent;
 
 		RanderMeshVertex()
 			: Position(0.0f)
-			, Color(1.0f)
-			, Normal(0.0f)
 			, TexCoords(0.0f)
-			, Tangent(0.0f)
-			, Bitangent(0.0f)
 		{}
 	};
+	//struct RanderMeshVertex
+	//{
+	//	glm::vec3 Position;
+	//	glm::vec4 Color;
+	//	// 法线
+	//	glm::vec3 Normal;
+	//	glm::vec2 TexCoords;
+	//	// 切线
+	//	glm::vec3 Tangent;
+	//	// 双切线
+	//	glm::vec3 Bitangent;
+
+	//	RanderMeshVertex()
+	//		: Position(0.0f)
+	//		, Color(1.0f)
+	//		, Normal(0.0f)
+	//		, TexCoords(0.0f)
+	//		, Tangent(0.0f)
+	//		, Bitangent(0.0f)
+	//	{}
+	//};
 
 	struct RendererData
 	{
@@ -128,7 +117,7 @@ namespace INVENT
 		unsigned int BaseInstance = 0;
 
 		unsigned int* Indices = nullptr;
-		unsigned int IndixOffset = 0;
+		unsigned int IndexOffset = 0;
 
 		std::array<ITextureBase*, INVENT_MAX_TEXTURE_RENDER_ONCE> TextureArray;
 		size_t TextureSlotIndex = 0;
@@ -166,11 +155,7 @@ namespace INVENT
 		renderer_data.VertexBuffer = IVertexBuffer::CreatePtr(INVENT_MAX_VERTEX_RENDER_ONCE * sizeof(RanderMeshVertex));
 		renderer_data.VertexBuffer->SetLayout({
 			{IShaderDataType::Float3, "a_Position"},
-			{IShaderDataType::Float4, "a_Color"},
-			{IShaderDataType::Float3, "a_Normal"},
-			{IShaderDataType::Float2, "a_TexCoord"},
-			{IShaderDataType::Float3, "a_Tangent"},
-			{IShaderDataType::Float3, "a_Bitangent"}
+			{IShaderDataType::Float2, "a_TexCoord"}
 			});
 		renderer_data.VertexArray->AddVertexBuffer(renderer_data.VertexBuffer);
 
@@ -191,6 +176,23 @@ namespace INVENT
 		renderer_data.DrawIndirectBuffer = IDrawIndirectBuffer::CreatePtr((unsigned int)(INVENT_MAX_MESH_A_RANDER * sizeof(DrawElementsIndirectCommand)));
 		renderer_data.ShaderStorageBuffer = IShaderStorageBuffer::CreatePtr((unsigned int)(INVENT_MAX_MESH_A_RANDER * sizeof(InstanceData)));
 
+	}
+
+	void IRenderer::BeginRender(const ICamera* camera)
+	{
+		renderer_data.CameraBuffer.ViewProjection = camera ? camera->GetViewProjectionMatrix() : glm::mat4(1.0f);
+		renderer_data.CameraBuffer.ViewProjection2D = glm::mat4(1.0f);
+		renderer_data.CameraUniformBuffer->SetData(&renderer_data.CameraBuffer, sizeof(RendererData::CameraData));
+		renderer_data.CameraUniformBuffer->Bind(0);
+
+		StartARender();
+		
+	}
+
+	void IRenderer::EndRender()
+	{
+		Rendering();
+		renderer_data.CameraUniformBuffer->UnBind(0);
 	}
 
 	void IRenderer::_free_renderer_data()
@@ -290,15 +292,23 @@ namespace INVENT
 		cmd.baseVertex = renderer_data.VertexCount;
 		cmd.baseInstance = renderer_data.BaseInstance++;
 
-		renderer_data.IndexCount += (unsigned int)mesh_comp->Indeices.size();
-		renderer_data.VertexCount += (unsigned int)mesh_comp->Vertexes.size();
+		
 
 		for (auto& mesh_vertex : mesh_comp->Vertexes)
 		{
 			renderer_data.VertexBufferBack->Position = model_martrix * glm::vec4(mesh_vertex.Position, 1.0f);
-			renderer_data.VertexBufferBack->Color = mesh_vertex.Color;
-			renderer_data.VertexBufferBack->Normal = mesh_vertex.Normal;
+			renderer_data.VertexBufferBack->TexCoords = mesh_vertex.TexCoords;
+			renderer_data.VertexBufferBack++;
 		}
+
+		for (unsigned int i = 0; i < mesh_comp->Indeices.size(); ++i)
+		{
+			renderer_data.Indices[renderer_data.IndexCount + i] = mesh_comp->Indeices[i] + renderer_data.VertexCount;
+		}
+
+		renderer_data.IndexCount += (unsigned int)mesh_comp->Indeices.size();
+		renderer_data.VertexCount += (unsigned int)mesh_comp->Vertexes.size();
+
 
 
 	}

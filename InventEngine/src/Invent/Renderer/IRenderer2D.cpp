@@ -192,6 +192,7 @@ namespace INVENT
 		renderer2d_data.CameraBuffer.ViewProjection = camera ? camera->GetViewProjectionMatrix() : glm::mat4(1.0f);
 		renderer2d_data.CameraBuffer.ViewProjection2D = glm::ortho(0.0f, (float)IEngine::InstancePtr()->GetWindowSizeX(), 0.0f, (float)IEngine::InstancePtr()->GetWindowSizeY());
 		renderer2d_data.CameraUniformBuffer->SetData(&renderer2d_data.CameraBuffer, sizeof(Renderer2DData::CameraData));
+		renderer2d_data.CameraUniformBuffer->Bind(0);
 
 		StartARender();
 	}
@@ -199,6 +200,7 @@ namespace INVENT
 	void IRenderer2D::EndRender()
 	{
 		Rendering();
+		renderer2d_data.CameraUniformBuffer->UnBind(0);
 	}
 
 	void IRenderer2D::StartARender()

@@ -15,6 +15,7 @@
 #include <boost/graph/properties.hpp>
 
 #include "Invent/IComponent/InventComponent.h"
+#include "Invent/Renderer/IRenderer.h"
 
 
 class MyGameInstance : public INVENT::IGameInstance<MyGameInstance>
@@ -91,7 +92,7 @@ public:
 		: INVENT::ISquare2dPawn()
 	{
 		this->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
-		this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("./Assets/Textures/test.png/../test.png"));
+		this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("./Assets/backpack/diffuse.jpg"));
 		//this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("charX",INVENT::UI::IDrawString::LoadChar('x')));
 
 		this->SetMoveSpeed(1.0f);
@@ -204,11 +205,13 @@ public:
 		//act->AddChild(act2);
 
 		auto act3 = this->CreateActor<MyAnimationActor>();
-		act3->SetWorldPosition({ 1.0f,-3.0f,1.0f });
+		act3->SetWorldPosition({ 1.0f,-3.0f,0.0f });
 
 		auto tilemap = this->CreateActor<MyTileMap>();
 
-		auto actor3d = this->CreateActor<INVENT::IActor3D>();
+		actor3d = this->CreateActor<INVENT::IActor3D>();
+		actor3d->SetWorldPosition({ 0.0f,-1.0f,2.0f });
+		//actor3d->SetWorldRotation({ 0.0f,90.0f,0.0f });
 		actor3d->LoadModel("./Assets/backpack/backpack.obj");
 
 		for (auto& mesh : actor3d->meshes)
@@ -281,8 +284,12 @@ public:
 
 	}
 
+	INVENT::IActor3D* actor3d;
+
 private:
 	INVENT::ICamera* camera;
+
+	
 
 };
 
@@ -303,13 +310,24 @@ public:
 		this->SetGameInstance(std::static_pointer_cast<INVENT::IBaseGameInstance>(MyGameInstance::GetGameInstancePtr()));
 		this->StartThreadPool();
 
-		//this->SetLevel(new MyLevel);
+		this->SetLevel(new MyLevel);
 
-		std::thread create_level([this]() {
+		/*std::thread create_level([this]() {
 			this->SetLevel(new MyLevel);
 			});
 
-		create_level.detach();
+		create_level.detach();*/
+	}
+
+	virtual void Render3d() override
+	{
+		MyLevel* mylevel = static_cast<MyLevel*>(this->Level);
+		for (auto& mesh : mylevel->actor3d->meshes)
+		{
+			INVENT::IRenderer::DrawMesh(&mesh, mylevel->actor3d->GetModelMatrice());
+		}
+
+		
 	}
 
 	virtual ~MyWindow()

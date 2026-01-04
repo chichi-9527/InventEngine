@@ -201,6 +201,74 @@ void main()
 		constexpr static const char* Default3DVertexShader = R"(
 			#version 460 core
 layout (location = 0) in vec3 a_Position;
+layout (location = 3) in vec2 a_TexCoord;
+
+struct InstanceData
+{
+	mat4 normalMatrix;
+	float diffuseTextureID;
+	float padding[3];
+};
+
+layout(std430, binding = 0) buffer InstanceDataBuffer
+{
+	InstanceData instances[];
+};
+
+layout(std140, binding = 0) uniform Camera
+{
+	mat4 u_ViewProjection;
+	mat4 u_ViewProjection2D;
+};
+
+struct VertexOutput
+{
+	vec2 TexCoord;
+	float diffuseTextureID;
+};
+
+layout (location = 0) out VertexOutput Output;
+
+void main()
+{
+	InstanceData data = instances[gl_BaseInstance];
+
+	Output.diffuseTextureID = data.diffuseTextureID;
+	
+    Output.TexCoord = a_TexCoord;
+	
+	gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+}
+		)";
+
+		constexpr static const char* Default3DFragmentShader = R"(
+			#version 460 core
+layout (binding = 0) uniform sampler2D u_Textures[32];
+
+struct VertexOutput
+{
+	vec2 TexCoord;
+	float diffuseTextureID;
+};
+
+layout (location = 0) in VertexOutput Input;
+
+layout (location = 0) out vec4 FragColor;
+
+void main()
+{
+	vec4 diffuse = vec4(1.0,1.0,1.0,1.0);
+
+	diffuse *= texture(u_Textures[ 1], Input.TexCoord);
+    
+    FragColor = diffuse;
+}
+		)";
+		
+	};
+		/*constexpr static const char* Default3DVertexShader = R"(
+			#version 460 core
+layout (location = 0) in vec3 a_Position;
 layout (location = 1) in vec4 a_Color;
 layout (location = 2) in vec3 a_Normal;
 layout (location = 3) in vec2 a_TexCoords;
@@ -347,7 +415,7 @@ void main()
 }
 		)";
 		
-	};
+	};*/
 }
 
 #endif // !_IDEFAULTSHADER_

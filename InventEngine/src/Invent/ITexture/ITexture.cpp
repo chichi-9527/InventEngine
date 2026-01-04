@@ -403,9 +403,12 @@ namespace INVENT
 		if (id && id < _vector_textrues.size())
 		{
 			auto texture = _vector_textrues[id];
-			if (texture->Type() == ITextureBase::TextureType::TEXTURE_2D)
-				return (ITexture2D*)texture;
-			INVENT_LOG_WARNING(std::string("Find texture id ok, but the name is not 2D texture: ") + std::to_string(id));
+			if (texture)
+			{
+				if (texture && texture->Type() == ITextureBase::TextureType::TEXTURE_2D)
+					return (ITexture2D*)texture;
+				INVENT_LOG_WARNING(std::string("Find texture id ok, but the name is not 2D texture: ") + std::to_string(id));
+			}
 		}
 		return nullptr;
 	}
