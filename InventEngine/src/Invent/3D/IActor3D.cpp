@@ -25,6 +25,11 @@ namespace INVENT
 		RecalculateModelMatrix();
 	}
 
+	void IActor3D::LoadModel(const std::string& path)
+	{
+		ILoadModel::Load(this->meshes, path);
+	}
+
 	void IActor3D::SetWorldRotation(const glm::vec3& rotation)
 	{
 		this->GetComponent<WorldRotationComponent>()->Rotation = rotation;

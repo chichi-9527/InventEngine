@@ -551,6 +551,7 @@ namespace INVENT
 	{
 		IEngine::InstancePtr()->SetIWindow(this);
 		_threadpool = new IThreadPool();
+		ILog::Instance().IINFO("Log init done");
 	}
 
 	void IWindow::Begin()
@@ -608,15 +609,10 @@ namespace INVENT
 			last_frame = current_frame;
 
 			// init textures
-			for (auto iter = TEXTURE_MANAGEMENT::GetUninitTextures().begin(); iter != TEXTURE_MANAGEMENT::GetUninitTextures().end(); )
+			while(!TEXTURE_MANAGEMENT::GetUninitTextures().empty())
 			{
-				(*iter)->InitTextureID();
-				if ((*iter)->IsValid)
-				{
-					iter = TEXTURE_MANAGEMENT::GetUninitTextures().erase(iter);
-					continue;
-				}
-				++iter;
+				TEXTURE_MANAGEMENT::GetUninitTextures().front()->InitTextureID();
+				TEXTURE_MANAGEMENT::GetUninitTextures().pop();
 			}
 
 			// init other functions

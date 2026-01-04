@@ -9,6 +9,7 @@ namespace INVENT
 	class IMesh;
 	class ILoadModel
 	{
+	public:
 		static void Load(std::vector<IMesh>& meshes, const std::string& path);
 
 	};

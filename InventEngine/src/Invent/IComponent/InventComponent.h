@@ -113,6 +113,8 @@ namespace INVENT
 		MeshComponent()
 		{
 			TextureIDs = { 0,0,0,0,0,0 };
+			Vertexes.clear();
+			Indeices.clear();
 		}
 		MeshComponent(const MeshComponent&) = default;
 

@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Invent\ITools\Log.h" />
     <ClInclude Include="src\Invent\Renderer\IShaderStorageBuffer.h" />
     <ClInclude Include="src\Invent\ITools\ILoadModel.h" />
     <ClInclude Include="src\Invent\3D\IMesh.h" />

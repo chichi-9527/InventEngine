@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <queue>
 #include <unordered_map>
 
 #include <thread>
@@ -151,7 +152,7 @@ namespace INVENT
 
 	namespace TEXTURE_MANAGEMENT
 	{
-		std::vector<ITextureBase*>& GetUninitTextures();
+		std::queue<ITextureBase*>& GetUninitTextures();
 	}
 
 	class ITexture2DManagement 

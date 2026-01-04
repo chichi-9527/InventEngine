@@ -14,6 +14,8 @@
 #include <boost/graph/astar_search.hpp>
 #include <boost/graph/properties.hpp>
 
+#include "Invent/IComponent/InventComponent.h"
+
 
 class MyGameInstance : public INVENT::IGameInstance<MyGameInstance>
 {
@@ -205,6 +207,16 @@ public:
 		act3->SetWorldPosition({ 1.0f,-3.0f,1.0f });
 
 		auto tilemap = this->CreateActor<MyTileMap>();
+
+		auto actor3d = this->CreateActor<INVENT::IActor3D>();
+		actor3d->LoadModel("./Assets/backpack/backpack.obj");
+
+		for (auto& mesh : actor3d->meshes)
+		{
+			auto meshcomp = mesh.GetMesh();
+			std::cout << meshcomp->Vertexes.size() << "\n";
+			std::cout << meshcomp->Indeices.size() << "\n";
+		}
 
 		/*auto collider1 = new INVENT::IColliderBox(nullptr, { 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f });
 		auto collider2 = new INVENT::IColliderBox(nullptr, { 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f }, { 0.0f,0.0f,45.0f });

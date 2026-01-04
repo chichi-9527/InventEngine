@@ -148,7 +148,7 @@ namespace INVENT
 		_height = height;
 		_channels = channels;
 
-		TEXTURE_MANAGEMENT::GetUninitTextures().push_back((ITextureBase*)this);
+		TEXTURE_MANAGEMENT::GetUninitTextures().push((ITextureBase*)this);
 		_type = ITextureBase::TextureType::TEXTURE_2D;
 	}
 
@@ -167,7 +167,7 @@ namespace INVENT
 		memcpy(_tex_data, character.Buffer, (size_t)_width * (size_t)_height);
 		_charcharacter = character;
 
-		TEXTURE_MANAGEMENT::GetUninitTextures().push_back((ITextureBase*)this);
+		TEXTURE_MANAGEMENT::GetUninitTextures().push((ITextureBase*)this);
 		_type = ITextureBase::TextureType::TEXTURE_2D;
 	}
 
@@ -462,7 +462,7 @@ namespace INVENT
 			
 		}
 
-		TEXTURE_MANAGEMENT::GetUninitTextures().push_back((ITextureBase*)this);
+		TEXTURE_MANAGEMENT::GetUninitTextures().push((ITextureBase*)this);
 		_type = ITextureBase::TextureType::TEXTURE_CUBE_MAP;
 	}
 
@@ -518,9 +518,9 @@ namespace INVENT
 	}
 
 
-	static std::vector<ITextureBase*> UninitTextrues;
+	static std::queue<ITextureBase*> UninitTextrues;
 
-	std::vector<ITextureBase*>& TEXTURE_MANAGEMENT::GetUninitTextures()
+	std::queue<ITextureBase*>& TEXTURE_MANAGEMENT::GetUninitTextures()
 	{
 		return UninitTextrues;
 	}
