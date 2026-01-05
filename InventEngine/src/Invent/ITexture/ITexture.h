@@ -132,7 +132,7 @@ namespace INVENT
 
 	private:
 		ITexture2D();
-		ITexture2D(const std::string& name, const std::string& path, const _UInt2& breakup = _UInt2());
+		ITexture2D(const std::string& name, const std::string& path, int flag_true_if_should_flip = 1, const _UInt2& breakup = _UInt2());
 		ITexture2D(const std::string& name, const CharCharacter& character, const _UInt2& breakup = _UInt2());
 
 	private:
@@ -165,14 +165,14 @@ namespace INVENT
 		static ITexture2DManagement& Instance();
 
 		ITexture2D* CreateTexture(const std::string& path, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
-		ITexture2D* CreateTexture(const std::string& name, const std::string& path, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
+		ITexture2D* CreateTexture(const std::string& name, const std::string& path, int flag_true_if_should_flip = 1, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
 		ITexture2D* CreateTexture(const std::string& name, const CharCharacter character, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
-		TextureID CreateTexture(ITexture2D* texture, const std::string& path, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
-		TextureID CreateTexture(ITexture2D* texture, const std::string& name, const std::string& path, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
+		TextureID CreateTexture(ITexture2D* texture, const std::string& path, int flag_true_if_should_flip = 1, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
+		TextureID CreateTexture(ITexture2D* texture, const std::string& name, const std::string& path, int flag_true_if_should_flip = 1, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
 		TextureID CreateTexture(ITexture2D* texture, const std::string& name, const CharCharacter character, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
 
 		TextureID CreateTextureDynamic(const std::string& path, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
-		TextureID CreateTextureDynamic(const std::string& name, const std::string& path, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
+		TextureID CreateTextureDynamic(const std::string& name, const std::string& path, int flag_true_if_should_flip = 1, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
 		TextureID CreateTextureDynamic(const std::string& name, const CharCharacter character, unsigned int tex_break_width_num = 0, unsigned int tex_break_height_num = 0);
 
 		ITexture2D* CreateWhiteTexture();

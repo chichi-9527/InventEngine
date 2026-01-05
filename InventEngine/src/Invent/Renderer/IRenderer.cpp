@@ -62,12 +62,11 @@ namespace INVENT
 	struct InstanceData
 	{
 		glm::mat4 modleMartrix;
-		float diffuseTextureID;
-		float padding[3];
+		glm::vec4 TextureIDs;
 
 		InstanceData()
 			: modleMartrix(1.0f)
-			, diffuseTextureID(0.0f)
+			, TextureIDs(0.0f)
 		{}
 	};
 
@@ -75,10 +74,12 @@ namespace INVENT
 	{
 		glm::vec3 Position;
 		glm::vec2 TexCoords;
+		glm::vec3 TextureIDs;
 
 		RanderMeshVertex()
 			: Position(0.0f)
 			, TexCoords(0.0f)
+			, TextureIDs(0.0f)
 		{}
 	};
 	//struct RanderMeshVertex
@@ -155,7 +156,8 @@ namespace INVENT
 		renderer_data.VertexBuffer = IVertexBuffer::CreatePtr(INVENT_MAX_VERTEX_RENDER_ONCE * sizeof(RanderMeshVertex));
 		renderer_data.VertexBuffer->SetLayout({
 			{IShaderDataType::Float3, "a_Position"},
-			{IShaderDataType::Float2, "a_TexCoord"}
+			{IShaderDataType::Float2, "a_TexCoord"},
+			{IShaderDataType::Float3, "a_TextureIDs"}
 			});
 		renderer_data.VertexArray->AddVertexBuffer(renderer_data.VertexBuffer);
 
@@ -213,6 +215,7 @@ namespace INVENT
 		renderer_data.IndexCount = 0;
 		renderer_data.BaseInstance = 0;
 		renderer_data.VertexBufferBack = renderer_data.VertexBuffers;
+		renderer_data.Instances.clear();
 
 		renderer_data.TextureSlotIndex = 1;
 	}
@@ -231,7 +234,7 @@ namespace INVENT
 			unsigned int data_size = (unsigned int)((unsigned char*)renderer_data.VertexBufferBack - (unsigned char*)renderer_data.VertexBuffers);
 			renderer_data.VertexBuffer->SetData((void*)renderer_data.VertexBuffers, data_size);
 
-			renderer_data.IndexBuffer->SetData(renderer_data.Indices, renderer_data.IndexCount);
+			renderer_data.IndexBuffer->SetData((void*)renderer_data.Indices, renderer_data.IndexCount * sizeof(unsigned int));
 
 			for (unsigned int i = 0; i < renderer_data.TextureSlotIndex; ++i)
 			{
@@ -239,10 +242,10 @@ namespace INVENT
 			}
 			renderer_data.Shader->Bind();
 			renderer_data.ShaderStorageBuffer->Bind(0);
-			renderer_data.ShaderStorageBuffer->SetData(renderer_data.Instances.data(), unsigned int(renderer_data.Instances.size() * sizeof(InstanceData)));
+			renderer_data.ShaderStorageBuffer->SetData((void*)renderer_data.Instances.data(), unsigned int(renderer_data.Instances.size() * sizeof(InstanceData)));
 			renderer_data.DrawIndirectBuffer->Bind();
-			renderer_data.DrawIndirectBuffer->SetData(renderer_data.Cmds.data(), unsigned int(renderer_data.Cmds.size() * sizeof(DrawElementsIndirectCommand)));
-			IRendererCommend::MultiDrawElementsIndirect(renderer_data.VertexArray, renderer_data.BaseInstance + 1);
+			renderer_data.DrawIndirectBuffer->SetData((void*)renderer_data.Cmds.data(), unsigned int(renderer_data.Cmds.size() * sizeof(DrawElementsIndirectCommand)));
+			IRendererCommend::MultiDrawElementsIndirect(renderer_data.VertexArray, renderer_data.BaseInstance);
 		}
 
 	}
@@ -250,6 +253,11 @@ namespace INVENT
 	void IRenderer::DrawMesh(IMesh* mesh, const glm::mat4& model_martrix)
 	{
 		auto mesh_comp = mesh->GetMesh();
+
+		if (mesh_comp->Vertexes.size() == 0)
+		{
+			return;
+		}
 
 		if (renderer_data.VertexCount + mesh_comp->Vertexes.size() > INVENT_MAX_VERTEX_RENDER_ONCE
 			 || renderer_data.IndexCount + mesh_comp->Indeices.size() > INVENT_MAX_INDEX_RENDER_ONCE
@@ -279,7 +287,7 @@ namespace INVENT
 					renderer_data.TextureArray[renderer_data.TextureSlotIndex] = texture;
 					renderer_data.TextureSlotIndex++;
 				}
-				instance.diffuseTextureID = texture_index;
+				instance.TextureIDs.x = texture_index;
 			}
 		}
 		// 
@@ -298,6 +306,7 @@ namespace INVENT
 		{
 			renderer_data.VertexBufferBack->Position = model_martrix * glm::vec4(mesh_vertex.Position, 1.0f);
 			renderer_data.VertexBufferBack->TexCoords = mesh_vertex.TexCoords;
+			renderer_data.VertexBufferBack->TextureIDs = instance.TextureIDs;
 			renderer_data.VertexBufferBack++;
 		}
 

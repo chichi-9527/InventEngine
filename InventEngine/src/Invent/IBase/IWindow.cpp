@@ -637,11 +637,11 @@ namespace INVENT
 			///////////////////////////////////////////////////////////
 			///////////// Render Begin
 
-			IWindow::Render(Level);
-
 			IRenderer::BeginRender(Level->GetController() ? Level->GetController()->GetSceneCamera() : nullptr);
 			Render3d();
 			IRenderer::EndRender();
+
+			IWindow::Render(Level);
 
 			///////////// Render End
 			//////////////////////////////////////////////////////////

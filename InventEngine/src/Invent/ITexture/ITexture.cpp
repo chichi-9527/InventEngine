@@ -131,7 +131,7 @@ namespace INVENT
 		IsValid = true;
 	}
 
-	ITexture2D::ITexture2D(const std::string& name, const std::string& path, const _UInt2& breakup)
+	ITexture2D::ITexture2D(const std::string& name, const std::string& path, int flag_true_if_should_flip, const _UInt2& breakup)
 		: ITextureBase()
 	{
 		_name = name;
@@ -140,7 +140,8 @@ namespace INVENT
 			_texture_breakup.is_valid = false;
 
 		int width = 0, height = 0, channels = 0;
-		stbi_set_flip_vertically_on_load(1);
+		if (flag_true_if_should_flip)
+			stbi_set_flip_vertically_on_load(flag_true_if_should_flip);
 
 		_tex_data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
@@ -209,12 +210,12 @@ namespace INVENT
 		return CreateTexture(name, path, tex_break_width_num, tex_break_height_num);
 	}
 
-	ITexture2D* ITexture2DManagement::CreateTexture(const std::string& name, const std::string& path, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
+	ITexture2D* ITexture2DManagement::CreateTexture(const std::string& name, const std::string& path, int flag_true_if_should_flip, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
 	{
 		ITexture2D* texture = GetTexture(name);
 		if (texture)
 			return texture;
-		texture = new ITexture2D(name, path, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
+		texture = new ITexture2D(name, path, flag_true_if_should_flip, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
 		size_t tex_id = 0;
 		{
 			std::lock_guard<std::mutex> lock(_mutex);
@@ -243,7 +244,7 @@ namespace INVENT
 		return texture;
 	}
 
-	ITexture2DManagement::TextureID ITexture2DManagement::CreateTexture(ITexture2D* texture, const std::string& path, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
+	ITexture2DManagement::TextureID ITexture2DManagement::CreateTexture(ITexture2D* texture, const std::string& path, int flag_true_if_should_flip, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
 	{
 		auto startcount = path.find_last_of("/\\") + 1;
 		auto lastcount = path.find_last_of('.');
@@ -257,7 +258,7 @@ namespace INVENT
 		return CreateTexture(texture, name, path, tex_break_width_num, tex_break_height_num);
 	}
 
-	ITexture2DManagement::TextureID ITexture2DManagement::CreateTexture(ITexture2D* texture, const std::string& name, const std::string& path, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
+	ITexture2DManagement::TextureID ITexture2DManagement::CreateTexture(ITexture2D* texture, const std::string& name, const std::string& path, int flag_true_if_should_flip, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
 	{
 		auto tex = _textrues.find(name);
 		if (tex != _textrues.end())
@@ -272,7 +273,7 @@ namespace INVENT
 			return (*tex).second.second;
 		}
 
-		texture = new ITexture2D(name, path, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
+		texture = new ITexture2D(name, path, flag_true_if_should_flip, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
 
 		size_t tex_id = 0;
 		{
@@ -322,7 +323,7 @@ namespace INVENT
 		return CreateTextureDynamic(name, path, tex_break_width_num, tex_break_height_num);
 	}
 
-	ITexture2DManagement::TextureID ITexture2DManagement::CreateTextureDynamic(const std::string& name, const std::string& path, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
+	ITexture2DManagement::TextureID ITexture2DManagement::CreateTextureDynamic(const std::string& name, const std::string& path, int flag_true_if_should_flip, unsigned int tex_break_width_num, unsigned int tex_break_height_num)
 	{
 		auto tex = _textrues.find(name);
 		if (tex != _textrues.end())
@@ -338,8 +339,8 @@ namespace INVENT
 			_textrues[name] = { nullptr, id };
 		}
 
-		IEngine::InstancePtr()->GetIWindow()->GetThreadPool()->Submit(0, [this, tex_break_width_num, tex_break_height_num, id](const std::string& Name, const std::string& Path) {
-			auto texture = new ITexture2D(Name, Path, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
+		IEngine::InstancePtr()->GetIWindow()->GetThreadPool()->Submit(0, [this, flag_true_if_should_flip, tex_break_width_num, tex_break_height_num, id](const std::string& Name, const std::string& Path) {
+			auto texture = new ITexture2D(Name, Path, flag_true_if_should_flip, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
 			std::lock_guard<std::mutex> lock(_mutex);
 			_vector_textrues[id] = (ITextureBase*)texture;
 			_textrues[Name].first = (ITextureBase*)texture;

@@ -92,8 +92,7 @@ public:
 		: INVENT::ISquare2dPawn()
 	{
 		this->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
-		this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("./Assets/backpack/diffuse.jpg"));
-		//this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("charX",INVENT::UI::IDrawString::LoadChar('x')));
+		this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("./Assets/Textures/test.png"));
 
 		this->SetMoveSpeed(1.0f);
 
@@ -114,11 +113,11 @@ public:
 		//std::cout << "actor position : " << glm::to_string(this->GetWorldPosition()) << "\n";
 	}
 
-	//virtual void PRESS_EVENT_KEY_2() override
-	//{
-	//	this->SetTexture(INVENT::ITexture2DManagement::Instance().CreateTexture("charX", INVENT::UI::IDrawString::LoadChar('A')));
-	//	std::cout << "PRESS_EVENT_KEY_2\n";
-	//}
+	virtual void PRESS_EVENT_KEY_2() override
+	{
+		this->SetTexture(INVENT::ITexture2DManagement::Instance().GetTexture("backpack_Scene_-_Root_diffuse"));
+		std::cout << "PRESS_EVENT_KEY_2\n";
+	}
 
 	virtual void SetWorldRotation(const glm::vec3& rotation) override
 	{
@@ -139,7 +138,7 @@ public:
 	{}
 	virtual ~MyController() {}
 
-	virtual bool PRESS_EVENT_KEY_2() override
+	/*virtual bool PRESS_EVENT_KEY_2() override
 	{
 		INVENT::IEventLayer::PRESS_EVENT_KEY_2();
 
@@ -147,7 +146,7 @@ public:
 		actor->SetFlip(false, true);
 
 		return false;
-	}
+	}*/
 
 };
 
@@ -210,7 +209,7 @@ public:
 		auto tilemap = this->CreateActor<MyTileMap>();
 
 		actor3d = this->CreateActor<INVENT::IActor3D>();
-		actor3d->SetWorldPosition({ 0.0f,-1.0f,2.0f });
+		//actor3d->SetWorldPosition({ 0.0f,-1.0f,2.0f });
 		//actor3d->SetWorldRotation({ 0.0f,90.0f,0.0f });
 		actor3d->LoadModel("./Assets/backpack/backpack.obj");
 
@@ -218,7 +217,15 @@ public:
 		{
 			auto meshcomp = mesh.GetMesh();
 			std::cout << meshcomp->Vertexes.size() << "\n";
+			/*for (auto& vertex : meshcomp->Vertexes)
+			{
+				std::cout << glm::to_string(vertex.Position) << "\n";
+			}*/
 			std::cout << meshcomp->Indeices.size() << "\n";
+			/*for (auto index : meshcomp->Indeices)
+			{
+				std::cout << index << "\n";
+			}*/
 		}
 
 		/*auto collider1 = new INVENT::IColliderBox(nullptr, { 0.0f,0.0f,0.0f }, { 1.0f,1.0f,1.0f });
@@ -254,12 +261,12 @@ public:
 		return false;
 	}
 
-	virtual bool PRESS_EVENT_KEY_2() override
-	{
-		//INVENT::IEngine::InstancePtr()->GetIWindow()->SetFullScreen(false);
+	//virtual bool PRESS_EVENT_KEY_2() override
+	//{
+	//	//INVENT::IEngine::InstancePtr()->GetIWindow()->SetFullScreen(false);
 
-		return false;
-	}
+	//	return false;
+	//}
 
 	//virtual bool EVENT_CURSOR_POSITION(double xpos, double ypos) override
 	//{

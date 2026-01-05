@@ -20,7 +20,7 @@ namespace INVENT
 	static void process_mesh(std::vector<IMesh>& meshes, const aiMesh* mesh, const aiScene* scene, unsigned int textureCoordID = 0, unsigned int vertexColorID = 0)
 	{
 		size_t materialID = mesh->mMaterialIndex;
-		auto mesh_comp = meshes[materialID - 1].GetMesh();
+		auto mesh_comp = meshes[materialID].GetMesh();
 
 		unsigned int offset = (unsigned int)mesh_comp->Vertexes.size();
 
@@ -87,50 +87,50 @@ namespace INVENT
 		}
 
 		unsigned int material_num = scene->mNumMaterials;
-		meshes.resize(size_t(material_num - 1));
+		meshes.resize(size_t(material_num));
 		aiString aipath;
 		for (unsigned int i = 0; i < meshes.size(); ++i)
 		{
 			auto& textureIDs = meshes[i].GetMesh()->TextureIDs;
-			const auto& name = scene->mMaterials[i + 1]->GetName();
+			const auto& name = scene->mMaterials[i]->GetName();
 			std::string meshName = model_name + "_" + name.C_Str();
 
-			if (scene->mMaterials[i + 1]->GetTextureCount(aiTextureType_DIFFUSE))
+			if (scene->mMaterials[i]->GetTextureCount(aiTextureType_DIFFUSE))
 			{
 				
-				scene->mMaterials[i + 1]->GetTexture(aiTextureType_DIFFUSE, 0, &aipath);
-				textureIDs[0] = ITexture2DManagement::Instance().CreateTextureDynamic(meshName + "_diffuse", path + "/../" + aipath.C_Str());
+				scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &aipath);
+				textureIDs[0] = ITexture2DManagement::Instance().CreateTextureDynamic(meshName + "_diffuse", path + "/../" + aipath.C_Str(), 0);
 
 			}
-			if (scene->mMaterials[i + 1]->GetTextureCount(aiTextureType_HEIGHT))
+			if (scene->mMaterials[i]->GetTextureCount(aiTextureType_HEIGHT))
 			{
-				scene->mMaterials[i + 1]->GetTexture(aiTextureType_HEIGHT, 0, &aipath);
+				scene->mMaterials[i]->GetTexture(aiTextureType_HEIGHT, 0, &aipath);
 				textureIDs[1] = ITexture2DManagement::Instance().CreateTextureDynamic(meshName + "_normal", path + "/../" + aipath.C_Str());
 			}
-			if (scene->mMaterials[i + 1]->GetTextureCount(aiTextureType_SPECULAR))
+			if (scene->mMaterials[i]->GetTextureCount(aiTextureType_SPECULAR))
 			{
-				scene->mMaterials[i + 1]->GetTexture(aiTextureType_SPECULAR, 0, &aipath);
+				scene->mMaterials[i]->GetTexture(aiTextureType_SPECULAR, 0, &aipath);
 				textureIDs[2] = ITexture2DManagement::Instance().CreateTextureDynamic(meshName + "_specular", path + "/../" + aipath.C_Str());
 			}
-			if (scene->mMaterials[i + 1]->GetTextureCount(aiTextureType_EMISSIVE))
+			if (scene->mMaterials[i]->GetTextureCount(aiTextureType_EMISSIVE))
 			{
-				scene->mMaterials[i + 1]->GetTexture(aiTextureType_EMISSIVE, 0, &aipath);
+				scene->mMaterials[i]->GetTexture(aiTextureType_EMISSIVE, 0, &aipath);
 				textureIDs[3] = ITexture2DManagement::Instance().CreateTextureDynamic(meshName + "_emission", path + "/../" + aipath.C_Str());
 			}
-			if (scene->mMaterials[i + 1]->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS))
+			if (scene->mMaterials[i]->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS))
 			{
-				scene->mMaterials[i + 1]->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &aipath);
+				scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &aipath);
 				textureIDs[4] = ITexture2DManagement::Instance().CreateTextureDynamic(meshName + "_roughness", path + "/../" + aipath.C_Str());
 			}
 
-			if (scene->mMaterials[i + 1]->GetTextureCount(aiTextureType_AMBIENT))
+			if (scene->mMaterials[i]->GetTextureCount(aiTextureType_AMBIENT))
 			{
-				scene->mMaterials[i + 1]->GetTexture(aiTextureType_AMBIENT, 0, &aipath);
+				scene->mMaterials[i]->GetTexture(aiTextureType_AMBIENT, 0, &aipath);
 				textureIDs[5] = ITexture2DManagement::Instance().CreateTextureDynamic(meshName + "_ao", path + "/../" + aipath.C_Str());
 			}
-			else if (scene->mMaterials[i + 1]->GetTextureCount(aiTextureType_AMBIENT_OCCLUSION))
+			else if (scene->mMaterials[i]->GetTextureCount(aiTextureType_AMBIENT_OCCLUSION))
 			{
-				scene->mMaterials[i + 1]->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &aipath);
+				scene->mMaterials[i]->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &aipath);
 				textureIDs[5] = ITexture2DManagement::Instance().CreateTextureDynamic(meshName + "_ao", path + "/../" + aipath.C_Str());
 			}
 		

@@ -22,6 +22,7 @@ namespace INVENT
 		MeshComponent* GetMesh();
 
 		const std::string& Name() const { return _name; }
+		void SetName(const std::string& name) { _name = name; }
 	private:
 		std::string _name;
 	};

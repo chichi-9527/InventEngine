@@ -103,7 +103,7 @@ namespace INVENT
 	{
 #ifdef USE_OPENGL
 		glCreateBuffers(1, &_ebo);
-		glNamedBufferData(_ebo, count, nullptr, GL_DYNAMIC_DRAW);
+		glNamedBufferData(_ebo, count * sizeof(unsigned int), nullptr, GL_DYNAMIC_DRAW);
 #endif // USE_OPENGL
 	}
 

@@ -201,43 +201,42 @@ void main()
 		constexpr static const char* Default3DVertexShader = R"(
 			#version 460 core
 layout (location = 0) in vec3 a_Position;
-layout (location = 3) in vec2 a_TexCoord;
+layout (location = 1) in vec2 a_TexCoord;
+layout (location = 2) in vec3 a_TextureIDs;
 
 struct InstanceData
 {
-	mat4 normalMatrix;
-	float diffuseTextureID;
-	float padding[3];
+    mat4 normalMatrix;
+    vec4 TextureIDs;
 };
 
 layout(std430, binding = 0) buffer InstanceDataBuffer
 {
-	InstanceData instances[];
+    InstanceData instances[];
 };
 
 layout(std140, binding = 0) uniform Camera
 {
-	mat4 u_ViewProjection;
-	mat4 u_ViewProjection2D;
+    mat4 u_ViewProjection;
+    mat4 u_ViewProjection2D;
 };
 
 struct VertexOutput
 {
-	vec2 TexCoord;
-	float diffuseTextureID;
+    vec2 TexCoord;
+    float diffuseTextureID;
 };
 
-layout (location = 0) out VertexOutput Output;
+layout (location = 0) flat out VertexOutput Output;
 
 void main()
 {
-	InstanceData data = instances[gl_BaseInstance];
-
-	Output.diffuseTextureID = data.diffuseTextureID;
-	
+    InstanceData data = instances[gl_InstanceID];
+    
+    Output.diffuseTextureID = data.TextureIDs.r;
     Output.TexCoord = a_TexCoord;
-	
-	gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+    
+    gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
 }
 		)";
 
@@ -247,19 +246,22 @@ layout (binding = 0) uniform sampler2D u_Textures[32];
 
 struct VertexOutput
 {
-	vec2 TexCoord;
-	float diffuseTextureID;
+    vec2 TexCoord;
+    float diffuseTextureID;
 };
 
-layout (location = 0) in VertexOutput Input;
+layout (location = 0) flat in VertexOutput Input;
 
 layout (location = 0) out vec4 FragColor;
 
 void main()
 {
-	vec4 diffuse = vec4(1.0,1.0,1.0,1.0);
+    int texID = int(Input.diffuseTextureID);
+    texID = clamp(texID, 0, 31);
+    
+    vec4 diffuse = texture(u_Textures[ texID], Input.TexCoord);
 
-	diffuse *= texture(u_Textures[ 1], Input.TexCoord);
+    diffuse.rgb = pow(diffuse.rgb, vec3(1.0/2.2));
     
     FragColor = diffuse;
 }
