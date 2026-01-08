@@ -28,7 +28,7 @@ namespace INVENT
 
 	public:
 
-		std::vector<IMesh> meshes;
+		size_t ModelID;
 
 	protected:
 		virtual void RecalculateModelMatrix();

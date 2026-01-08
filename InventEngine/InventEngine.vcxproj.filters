@@ -186,6 +186,9 @@
     <ClInclude Include="src\Invent\ITools\Log.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Invent\2D\ITextActor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\Invent.cpp">
@@ -336,6 +339,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Invent\Renderer\IShaderStorageBuffer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\2D\ITextActor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

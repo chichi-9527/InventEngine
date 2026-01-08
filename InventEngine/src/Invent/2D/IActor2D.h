@@ -11,8 +11,18 @@ namespace INVENT
 		IActor2D();
 		virtual ~IActor2D();
 
-	private:
+		void SetColor(const glm::vec4& color) { _color = color; }
+		const glm::vec4& GetColor() const { return _color; }
 
+		virtual void SetWorldRotation(const glm::vec3& rotation);
+		virtual const glm::vec3& GetWorldRotation();
+
+
+	protected:
+
+
+	private:
+		glm::vec4 _color;
 
 	};
 

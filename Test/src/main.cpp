@@ -213,7 +213,7 @@ public:
 		//actor3d->SetWorldRotation({ 0.0f,90.0f,0.0f });
 		actor3d->LoadModel("./Assets/backpack/backpack.obj");
 
-		for (auto& mesh : actor3d->meshes)
+		for (auto& mesh : *INVENT::IModelManagement::Instance().GetMeshes( actor3d->ModelID))
 		{
 			auto meshcomp = mesh.GetMesh();
 			std::cout << meshcomp->Vertexes.size() << "\n";
@@ -329,7 +329,7 @@ public:
 	virtual void Render3d() override
 	{
 		MyLevel* mylevel = static_cast<MyLevel*>(this->Level);
-		for (auto& mesh : mylevel->actor3d->meshes)
+		for (auto& mesh : *INVENT::IModelManagement::Instance().GetMeshes(mylevel->actor3d->ModelID))
 		{
 			INVENT::IRenderer::DrawMesh(&mesh, mylevel->actor3d->GetModelMatrice());
 		}

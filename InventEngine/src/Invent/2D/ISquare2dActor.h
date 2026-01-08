@@ -17,12 +17,6 @@ namespace INVENT
 		ISquare2dActor();
 		virtual ~ISquare2dActor();
 
-		void SetColor(const glm::vec4& color) { _color = color; }
-		const glm::vec4& GetColor() const { return _color; }
-
-		/*void SetPosition(const glm::vec3& position);
-		const glm::vec3& GetPosition();*/
-
 		void SetScale(const glm::vec2& scale);
 		const glm::vec2& GetScale();
 
@@ -30,9 +24,6 @@ namespace INVENT
 		void SetRotation(float rotation);
 		// 绕 z 轴 {0.0f, 0.0f, 1.0f} 旋转
 		float GetRotation();
-
-		virtual void SetWorldRotation(const glm::vec3& rotation);
-		virtual const glm::vec3& GetWorldRotation();
 
 		void SetShader(IShader* shader) { _shader = shader; }
 		const IShader* GetShader() const { return _shader; }
@@ -67,7 +58,6 @@ namespace INVENT
 		std::pair<bool, bool> GetFlip() const { return { _flip_left_right,_flip_up_down }; }
 
 	private:
-		glm::vec4 _color;
 
 		glm::vec2 _texture_coord[2]{};
 		ITexture2D::_UInt2 _texture_coord_index;

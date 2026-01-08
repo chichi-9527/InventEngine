@@ -11,7 +11,6 @@ namespace INVENT
 {
 	ISquare2dActor::ISquare2dActor()
 		: IActor2D()
-		, _color({ 1.0f, 1.0f,1.0f,1.0f }) // white
 		, _texture_id(0)
 		, _texture(nullptr)
 		, _shader(nullptr)
@@ -19,8 +18,6 @@ namespace INVENT
 		, _flip_up_down(false)
 	{
 		AddComponent<Scale2DComponent>(glm::vec2{ 1.0f,1.0f });
-		// AddComponent<Rotation2DComponent>(0.0f);
-		AddComponent<WorldRotationComponent>(glm::vec3{ 0.0f,0.0f,0.0f });
 
 		IEngine::InstancePtr()->GetIWindow()->GetMainThreadInitQueue().push([this]() {
 			_shader = IShaderManagement::GetDefaultSquare2DShader();
@@ -34,7 +31,6 @@ namespace INVENT
 	ISquare2dActor::~ISquare2dActor()
 	{
 		RemoveComponent<Scale2DComponent>();
-		RemoveComponent<WorldRotationComponent>();
 	}
 
 	void ISquare2dActor::SetScale(const glm::vec2& scale)
@@ -55,16 +51,6 @@ namespace INVENT
 	float ISquare2dActor::GetRotation()
 	{
 		return this->GetComponent<WorldRotationComponent>()->Rotation.z;
-	}
-
-	void ISquare2dActor::SetWorldRotation(const glm::vec3& rotation)
-	{
-		this->GetComponent<WorldRotationComponent>()->Rotation = rotation;
-	}
-
-	const glm::vec3& ISquare2dActor::GetWorldRotation()
-	{
-		return this->GetComponent<WorldRotationComponent>()->Rotation;
 	}
 
 	void ISquare2dActor::SetTextureCoord(const glm::vec2& left_down, const glm::vec2& right_up)

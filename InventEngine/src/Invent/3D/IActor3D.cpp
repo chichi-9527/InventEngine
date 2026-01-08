@@ -1,8 +1,6 @@
 #include "IEpch.h"
 #include "IActor3D.h"
 
-#include "ITools/ILoadModel.h"
-
 #include "IComponent/InventComponent.h"
 
 namespace INVENT
@@ -10,8 +8,9 @@ namespace INVENT
 	IActor3D::IActor3D()
 		: IActor()
 		, _model_matrice(1.0f)
+		, ModelID((size_t)-1)
 	{
-		meshes.clear();
+
 		this->AddComponent<WorldRotationComponent>(glm::vec3(0.0f));
 		this->AddComponent<ScaleComponent>(glm::vec3(1.0f));
 	}
@@ -27,7 +26,7 @@ namespace INVENT
 
 	void IActor3D::LoadModel(const std::string& path)
 	{
-		ILoadModel::Load(this->meshes, path);
+		ModelID = IModelManagement::Instance().LoadModel(path);
 	}
 
 	void IActor3D::SetWorldRotation(const glm::vec3& rotation)

@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Invent\2D\ITextActor.h" />
     <ClInclude Include="src\Invent\ITools\Log.h" />
     <ClInclude Include="src\Invent\Renderer\IShaderStorageBuffer.h" />
     <ClInclude Include="src\Invent\ITools\ILoadModel.h" />
@@ -70,6 +71,7 @@
     <ClInclude Include="src\Invent\ThreadPool\IThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Invent\2D\ITextActor.cpp" />
     <ClCompile Include="src\Invent\Renderer\IShaderStorageBuffer.cpp" />
     <ClCompile Include="src\Invent\ITools\ILoadModel.cpp" />
     <ClCompile Include="src\Invent\3D\IMesh.cpp" />
