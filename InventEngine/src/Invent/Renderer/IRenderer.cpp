@@ -44,11 +44,11 @@ namespace INVENT
 	// 每个 Mesh
 	struct DrawElementsIndirectCommand 
 	{
-		GLuint count; // 索引数量 index count
-		GLuint instanceCount; // 实例数量 always = 1；优化批量渲染时更改代码
-		GLuint firstIndex; // 第一个索引在IBO中的位置（注意：是索引，不是字节偏移）
-		GLuint baseVertex; // 基顶点（顶点索引的偏移）
-		GLuint baseInstance; // 基实例（模型ID）
+		unsigned int count; // 索引数量 index count
+		unsigned int instanceCount; // 实例数量 always = 1；优化批量渲染时更改代码
+		unsigned int firstIndex; // 第一个索引在IBO中的位置（注意：是索引，不是字节偏移）
+		unsigned int baseVertex; // 基顶点（顶点索引的偏移）
+		unsigned int baseInstance; // 基实例（模型ID）
 
 		DrawElementsIndirectCommand()
 			: count(0)

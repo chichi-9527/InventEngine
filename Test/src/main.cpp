@@ -113,10 +113,14 @@ public:
 		//std::cout << "actor position : " << glm::to_string(this->GetWorldPosition()) << "\n";
 	}
 
-	virtual void PRESS_EVENT_KEY_2() override
+	virtual void PRESS_EVENT(int key) override
 	{
-		this->SetTexture(INVENT::ITexture2DManagement::Instance().GetTexture("backpack_Scene_-_Root_diffuse"));
-		std::cout << "PRESS_EVENT_KEY_2\n";
+		if (key == INVENT_KEY_2)
+		{
+			this->SetTexture(INVENT::ITexture2DManagement::Instance().GetTexture("backpack_Scene_-_Root_diffuse"));
+			std::cout << "PRESS_EVENT_KEY_2\n";
+		}
+		
 	}
 
 	virtual void SetWorldRotation(const glm::vec3& rotation) override
@@ -249,10 +253,14 @@ public:
 
 	}
 
-	virtual bool PRESS_EVENT_KEY_1() override
+	virtual bool PRESS_EVENT(int key) override
 	{
-		this->GetController<MyController>()->SetControlPlayerIndex(this->GetController<MyController>()->GetControlPlayerIndex() == 0 ? 1 : 0);
+		if (key == INVENT_KEY_1)
+		{
+			this->GetController<MyController>()->SetControlPlayerIndex(this->GetController<MyController>()->GetControlPlayerIndex() == 0 ? 1 : 0);
 
+		}
+		IBaseLevel::PRESS_EVENT(key);
 		//auto actor = this->GetController<MyController>()->Get2DPlayerController<MyActor>(0);
 		//actor->SetScale({ 1.0f,0.1f });
 

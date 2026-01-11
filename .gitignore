@@ -366,3 +366,5 @@ FodyWeavers.xsd
 
 /bin/x64-Release/Test/Assets
 /Assimp543/lib
+/Test/Assets/Car01
+/Test/Assets/backpack

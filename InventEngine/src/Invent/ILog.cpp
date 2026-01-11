@@ -19,7 +19,7 @@ namespace INVENT
 
 	void ILog::Init()
 	{
-#ifdef INVENT_USE_WINDOWS
+#ifdef _WIN32
         // 启用 ANSI 转义序列支持
         auto enableVTMode = []() {
             HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -43,7 +43,7 @@ namespace INVENT
         enableVTMode();
 
         SetConsoleOutputCP(CP_UTF8);
-#endif // !INVENT_USE_WINDOWS
+#endif // !_WIN32
 
         boost::log::add_common_attributes();
 

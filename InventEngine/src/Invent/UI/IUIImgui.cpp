@@ -37,15 +37,19 @@ namespace INVENT
 	void IUIImgui::StartFrame()
 	{
 		// Start the Dear ImGui frame
+#ifdef USE_OPENGL
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 		//ImGui::ShowDemoWindow(); // Show demo window! :)
+#endif // #ifdef USE_OPENGL
 	}
 
 	void IUIImgui::Render()
 	{
+#ifdef USE_OPENGL
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+#endif // #ifdef USE_OPENGL
 	}
 }

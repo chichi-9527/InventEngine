@@ -2,11 +2,11 @@
 #define _INVENT_ENGINE_PCH_
 
 
-#ifdef INVENT_USE_WINDOWS
+#ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include "Windows.h"
-#endif // INVENT_USE_WINDOWS
+#endif // _WIN32
 
 #include <boost/asio.hpp>
 #include <boost/log/core.hpp>
@@ -41,11 +41,6 @@
 #ifdef USE_OPENGL
 
 #include "glad/glad.h"
-#include <GLFW/glfw3.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -53,11 +48,15 @@
 
 #endif // USE_OPENGL
 
+#include <GLFW/glfw3.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 
-
-#if defined(INVENT_USE_WINDOWS) && defined(USE_OPENGL)
-#include "Extended/wglext.h"
+#if defined(_WIN32) && defined(USE_OPENGL)
+#include "wglext.h"
 #endif
 
 
