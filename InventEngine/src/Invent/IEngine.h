@@ -22,12 +22,23 @@ namespace INVENT
 
 		static const std::chrono::steady_clock::time_point& GetEngineStartTimePoint();
 
+		typedef size_t NormalInputFunctionID;
+		typedef size_t CursorPositionFunctionID;
+		NormalInputFunctionID RegisterNormalProcessInputFunction(std::function<void(float)>&& callback, int key);
+		void CancellationNormalProcessInputFunction(NormalInputFunctionID id);
+		CursorPositionFunctionID RegisterCursorPositionFunction(std::function<void(float, bool, double, double)>&& callback);
+		void CancellationCursorPositionFunction(CursorPositionFunctionID id);
+
 	private:
 		void SetIWindow(IWindow* window);
 
 		IEngine();
 
 	private:
+
+		std::vector<std::pair<std::function<void(float)>, int>> _normal_input_callbacks;
+		std::vector<std::function<void(float, bool, double, double)>> _cursor_position_input_callbacks;
+
 		IWindow* _iwindow;
 	};
 }

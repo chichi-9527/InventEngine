@@ -106,7 +106,11 @@ namespace INVENT
 		void _create();
 		int _glfw_init();
 		void _window_size_change();
+
+		// 已废弃 现在通过注册回调函数
 		void _process_input(float delta);
+
+		void _process_input_callback(float delta);
 
 	};
 }

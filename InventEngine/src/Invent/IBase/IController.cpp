@@ -1,6 +1,8 @@
 #include "IEpch.h"
 #include "IController.h"
 
+#include "IEngine.h"
+
 namespace INVENT
 {
 
@@ -24,7 +26,12 @@ namespace INVENT
 		: IPlayerControllerBase()
 		, _scene_camera(nullptr)
 		, _control_player_index(0)
-	{}
+	{
+		IEngine::InstancePtr()->RegisterNormalProcessInputFunction([this](float delta) {IPlayerController2D::EventUp(delta); }, INVENT_KEY_W);
+		IEngine::InstancePtr()->RegisterNormalProcessInputFunction([this](float delta) {IPlayerController2D::EventLeft(delta); }, INVENT_KEY_A);
+		IEngine::InstancePtr()->RegisterNormalProcessInputFunction([this](float delta) {IPlayerController2D::EventDown(delta); }, INVENT_KEY_S);
+		IEngine::InstancePtr()->RegisterNormalProcessInputFunction([this](float delta) {IPlayerController2D::EventRight(delta); }, INVENT_KEY_D);
+	}
 
 	IPlayerController2D::~IPlayerController2D()
 	{
@@ -88,36 +95,28 @@ namespace INVENT
 		return nullptr;
 	}
 
-	bool IPlayerController2D::EVENT_KEY_W(float delta)
+	void IPlayerController2D::EventUp(float delta)
 	{
-		if (!_is_default)
-			return false;
 		_pawns[_control_player_index]->MoveUp(delta);
-		return true;
+
 	}
 
-	bool IPlayerController2D::EVENT_KEY_A(float delta)
+	void IPlayerController2D::EventLeft(float delta)
 	{
-		if (!_is_default)
-			return false;
 		_pawns[_control_player_index]->MoveLeft(delta);
-		return true;
+
 	}
 
-	bool IPlayerController2D::EVENT_KEY_S(float delta)
+	void IPlayerController2D::EventDown(float delta)
 	{
-		if (!_is_default)
-			return false;
 		_pawns[_control_player_index]->MoveDown(delta);
-		return true;
+
 	}
 
-	bool IPlayerController2D::EVENT_KEY_D(float delta)
+	void IPlayerController2D::EventRight(float delta)
 	{
-		if (!_is_default)
-			return false;
 		_pawns[_control_player_index]->MoveRight(delta);
-		return true;
+
 	}
 
 }

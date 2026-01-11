@@ -1,4 +1,4 @@
-#ifndef _IBASEEVENTFUNCTION_
+﻿#ifndef _IBASEEVENTFUNCTION_
 #define _IBASEEVENTFUNCTION_
 
 namespace INVENT
@@ -12,6 +12,8 @@ namespace INVENT
 		virtual ~IBaseEventFunction() = default;
 
 	protected:
+
+		// 已废弃 现在通过注册回调函数 若使用这些函数，在 IWindow 中更改调用 _process_input
 		virtual void EVENT_KEY_SPACE(float delta);
 		virtual void EVENT_KEY_APOSTROPHE(float delta);
 		virtual void EVENT_KEY_COMMA(float delta);
@@ -132,6 +134,8 @@ namespace INVENT
 		virtual void EVENT_KEY_RIGHT_ALT(float delta);
 		virtual void EVENT_KEY_RIGHT_SUPER(float delta);
 		virtual void EVENT_KEY_MENU(float delta);
+
+		///////////////////////////////////////////////////////////
 
 		virtual void EVENT_CURSOR_POSITION_FRAME(float delta, bool cursor_inside_window, double xpos, double ypos);
 

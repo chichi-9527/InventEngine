@@ -1,4 +1,4 @@
-#ifndef _IEVENTLAYER_
+﻿#ifndef _IEVENTLAYER_
 #define _IEVENTLAYER_
 
 #include "IBaseEventFunction.h"
@@ -38,6 +38,7 @@ namespace INVENT
 		void EraseEventObj(IBaseEventFunction* obj);
 
 	protected:
+		// 已废弃 现在通过注册回调函数 若使用这些函数，在 IWindow 中更改调用 _process_input
 		// if return true, the event will not continue to next layer
 		virtual bool EVENT_KEY_SPACE(float delta);
 		virtual bool EVENT_KEY_APOSTROPHE(float delta);
@@ -159,6 +160,8 @@ namespace INVENT
 		virtual bool EVENT_KEY_RIGHT_ALT(float delta);
 		virtual bool EVENT_KEY_RIGHT_SUPER(float delta);
 		virtual bool EVENT_KEY_MENU(float delta);
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		virtual bool EVENT_CURSOR_POSITION_FRAME(float delta, bool cursor_inside_window, double xpos, double ypos);
 

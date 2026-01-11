@@ -125,12 +125,13 @@ namespace INVENT
 //#define GLFW_MOUSE_BUTTON_RIGHT     GLFW_MOUSE_BUTTON_2
 //#define GLFW_MOUSE_BUTTON_MIDDLE    GLFW_MOUSE_BUTTON_3
 
+	static double xpos = 0.0, ypos = 0.0;
 	void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 	{
 		IWindow* iwindow = static_cast<IWindow*>(glfwGetWindowUserPointer(window));
 		if (iwindow)
 		{
-			double xpos = 0.0, ypos = 0.0;
+			
 			glfwGetCursorPos(window, &xpos, &ypos);
 
 			if (action == GLFW_PRESS)
@@ -409,7 +410,8 @@ namespace INVENT
 			///////////// Render End
 			//////////////////////////////////////////////////////////
 
-			_process_input(delta_time);
+			//_process_input(delta_time);
+			_process_input_callback(delta_time);
 
 			if (_game_instance_ptr)
 				_game_instance_ptr->Update(delta_time);
@@ -519,7 +521,7 @@ namespace INVENT
 			InitWGL();
 			if (wglGetSwapIntervalEXT() != SwapIntervalEXT)
 				wglSwapIntervalEXT(SwapIntervalEXT);
-			INVENT_LOG_DEBUG(std::string("当前 swap interval: ") + std::to_string(wglGetSwapIntervalEXT()));
+			INVENT_LOG_DEBUG(std::format("当前 swap interval: {} ", wglGetSwapIntervalEXT()));
 #endif // defined(_WIN32) && defined(USE_OPENGL)
 			glfwSetWindowUserPointer(Window, this);
 #ifdef USE_OPENGL
@@ -539,11 +541,11 @@ namespace INVENT
 				glGetIntegerv(GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS, &max_geometry);
 				glGetIntegerv(GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS, &max_compute);
 
-				INVENT_LOG_INFO(std::string("总可用纹理单元数: ") + std::to_string(max_combined));
-				INVENT_LOG_INFO(std::string("片段着色器可用数: ") + std::to_string(max_fragment));
-				INVENT_LOG_INFO(std::string("顶点着色器可用数: ") + std::to_string(max_vertex));
-				INVENT_LOG_INFO(std::string("几何着色器可用数: ") + std::to_string(max_geometry));
-				INVENT_LOG_INFO(std::string("计算着色器可用数: ") + std::to_string(max_compute));
+				INVENT_LOG_INFO(std::format("总可用纹理单元数: {} ", max_combined));
+				INVENT_LOG_INFO(std::format("片段着色器可用数: {} ", max_fragment));
+				INVENT_LOG_INFO(std::format("顶点着色器可用数: {} ", max_vertex));
+				INVENT_LOG_INFO(std::format("几何着色器可用数: {} ", max_geometry));
+				INVENT_LOG_INFO(std::format("计算着色器可用数: {} ", max_compute));
 			}
 			else
 				INVENT_LOG_ERROR("Failed to initialize GLAD");
@@ -593,6 +595,7 @@ namespace INVENT
 			auto takeoff = (*iter)->EVENT_FUNC_NAME(delta);	\
 			if (takeoff) break;	}}
 
+	// 已废弃 现在通过注册回调函数
 	void IWindow::_process_input(float delta)
 	{
 		CALLEVENT(GLFW_KEY_SPACE, EVENT_KEY_SPACE);
@@ -725,6 +728,27 @@ namespace INVENT
 				break;
 		}
 		
+	}
+
+	void IWindow::_process_input_callback(float delta)
+	{
+		glfwGetCursorPos(Window, &cursor_xpos, &cursor_ypos);
+		for (auto& func : IEngine::InstancePtr()->_cursor_position_input_callbacks)
+		{
+			if (func)
+			{
+				func(delta, CursorInsideWindow, cursor_xpos, cursor_ypos);
+			}
+		}
+
+		for (auto& [func, key] : IEngine::InstancePtr()->_normal_input_callbacks)
+		{
+			if (func && glfwGetKey(Window, key) == (GLFW_PRESS | GLFW_RELEASE))
+			{
+				func(delta);
+			}
+		}
+
 	}
 	
 }

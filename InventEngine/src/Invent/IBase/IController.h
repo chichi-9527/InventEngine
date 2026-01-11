@@ -75,10 +75,10 @@ namespace INVENT
 			return nullptr;
 		}
 
-		virtual bool EVENT_KEY_W(float delta) override;
-		virtual bool EVENT_KEY_A(float delta) override;
-		virtual bool EVENT_KEY_S(float delta) override;
-		virtual bool EVENT_KEY_D(float delta) override;
+		virtual void EventUp(float delta);
+		virtual void EventLeft(float delta);
+		virtual void EventDown(float delta);
+		virtual void EventRight(float delta);
 
 	private:
 		std::vector<IBasePawnControl2D*> _pawns;

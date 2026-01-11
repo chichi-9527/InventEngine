@@ -47,4 +47,58 @@ namespace INVENT
 	{
 		_iwindow = window;
 	}
+
+	static std::queue<size_t> NormalInputFunctionIDs;
+	static std::queue<size_t> CursorPositionFunctionIDs;
+	IEngine::NormalInputFunctionID IEngine::RegisterNormalProcessInputFunction(std::function<void(float)>&& callback, int key)
+	{
+		size_t id = _normal_input_callbacks.size();
+		if (!NormalInputFunctionIDs.empty())
+		{
+			id = NormalInputFunctionIDs.front();
+			NormalInputFunctionIDs.pop();
+			_normal_input_callbacks[id].first = std::move(callback);
+		}
+		else
+		{
+			_normal_input_callbacks.emplace_back(std::move(callback), key);
+		}
+		return id;
+	}
+
+	void IEngine::CancellationNormalProcessInputFunction(NormalInputFunctionID id)
+	{
+		if (id >= _normal_input_callbacks.size())
+		{
+			return;
+		}
+		_normal_input_callbacks[id].first = nullptr;
+		NormalInputFunctionIDs.emplace(id);
+	}
+
+	IEngine::CursorPositionFunctionID IEngine::RegisterCursorPositionFunction(std::function<void(float, bool, double, double)>&& callback)
+	{
+		size_t id = IEngine::_cursor_position_input_callbacks.size();
+		if (!CursorPositionFunctionIDs.empty())
+		{
+			id = CursorPositionFunctionIDs.front();
+			CursorPositionFunctionIDs.pop();
+			IEngine::_cursor_position_input_callbacks[id] = std::move(callback);
+		}
+		else
+		{
+			IEngine::_cursor_position_input_callbacks.emplace_back(std::move(callback));
+		}
+		return id;
+	}
+
+	void IEngine::CancellationCursorPositionFunction(CursorPositionFunctionID id)
+	{
+		if (id >= IEngine::_cursor_position_input_callbacks.size())
+		{
+			return;
+		}
+		IEngine::_cursor_position_input_callbacks[id] = nullptr;
+		CursorPositionFunctionIDs.emplace(id);
+	}
 }
