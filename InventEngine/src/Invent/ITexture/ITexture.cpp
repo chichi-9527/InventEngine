@@ -339,7 +339,7 @@ namespace INVENT
 			_textrues[name] = { nullptr, id };
 		}
 
-		IEngine::InstancePtr()->GetIWindow()->GetThreadPool()->Submit(0, [this, flag_true_if_should_flip, tex_break_width_num, tex_break_height_num, id](const std::string& Name, const std::string& Path) {
+		IEngine::InstancePtr()->GetWorkThreadPool()->Submit(0, [this, flag_true_if_should_flip, tex_break_width_num, tex_break_height_num, id](const std::string& Name, const std::string& Path) {
 			auto texture = new ITexture2D(Name, Path, flag_true_if_should_flip, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
 			std::lock_guard<std::mutex> lock(_mutex);
 			_vector_textrues[id] = (ITextureBase*)texture;
@@ -365,7 +365,7 @@ namespace INVENT
 			_textrues[name] = { nullptr, id };
 		}
 
-		IEngine::InstancePtr()->GetIWindow()->GetThreadPool()->Submit(0, [this, tex_break_width_num, tex_break_height_num, id](const std::string& Name, const CharCharacter& Path) {
+		IEngine::InstancePtr()->GetWorkThreadPool()->Submit(0, [this, tex_break_width_num, tex_break_height_num, id](const std::string& Name, const CharCharacter& Path) {
 			auto texture = new ITexture2D(Name, Path, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
 			std::lock_guard<std::mutex> lock(_mutex);
 			_vector_textrues[id] = (ITextureBase*)texture;

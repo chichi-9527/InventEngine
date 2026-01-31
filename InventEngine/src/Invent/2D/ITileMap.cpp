@@ -18,7 +18,7 @@ namespace INVENT
 
 	void ITileMap::DynamicInit(const std::vector<TileSpriteTextureColorInit>& inits)
 	{
-		INVENT::IEngine::InstancePtr()->GetIWindow()->GetThreadPool()->Submit(0, [this](const std::vector<TileSpriteTextureColorInit>& Inits) {
+		INVENT::IEngine::InstancePtr()->GetWorkThreadPool()->Submit(0, [this](const std::vector<TileSpriteTextureColorInit>& Inits) {
 			if (Inits.size() != this->_sprites.size())
 			{
 				INVENT_LOG_ERROR("A tile map init size is error");

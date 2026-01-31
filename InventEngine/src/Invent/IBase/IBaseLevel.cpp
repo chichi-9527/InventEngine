@@ -3,7 +3,6 @@
 #include "IBaseActor.h"
 
 #include "IEngine.h"
-#include "IBase/IWindow.h"
 
 namespace INVENT
 {
@@ -206,7 +205,7 @@ namespace INVENT
 
 	IThreadPool* IBaseLevel::GetIWindowThreadPool()
 	{
-		return IEngine::InstancePtr()->GetIWindow()->GetThreadPool();
+		return IEngine::InstancePtr()->GetWorkThreadPool();
 	}
 
 	void IBaseLevel::_clear()

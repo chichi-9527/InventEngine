@@ -1,15 +1,36 @@
 #include "IEpch.h"
 #include "IEngine.h"
 
+#include "ThreadPool/IThreadPool.h"
 #include "IBase/IWindow.h"
+#include "IBase/IGameInstance.h"
 
 static const auto StartTimePoint = std::chrono::high_resolution_clock::now();
 
 namespace INVENT
 {
 	IEngine::IEngine()
-		: _iwindow(nullptr)
+		: _threadpool(nullptr)
+		, _work_thread_pool(new IThreadPool)
 	{
+		_work_thread_pool->Start();
+	}
+
+	IEngine::~IEngine()
+	{
+		ShutdownThreadPool();
+		if (_threadpool)
+		{
+			delete _threadpool;
+			_threadpool = nullptr;
+		}
+		if (_work_thread_pool)
+		{
+			_work_thread_pool->Shutdown();
+			delete _work_thread_pool;
+			_work_thread_pool = nullptr;
+		}
+		
 	}
 
 	std::shared_ptr<IEngine> IEngine::InstancePtr()
@@ -18,19 +39,36 @@ namespace INVENT
 		return iengine;
 	}
 
-	IWindow* IEngine::GetIWindow()
+	void IEngine::Start()
 	{
-		return _iwindow;
+		if (_iwindow_ptr)
+		{
+			_iwindow_ptr->Start();
+		}
+		else
+		{
+			INVENT_LOG_WARNING("has no window, you need create game window before start");
+		}
+	}
+
+	std::shared_ptr<IWindow> IEngine::GetIWindow()
+	{
+		return _iwindow_ptr;
 	}
 
 	unsigned int IEngine::GetWindowSizeX()
 	{
-		return _iwindow->GetWidth();
+		return _iwindow_ptr->GetWidth();
 	}
 
 	unsigned int IEngine::GetWindowSizeY()
 	{
-		return _iwindow->GetHeight();
+		return _iwindow_ptr->GetHeight();
+	}
+
+	void IEngine::SetGameInstance(std::shared_ptr<IBaseGameInstance> game_instance_ptr)
+	{
+		_game_instance_ptr = game_instance_ptr;
 	}
 
 	float IEngine::GetEngineMilliseconds()
@@ -43,9 +81,29 @@ namespace INVENT
 		return StartTimePoint;
 	}
 
-	void IEngine::SetIWindow(IWindow* window)
+	void IEngine::SetThreadPoolThreadNumAndPriorityNum(unsigned int t_num, unsigned int p_num)
 	{
-		_iwindow = window;
+		if (!_threadpool)
+		{
+			_threadpool = new IThreadPool(t_num, p_num);
+			return;
+		}
+		_threadpool->SetThreadPriorityNum(t_num, p_num);
+	}
+
+	void IEngine::StartThreadPool()
+	{
+		if (!_threadpool)
+		{
+			_threadpool = new IThreadPool();
+		}
+		_threadpool->Start();
+	}
+
+	void IEngine::ShutdownThreadPool()
+	{
+		if (_threadpool)
+			_threadpool->Shutdown();
 	}
 
 	static std::queue<size_t> NormalInputFunctionIDs;

@@ -2,9 +2,8 @@
 #define _IWINDOW_
 
 #include "IBaseLevel.h"
-#include "IGameInstance.h"
 
-#include "ThreadPool/IThreadPool.h"
+
 
 #include "Renderer/IRenderer.h"
 #include "Renderer/IRenderer2D.h"
@@ -30,7 +29,7 @@ namespace INVENT
 		unsigned int GetHeight() const { return Height; }
 		float GetWindowAspect() const { return (float)Width / (float)Height; }
 
-		IThreadPool* GetThreadPool() const { return _threadpool; }
+		
 
 		friend void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 		friend void register_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -49,10 +48,7 @@ namespace INVENT
 		std::queue<std::function<void()>>& GetMainThreadInitQueue() { return _main_thread_init_queue; }
 
 	protected:
-		// default num {1,1} only set num before thread start
-		void SetThreadPoolThreadNumAndPriorityNum(unsigned int t_num, unsigned int p_num) { _threadpool->SetThreadPriorityNum(t_num, p_num); }
-		void StartThreadPool() { _threadpool->Start(); }
-		void ShutdownThreadPool() { _threadpool->Shutdown(); }
+		
 
 		virtual void Begin();
 
@@ -62,7 +58,7 @@ namespace INVENT
 		// 设置加载时的场景/关卡
 		// Set
 
-		void SetGameInstance(std::shared_ptr<IBaseGameInstance> game_instance_ptr);
+		
 
 		static void Render(IBaseLevel* level);
 
@@ -83,7 +79,7 @@ namespace INVENT
 		// 仅 Windows 下有效
 		int SwapIntervalEXT = 1;
 	private:
-		std::shared_ptr<IBaseGameInstance> _game_instance_ptr;
+		
 
 		std::queue<std::function<void()>> _main_thread_init_queue;
 
@@ -91,7 +87,7 @@ namespace INVENT
 		// 2,3: old size
 		int _pos_size[4] = { 20,20,800,600 };
 
-		IThreadPool* _threadpool;
+		
 
 		IBaseLevel* _default_level;
 

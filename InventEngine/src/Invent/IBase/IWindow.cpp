@@ -8,6 +8,8 @@
 #include "2D/2DComponent/Invent2DAnimationComponent.h"
 
 #include "IEngine.h"
+#include "IGameInstance.h"
+#include "ThreadPool/IThreadPool.h"
 
 #include "UI/IUIImgui.h"
 #include "UI/IDrawString.h"
@@ -23,7 +25,7 @@ namespace INVENT
 // Posted by eugensk, modified by community. See post 'Timeline' for change history
 // Retrieved 2025-12-20, License - CC BY-SA 4.0
 
-	bool WGLExtensionSupported(const char* extension_name)
+	static bool WGLExtensionSupported(const char* extension_name)
 	{
 		// this is pointer to function which returns pointer to string with list of all wgl extensions
 		PFNWGLGETEXTENSIONSSTRINGEXTPROC _wglGetExtensionsStringEXT = NULL;
@@ -310,8 +312,6 @@ namespace INVENT
 		, Level(nullptr)
 		, delta_time(0.0f)
 	{
-		IEngine::InstancePtr()->SetIWindow(this);
-		_threadpool = new IThreadPool();
 		ILog::Instance().IINFO("Log init done");
 	}
 
@@ -336,9 +336,6 @@ namespace INVENT
 			delete _default_level;
 		_default_level = nullptr;
 
-		if (_threadpool) _threadpool->Shutdown(); delete _threadpool;
-		_threadpool = nullptr;
-
 		glfwTerminate();
 	}
 
@@ -351,10 +348,8 @@ namespace INVENT
 		IRenderer::Init();
 		IUIImgui::Init(Window);
 		AnimationManagement::Start();
-		
-		if (_game_instance_ptr)
-			_game_instance_ptr->Begin();
-
+	
+		IEngine::InstancePtr()->GetGameInstance()->Begin();
 		
 
 		///////////////////////////////////////////////////////////
@@ -387,6 +382,8 @@ namespace INVENT
 				_main_thread_init_queue.pop();
 			}
 
+			IEngine::InstancePtr()->GetGameInstance()->Update(delta_time);
+
 			IUIImgui::StartFrame();
 
 			//INVENT_LOG_DEBUG(std::to_string(delta_time));
@@ -413,9 +410,6 @@ namespace INVENT
 			//_process_input(delta_time);
 			_process_input_callback(delta_time);
 
-			if (_game_instance_ptr)
-				_game_instance_ptr->Update(delta_time);
-
 			IUIImgui::Render();
 
 			// 检查并调用事件，交换缓冲
@@ -423,9 +417,7 @@ namespace INVENT
 			glfwPollEvents();
 		}
 
-		if (_game_instance_ptr)
-			_game_instance_ptr->End();
-
+		IEngine::InstancePtr()->GetGameInstance()->End();
 		AnimationManagement::Shutdown();
 		IUIImgui::End();
 		
@@ -470,10 +462,7 @@ namespace INVENT
 			Level = level;
 	}
 
-	void IWindow::SetGameInstance(std::shared_ptr<IBaseGameInstance> game_instance_ptr)
-	{
-		_game_instance_ptr = game_instance_ptr;
-	}
+
 
 	// debug
 	struct quad_vertex {

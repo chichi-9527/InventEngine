@@ -19,6 +19,14 @@ namespace INVENT
 		virtual void Update(float delta) = 0;
 		// 游戏结束时才调用
 		virtual void End() = 0;
+
+		typedef size_t ILevelID;
+		template<typename T>
+		ILevelID CreateLevel()
+		{
+			return 0;
+		}
+
 	protected:
 		IBaseGameInstance() = default;
 	};

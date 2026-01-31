@@ -322,9 +322,6 @@ public:
 	{
 		INVENT::IWindow::Begin();
 
-		this->SetGameInstance(std::static_pointer_cast<INVENT::IBaseGameInstance>(MyGameInstance::GetGameInstancePtr()));
-		this->StartThreadPool();
-
 		this->SetLevel(new MyLevel);
 
 		/*std::thread create_level([this]() {
@@ -415,8 +412,9 @@ public:
 
 int main()
 {
-	MyWindow window;
-	window.Start();
+	auto window = INVENT::IEngine::InstancePtr()->CreateGameWindow<MyWindow>();
+	INVENT::IEngine::InstancePtr()->SetGameInstance(std::static_pointer_cast<INVENT::IBaseGameInstance>(MyGameInstance::GetGameInstancePtr()));
+	window->Start();
 
 	//// 4. 构建图
 	//Graph g(100*100); // 个节点

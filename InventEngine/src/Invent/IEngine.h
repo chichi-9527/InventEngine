@@ -1,26 +1,62 @@
-#ifndef _IENGINE_
+﻿#ifndef _IENGINE_
 #define _IENGINE_
 
-#include <memory>
+#include "ILog.h"
 
+#include <memory>
 #include <chrono>
+#include <format>
+#include <utility>
 
 namespace INVENT
 {
+	class IBaseGameInstance;
 	class IWindow;
+	class IThreadPool;
+
 	class IEngine 
 	{
 		friend class IWindow;
 	public:
+		~IEngine();
 		static std::shared_ptr<IEngine> InstancePtr();
 
-		IWindow* GetIWindow();
+		void Start();
+
+		template<typename T, typename... Args>
+		std::shared_ptr<T> CreateGameWindow(Args&&... args)
+		{
+			if (!std::is_base_of_v<IWindow, T>)
+			{
+				INVENT_LOG_ERROR(std::format("[IEngine] Window class type error; {}", typeid(T).name()));
+				return nullptr;
+			}
+			 auto window = std::make_shared<T>(std::forward<Args>(args)...);
+			 _iwindow_ptr = std::static_pointer_cast<IWindow>(window);
+			return window;
+		}
+		std::shared_ptr<IWindow> GetIWindow();
 		unsigned int GetWindowSizeX();
 		unsigned int GetWindowSizeY();
 
-		float GetEngineMilliseconds();
+		void SetGameInstance(std::shared_ptr<IBaseGameInstance> game_instance_ptr);
+		std::shared_ptr<IBaseGameInstance> GetGameInstance() { return _game_instance_ptr; }
 
+		float GetEngineMilliseconds();
 		static const std::chrono::steady_clock::time_point& GetEngineStartTimePoint();
+
+		/// <summary>
+		/// default num {1,1} only set num before thread start
+		/// 此线程池为可选线程池，若不调用以下任意函数则不会创建
+		/// </summary>
+		/// <param name="t_num">线程数量</param>
+		/// <param name="p_num">优先级数量</param>
+		void SetThreadPoolThreadNumAndPriorityNum(unsigned int t_num, unsigned int p_num);
+		void StartThreadPool();
+		void ShutdownThreadPool();
+
+		IThreadPool* GetThreadPool() const { return _threadpool; }
+		IThreadPool* GetWorkThreadPool() const { return _work_thread_pool; }
 
 		typedef size_t NormalInputFunctionID;
 		typedef size_t CursorPositionFunctionID;
@@ -30,7 +66,6 @@ namespace INVENT
 		void CancellationCursorPositionFunction(CursorPositionFunctionID id);
 
 	private:
-		void SetIWindow(IWindow* window);
 
 		IEngine();
 
@@ -39,7 +74,11 @@ namespace INVENT
 		std::vector<std::pair<std::function<void(float)>, int>> _normal_input_callbacks;
 		std::vector<std::function<void(float, bool, double, double)>> _cursor_position_input_callbacks;
 
-		IWindow* _iwindow;
+		std::shared_ptr<IWindow> _iwindow_ptr;
+		std::shared_ptr<IBaseGameInstance> _game_instance_ptr;
+
+		IThreadPool* _threadpool;
+		IThreadPool* _work_thread_pool;
 	};
 }
 

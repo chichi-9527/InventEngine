@@ -33,12 +33,14 @@ namespace INVENT
 
 		// 线程数量只能在未 Start 时设置
 		void SetThreadNum(unsigned int thread_num);
+		unsigned int GetThreadNum() const { return _thread_num; }
 		// 优先级数量只能在未 Start 时设置, 设置前指定的任务顺序不会改变
 		void SetPriorityNum(unsigned int priority_num);
+		unsigned int GetPriorityNum() const { return _priority_num; }
 		// 线程数量和优先级数量只能在未 Start 时设置
 		void SetThreadPriorityNum(unsigned int thread_num, unsigned int priority_num);
 
-		const std::atomic_bool& IsShutdown() const { return _is_shutdown; }
+		bool IsRunning() const { return _is_start; }
 		void Shutdown();
 
 		// 任务优先级为 0 ~priority_num - 1
@@ -60,6 +62,8 @@ namespace INVENT
 		}
 
 	protected:
+
+		const std::atomic_bool& IsShutdown() const { return _is_shutdown; }
 
 		template<typename T>
 		class IFunctionQueue 
