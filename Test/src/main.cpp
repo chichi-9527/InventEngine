@@ -1,6 +1,9 @@
 ﻿
 
 #include "Invent/Invent.h"
+#include "Invent/2D/ITileMap.h"
+#include "Invent/IBase/IController.h"
+#include "Invent/IBase/IActor.h"
 
 #include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -247,27 +250,27 @@ public:
 		camera = new INVENT::ICamera();
 		camera->SetWorldPosition({ 0.0f,0.0f,10.0f });
 
-		this->CreateControllerPtr<MyController>()->SetSceneCamera(camera);
+		/*this->CreateControllerPtr<MyController>()->SetSceneCamera(camera);
 		this->GetController<MyController>()->AddPlayer(act);
-		this->GetController<MyController>()->AddPlayer(act2);
+		this->GetController<MyController>()->AddPlayer(act2);*/
 
 	}
 
-	virtual bool PRESS_EVENT(int key) override
-	{
-		if (key == INVENT_KEY_1)
-		{
-			this->GetController<MyController>()->SetControlPlayerIndex(this->GetController<MyController>()->GetControlPlayerIndex() == 0 ? 1 : 0);
+	//virtual bool PRESS_EVENT(int key) override
+	//{
+	//	if (key == INVENT_KEY_1)
+	//	{
+	//		this->GetController<MyController>()->SetControlPlayerIndex(this->GetController<MyController>()->GetControlPlayerIndex() == 0 ? 1 : 0);
 
-		}
-		IBaseLevel::PRESS_EVENT(key);
-		//auto actor = this->GetController<MyController>()->Get2DPlayerController<MyActor>(0);
-		//actor->SetScale({ 1.0f,0.1f });
+	//	}
+	//	IBaseLevel::PRESS_EVENT(key);
+	//	//auto actor = this->GetController<MyController>()->Get2DPlayerController<MyActor>(0);
+	//	//actor->SetScale({ 1.0f,0.1f });
 
-		//INVENT::IEngine::InstancePtr()->GetIWindow()->SetFullScreen(true);
+	//	//INVENT::IEngine::InstancePtr()->GetIWindow()->SetFullScreen(true);
 
-		return false;
-	}
+	//	return false;
+	//}
 
 	//virtual bool PRESS_EVENT_KEY_2() override
 	//{
@@ -314,7 +317,6 @@ public:
 	MyWindow(unsigned int width = 800, unsigned int height = 600, std::string title = "title")
 		: IWindow(width, height, title)
 	{
-		this->SwapIntervalEXT = 0;
 		
 	}
 

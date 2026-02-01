@@ -1,4 +1,4 @@
-#ifndef _INVENT_
+﻿#ifndef _INVENT_
 #define _INVENT_
 
 #include "ILog.h"
@@ -13,7 +13,6 @@
 
 #include "Shader/IShader.h"
 
-#include "3D/IObject.h"
 #include "3D/IActor3D.h"
 
 #include "2D/ISquare2dPawn.h"

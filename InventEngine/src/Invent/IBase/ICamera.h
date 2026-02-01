@@ -1,15 +1,14 @@
 ﻿#ifndef _ICAMERA_
 #define _ICAMERA_
 
-#include "IObjectBase.h"
-#include "IBaseActor.h"
+#include "IActor.h"
 #include "IBasePawnControl.h"
 
 #include <glm/glm.hpp>
 
 namespace INVENT
 {
-	class ICamera : public IObjectBase,public IBaseActor,public IBasePawnControl
+	class ICamera : public IActor, public IBasePawnControl
 	{
 	public:
 		ICamera();

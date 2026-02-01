@@ -3,12 +3,11 @@
 
 #include "IEventLayer.h"
 
-#include "IBaseActor.h"
-#include "IController.h"
-#include "ICamera.h"
-
-#include "2D/ISquare2dActor.h"
-#include "2D/ITileMap.h"
+//#include "IController.h"
+//#include "ICamera.h"
+//
+//#include "2D/ISquare2dActor.h"
+//#include "2D/ITileMap.h"
 
 #include "IPhysicsCollision/ICollisionHandling.h"
 
@@ -18,29 +17,109 @@
 
 #include "ILog.h"
 
+#include <glm/glm.hpp>
+
+#include <format>
 #include <vector>
 #include <mutex>
-#include <glm/glm.hpp>
 
 struct GLFWwindow;
 
 namespace INVENT
 {
-	class IBaseActor;
-	class IBaseLevel : public IEventLayer
+	class IActor;
+	class ISquare2dActor;
+	class ITileMap;
+
+	class IPlayerControllerBase;
+
+	class IBaseLevel
 	{
 		friend class ICollisionHandling;
-	public:
-		friend class IWindow;
 		friend void register_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 		friend void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
 		friend void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 		friend void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-
+		friend void cursor_enter_callback(GLFWwindow* window, int entered);
+	public:
+		
 		IBaseLevel();
 		virtual ~IBaseLevel();
 
+		virtual void Begin();
 		virtual void Update(float delta);
+		virtual void End();
+
+		/// <summary>
+		/// 创建并返回类型为 T 的 actor 实例
+		/// actor 将在关卡失效后失效，生命周期有关卡管理
+		/// </summary>
+		/// <typeparam name="T">要创建的 actor 类型。T 必须继承自 IActor；</typeparam>
+		/// <returns>指向新分配的 T 实例的指针；如果类型不满足要求则返回 nullptr。</returns>
+		template<typename T, typename ... Args>
+		T* CreateActor(Args&&... args)
+		{
+			if constexpr (!std::is_base_of_v<IActor, T>)
+			{
+				INVENT_LOG_ERROR(std::format("[BaseLevel] Actor class type error; {}", typeid(T).name()));
+				return nullptr;
+			}
+
+			T* actor = new T(std::forward<Args>(args)...);
+
+			GetIWindowThreadPool()->Submit(0, [this, actor]() {
+
+				_add_actor(static_cast<IActor*>(actor));
+
+				if constexpr (std::is_base_of_v<ISquare2dActor, T>)
+				{
+					_add_actor<ISquare2dActor>(static_cast<ISquare2dActor*>(actor));
+				}
+				if constexpr (std::is_base_of_v<ITileMap, T>)
+				{
+					_add_actor<ITileMap>(static_cast<ITileMap*>(actor));
+				}
+
+				});
+
+			return actor;
+		}
+
+	private:
+		void _add_actor(IActor* actor_ptr);
+		void _erase_actor(IActor*& actor_ptr);
+
+		template<typename ActorT>
+		void _add_actor(ActorT* actor_t)
+		{
+			std::lock_guard<std::mutex> lock(_all_actors_mutex);
+			std::get<std::vector<ActorT*>>(_actor_vectors).emplace_back(actor_t);
+		}
+		template<typename ActorT>
+		void _erase_actor(ActorT* actor_t)
+		{
+			std::lock_guard<std::mutex> lock(_all_actors_mutex);
+			auto& arr = std::get<std::vector<ActorT*>>(_actor_vectors);
+			for (auto& actor : arr)
+			{
+				if (actor == actor_t)
+				{
+					std::swap(actor, arr.back());
+					arr.pop_back();
+				}
+			}
+		}
+
+	private:
+		std::tuple<std::vector<ISquare2dActor*>
+			, std::vector<ITileMap*>> _actor_vectors;
+
+		std::vector<IActor*> _all_actors;
+
+		std::mutex _all_actors_mutex;
+
+
+	public:
 
 		// need Inherited from IPlayerControllerBase
 		// and auto SetController if inherited
@@ -56,14 +135,14 @@ namespace INVENT
 			return controller;
 		}
 
-		void SetController(std::shared_ptr<IPlayerControllerBase> controller);
-		std::shared_ptr<IPlayerControllerBase> GetController() { return _controller_ptr; }
+		//void SetController(std::shared_ptr<IPlayerControllerBase> controller);
+		//std::shared_ptr<IPlayerControllerBase> GetController() { return _controller_ptr; }
 
-		template<typename T>
+		/*template<typename T>
 		std::shared_ptr<T> GetController() 
 		{ 
 			return std::static_pointer_cast<T>(_controller_ptr);
-		}
+		}*/
 
 	protected:
 		void SetClearColor(float red, float green, float blue, float alpha);
@@ -96,41 +175,7 @@ namespace INVENT
 
 		float GetAspectRatio() const { return _window_size.x / _window_size.y; }
 
-		// must Inherited from IBaseActor
-		// Instances will render if they inherit from the following base classes:
-		// <ISquare2dActor> 
-		// Instances will find Collision and Physics Components if they inherit from the following base classes:
-		// <IActor2D> 
-		template<typename T>
-		T* CreateActor()
-		{
-			if (!std::is_base_of_v<IBaseActor, T>)
-			{
-				INVENT_ASSERT(false, "this class is not Inherited from IBaseActor");
-				INVENT_ASSERT(false, std::string(typeid(T).name()));
-				return nullptr;
-			}
-
-			T* actor = new T;
-
-			GetIWindowThreadPool()->Submit(0, [this, actor]() {
-				AddActor((IBaseActor*)actor);
-
-				if (std::is_base_of_v<ISquare2dActor, T>)
-					AddSquare2dActor((ISquare2dActor*)actor);
-				else if (std::is_base_of_v<ITileMap, T>)
-					AddTileMap((ITileMap*)actor);
-
-				this->AddEventObj((IBaseEventFunction*)(actor));
-
-				});
-
-			/*if (std::is_base_of_v<ISquare2dActor, T>)
-				_square_2d_actors.push_back((ISquare2dActor*)actor);*/
-			// else if()
-
-			return actor;
-		}
+		
 
 		void DeleteActor(const IBaseActor* actor);
 
@@ -187,7 +232,7 @@ namespace INVENT
 		// 由 ICollisionHandling 管理，若更改逻辑，需要更改 ICollisionHandling::StartCollisionHandle 函数中逻辑
 		bool _is_over_collision_detection = true;
 
-		std::shared_ptr<IPlayerControllerBase> _controller_ptr;
+		//std::shared_ptr<IPlayerControllerBase> _controller_ptr;
 
 		glm::vec2 _window_size;
 

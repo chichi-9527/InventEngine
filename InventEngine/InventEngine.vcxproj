@@ -11,13 +11,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Invent\IBase\ILevel.h" />
+    <ClInclude Include="src\Invent\IBase\IScene.h" />
+    <ClInclude Include="src\Invent\IBase\IRenderThread.h" />
     <ClInclude Include="src\Invent\2D\ITextActor.h" />
     <ClInclude Include="src\Invent\IBase\IEventDefine.h" />
     <ClInclude Include="src\Invent\ITools\Log.h" />
     <ClInclude Include="src\Invent\Renderer\IShaderStorageBuffer.h" />
     <ClInclude Include="src\Invent\ITools\ILoadModel.h" />
     <ClInclude Include="src\Invent\3D\IMesh.h" />
-    <ClInclude Include="src\Invent\3D\IActor.h" />
+    <ClInclude Include="src\Invent\IBase\IActor.h" />
     <ClInclude Include="src\Extended\wglext.h" />
     <ClInclude Include="src\Invent\2D\2DComponent\Invent2DAnimationComponent.h" />
     <ClInclude Include="src\Invent\2D\2DComponent\Invent2DComponent.h" />
@@ -35,7 +38,7 @@
     <ClInclude Include="src\Invent\IBase\IController.h" />
     <ClInclude Include="src\Invent\IBase\IEventLayer.h" />
     <ClInclude Include="src\Invent\IBase\IBaseLevel.h" />
-    <ClInclude Include="src\Invent\3D\IObject.h" />
+    <ClInclude Include="src\Invent\IBase\IObject.h" />
     <ClInclude Include="src\Invent\IBase\IGameInstance.h" />
     <ClInclude Include="src\Invent\IBase\IObjectBase.h" />
     <ClInclude Include="src\Invent\IBase\IWindow.h" />
@@ -72,11 +75,14 @@
     <ClInclude Include="src\Invent\ThreadPool\IThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Invent\IBase\ILevel.cpp" />
+    <ClCompile Include="src\Invent\IBase\IScene.cpp" />
+    <ClCompile Include="src\Invent\IBase\IRenderThread.cpp" />
     <ClCompile Include="src\Invent\2D\ITextActor.cpp" />
     <ClCompile Include="src\Invent\Renderer\IShaderStorageBuffer.cpp" />
     <ClCompile Include="src\Invent\ITools\ILoadModel.cpp" />
     <ClCompile Include="src\Invent\3D\IMesh.cpp" />
-    <ClCompile Include="src\Invent\3D\IActor.cpp" />
+    <ClCompile Include="src\Invent\IBase\IActor.cpp" />
     <ClCompile Include="src\Invent\2D\2DComponent\Invent2DAnimationComponent.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -95,7 +101,7 @@
     <ClCompile Include="src\Invent\IBase\IController.cpp" />
     <ClCompile Include="src\Invent\IBase\IEventLayer.cpp" />
     <ClCompile Include="src\Invent\IBase\IBaseLevel.cpp" />
-    <ClCompile Include="src\Invent\3D\IObject.cpp" />
+    <ClCompile Include="src\Invent\IBase\IObject.cpp" />
     <ClCompile Include="src\Invent\IBase\IGameInstance.cpp" />
     <ClCompile Include="src\Invent\IBase\IObjectBase.cpp" />
     <ClCompile Include="src\Invent\IBase\IWindow.cpp" />

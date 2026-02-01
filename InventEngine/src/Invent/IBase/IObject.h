@@ -1,7 +1,7 @@
-#ifndef _IOBJECT_
+﻿#ifndef _IOBJECT_
 #define _IOBJECT_
 
-#include "IBase/IObjectBase.h"
+#include "IObjectBase.h"
 
 namespace INVENT
 {

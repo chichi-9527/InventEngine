@@ -45,7 +45,7 @@
     <ClInclude Include="src\Invent\IBase\IBindEvent.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\Invent\3D\IObject.h">
+    <ClInclude Include="src\Invent\IBase\IObject.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\Invent\IBase\IObjectBase.h">
@@ -168,7 +168,7 @@
     <ClInclude Include="src\Extended\wglext.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\Invent\3D\IActor.h">
+    <ClInclude Include="src\Invent\IBase\IActor.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\Invent\3D\IActor3D.h">
@@ -190,6 +190,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\Invent\IBase\IEventDefine.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Invent\IBase\IRenderThread.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Invent\IBase\IScene.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Invent\IBase\ILevel.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -221,7 +230,7 @@
     <ClCompile Include="src\Invent\IBase\IBindEvent.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\Invent\3D\IObject.cpp">
+    <ClCompile Include="src\Invent\IBase\IObject.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Invent\IBase\IObjectBase.cpp">
@@ -329,7 +338,7 @@
     <ClCompile Include="src\Invent\UI\IUIText.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\Invent\3D\IActor.cpp">
+    <ClCompile Include="src\Invent\IBase\IActor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Invent\3D\IActor3D.cpp">
@@ -345,6 +354,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Invent\2D\ITextActor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\IBase\IRenderThread.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\IBase\IScene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\IBase\ILevel.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -23,7 +23,9 @@ namespace INVENT
 		IBaseActor() = default;
 		virtual ~IBaseActor();
 
+		virtual void Begin();
 		virtual void Update(float delta);
+		virtual void End();
 
 		virtual void AddCollider(IColliderBase* base);
 		virtual void EraseCollider(const IColliderBase* base);

@@ -1,4 +1,4 @@
-#include "IEpch.h"
+﻿#include "IEpch.h"
 #include "IBaseActor.h"
 #include "IBaseLevel.h"
 
@@ -8,6 +8,7 @@ namespace INVENT
 {
 	IBaseActor::~IBaseActor()
 	{
+		End();
 		if (_level)
 		{
 			switch (_collider_type)
@@ -32,6 +33,8 @@ namespace INVENT
 
 	}
 
+	void IBaseActor::Begin(){}
+
 	void IBaseActor::Update(float delta)
 	{
 		for (auto comp : _action_components)
@@ -40,6 +43,8 @@ namespace INVENT
 				comp->Update(delta);
 		}
 	}
+
+	void IBaseActor::End(){}
 
 	void IBaseActor::SetLevel(IBaseLevel* level)
 	{

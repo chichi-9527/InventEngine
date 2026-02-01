@@ -1,4 +1,4 @@
-#ifndef _INVENT_ENGINE_PCH_
+﻿#ifndef _INVENT_ENGINE_PCH_
 #define _INVENT_ENGINE_PCH_
 
 
@@ -27,6 +27,7 @@
 #include <queue>
 #include <cstring>
 #include <format>
+#include <tuple>
 
 #include <iostream>
 #include <fstream>

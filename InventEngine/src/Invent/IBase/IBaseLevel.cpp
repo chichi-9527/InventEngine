@@ -3,6 +3,7 @@
 #include "IBaseActor.h"
 
 #include "IEngine.h"
+#include "IActor.h"
 
 namespace INVENT
 {
@@ -13,11 +14,6 @@ namespace INVENT
 		, _clear_color_vec({ 0.2f,0.2f,0.2f,1.0f })
 	{
 		ObjectEventLayer = CreateLayer<IEventLayer>();
-		this->SetAllEventReturn(false);
-
-		AddLayer(ObjectEventLayer);
-		AddLayer(this);
-
 		_colli_handler = new ICollisionHandling(this);
 	}
 
@@ -48,6 +44,8 @@ namespace INVENT
 		}
 	}
 
+	void IBaseLevel::Begin(){}
+
 	void IBaseLevel::Update(float delta)
 	{
 		for (auto actor : _actors)
@@ -65,18 +63,45 @@ namespace INVENT
 		_deal_collision();
 	}
 
-	void IBaseLevel::SetController(std::shared_ptr<IPlayerControllerBase> controller)
+	void IBaseLevel::End(){}
+
+	void IBaseLevel::_add_actor(IActor* actor_ptr)
 	{
-		if (_controller_ptr)
+		actor_ptr->Begin();
+		std::lock_guard<std::mutex> lock(_all_actors_mutex);
+		_all_actors.emplace_back(actor_ptr);
+	}
+
+	void IBaseLevel::_erase_actor(IActor*& actor_ptr)
+	{
+		if (!actor_ptr) return;
+
+		std::lock_guard<std::mutex> lock(_all_actors_mutex);
+		for (auto& actorPtr : _all_actors)
 		{
-			this->EraseLayer(_controller_ptr.get());
-		}
-		_controller_ptr = controller;
-		if (_controller_ptr)
-		{
-			this->AddLayer(_controller_ptr.get());
+			if (actorPtr == actor_ptr)
+			{
+				std::swap(actorPtr, _all_actors.back());
+				_all_actors.pop_back();
+				actor_ptr = nullptr;
+			}
 		}
 	}
+
+	//void IBaseLevel::SetController(std::shared_ptr<IPlayerControllerBase> controller)
+	//{
+	//	if (_controller_ptr)
+	//	{
+	//		this->EraseLayer(_controller_ptr.get());
+	//	}
+	//	_controller_ptr = controller;
+	//	if (_controller_ptr)
+	//	{
+	//		this->AddLayer(_controller_ptr.get());
+	//	}
+	//}
+
+
 
 	void IBaseLevel::SetClearColor(float red, float green, float blue, float alpha)
 	{
@@ -101,7 +126,7 @@ namespace INVENT
 			_actors.pop_back();
 		}
 
-		this->EraseEventObj((IBaseEventFunction*)(actor));
+		
 
 		// 删除 _square_2d_actors 中的元素
 		EraseSquare2dActor((ISquare2dActor*)actor);

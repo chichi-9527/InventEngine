@@ -1,9 +1,8 @@
-#ifndef _IActor_
+﻿#ifndef _IActor_
 #define _IActor_
 
 #include "IObject.h"
-
-#include "IBase/IBaseActor.h"
+#include "IBaseActor.h"
 
 #include "IPhysicsCollision/ICollider.h"
 

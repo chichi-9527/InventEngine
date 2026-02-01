@@ -2,6 +2,9 @@
 #define _IENGINE_
 
 #include "ILog.h"
+#include "IBase/IScene.h"
+
+#include <glm/glm.hpp>
 
 #include <memory>
 #include <chrono>
@@ -18,6 +21,7 @@ namespace INVENT
 	{
 		friend class IWindow;
 	public:
+
 		~IEngine();
 		static std::shared_ptr<IEngine> InstancePtr();
 
@@ -26,7 +30,7 @@ namespace INVENT
 		template<typename T, typename... Args>
 		std::shared_ptr<T> CreateGameWindow(Args&&... args)
 		{
-			if (!std::is_base_of_v<IWindow, T>)
+			if constexpr (!std::is_base_of_v<IWindow, T>)
 			{
 				INVENT_LOG_ERROR(std::format("[IEngine] Window class type error; {}", typeid(T).name()));
 				return nullptr;
@@ -39,6 +43,17 @@ namespace INVENT
 		unsigned int GetWindowSizeX();
 		unsigned int GetWindowSizeY();
 
+		template<typename T>
+		IScene::ILevelID CreateLevelInstance()
+		{
+			return IScene::InstancePtr()->CreateLevelInstance<T>();
+		}
+		template<typename T>
+		IScene::ILevelID ShowLevelInstance(const glm::vec3& position = { 0.0f })
+		{
+			return IScene::InstancePtr()->ShowLevelInstance<T>(position);
+		}
+
 		void SetGameInstance(std::shared_ptr<IBaseGameInstance> game_instance_ptr);
 		std::shared_ptr<IBaseGameInstance> GetGameInstance() { return _game_instance_ptr; }
 
@@ -47,7 +62,7 @@ namespace INVENT
 
 		/// <summary>
 		/// default num {1,1} only set num before thread start
-		/// 此线程池为可选线程池，若不调用以下任意函数则不会创建
+		/// 此线程池为可选线程池，若不调用以下任何函数则不会创建
 		/// </summary>
 		/// <param name="t_num">线程数量</param>
 		/// <param name="p_num">优先级数量</param>

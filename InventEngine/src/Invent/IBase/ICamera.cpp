@@ -1,4 +1,4 @@
-#include "IEpch.h"
+﻿#include "IEpch.h"
 #include "ICamera.h"
 
 #include "IEngine.h"
@@ -7,8 +7,7 @@
 namespace INVENT
 {
 	ICamera::ICamera()
-		: IObjectBase()
-		, IBaseActor()
+		: IActor()
 		, IBasePawnControl()
 		, _projection_matrix(1.0f)
 		, _view_matrix(1.0f)

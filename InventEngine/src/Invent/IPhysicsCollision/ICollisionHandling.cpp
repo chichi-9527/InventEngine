@@ -3,6 +3,7 @@
 #include "ICollisionDetection.h"
 
 #include "IBase/IBaseLevel.h"
+#include "IBase/IBaseActor.h"
 
 namespace INVENT
 {
