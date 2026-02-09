@@ -5,11 +5,6 @@
 
 //#include "IController.h"
 //#include "ICamera.h"
-//
-//#include "2D/ISquare2dActor.h"
-//#include "2D/ITileMap.h"
-
-#include "IPhysicsCollision/ICollisionHandling.h"
 
 #include "UI/IUIImgui.h"
 
@@ -30,12 +25,11 @@ namespace INVENT
 	class IActor;
 	class ISquare2dActor;
 	class ITileMap;
-
-	class IPlayerControllerBase;
+	class IColliderBase;
 
 	class IBaseLevel
 	{
-		friend class ICollisionHandling;
+		friend class IScene;
 		friend void register_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 		friend void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
 		friend void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
@@ -43,12 +37,12 @@ namespace INVENT
 		friend void cursor_enter_callback(GLFWwindow* window, int entered);
 	public:
 		
-		IBaseLevel();
+		IBaseLevel(const glm::vec3& position = {});
 		virtual ~IBaseLevel();
 
-		virtual void Begin();
-		virtual void Update(float delta);
-		virtual void End();
+		virtual void Begin() = 0;
+		virtual void Update(float delta) = 0;
+		virtual void End() = 0;
 
 		/// <summary>
 		/// 创建并返回类型为 T 的 actor 实例
@@ -67,9 +61,9 @@ namespace INVENT
 
 			T* actor = new T(std::forward<Args>(args)...);
 
-			GetIWindowThreadPool()->Submit(0, [this, actor]() {
+			_get_engine_work_thread_pool()->Submit(0, [this, actor]() {
 
-				_add_actor(static_cast<IActor*>(actor));
+				_add2_all_actors(static_cast<IActor*>(actor));
 
 				if constexpr (std::is_base_of_v<ISquare2dActor, T>)
 				{
@@ -85,9 +79,53 @@ namespace INVENT
 			return actor;
 		}
 
+		/// <summary>
+		/// 根据模板类型将指定的 actor 从各类管理集合中移除。
+		/// </summary>
+		/// <typeparam name="ATy">actor 的静态类型。编译期将根据此类型来选择相应的移除行为。</typeparam>
+		/// <param name="actor">指向要移除的 actor 的指针的引用。</param>
+		template<typename ATy>
+		void DestoryActor(ATy*& actor)
+		{
+			if constexpr (!std::is_base_of_v<IActor, ATy>)
+			{
+				return;
+			}
+
+			_destory_actor_funcs.push_back([this, actor]() {
+				_erase_from_all_actors(static_cast<IActor*>(actor));
+				});
+
+			if constexpr (std::is_base_of_v<ISquare2dActor, ATy>)
+			{
+				_erase_actor<ISquare2dActor>(static_cast<ISquare2dActor*>(actor));
+			}
+			if constexpr (std::is_base_of_v<ITileMap, ATy>)
+			{
+				_erase_actor<ITileMap>(static_cast<ITileMap*>(actor));
+			}
+
+		}
+
+		/// <summary>
+		/// 设置此关卡位置，在场景中渲染时将参考此位置
+		/// 设置位置时将异步更新所有 actor 的位置
+		/// </summary>
+		/// <param name="position"></param>
+		void SetPosition(const glm::vec3& position);
+		const glm::vec3& GetPosition() const { return _position; }
+
+		// 碰撞体
+		void AddStaticCollider(IColliderBase* collider);
+		void EraseStaticCollider(const IColliderBase* collider);
+		void AddStaticColliders(const std::vector<IColliderBase*>& collider);
+		void AddDynamicCollider(IColliderBase* collider);
+		void EraseDynamicCollider(const IColliderBase* collider);
+		void AddDynamicColliders(const std::vector<IColliderBase*>& collider);
+
 	private:
-		void _add_actor(IActor* actor_ptr);
-		void _erase_actor(IActor*& actor_ptr);
+		void _add2_all_actors(IActor* actor_ptr);
+		void _erase_from_all_actors(IActor*& actor_ptr);
 
 		template<typename ActorT>
 		void _add_actor(ActorT* actor_t)
@@ -95,6 +133,7 @@ namespace INVENT
 			std::lock_guard<std::mutex> lock(_all_actors_mutex);
 			std::get<std::vector<ActorT*>>(_actor_vectors).emplace_back(actor_t);
 		}
+
 		template<typename ActorT>
 		void _erase_actor(ActorT* actor_t)
 		{
@@ -110,44 +149,31 @@ namespace INVENT
 			}
 		}
 
+		IThreadPool* _get_engine_work_thread_pool();
+
+		void _recalculate_actors_position();
+		void _update_actor_position(IActor* actor);
+
 	private:
 		std::tuple<std::vector<ISquare2dActor*>
 			, std::vector<ITileMap*>> _actor_vectors;
 
 		std::vector<IActor*> _all_actors;
+		std::vector<std::function<void()>> _destory_actor_funcs;
+		std::vector<IColliderBase*> _static_colliders;
+		std::vector<IColliderBase*> _dynamic_colliders;
 
 		std::mutex _all_actors_mutex;
+		std::mutex _colliders_mutex;
+
+		glm::vec3 _position;
 
 
-	public:
-
-		// need Inherited from IPlayerControllerBase
-		// and auto SetController if inherited
-		template<typename T, typename ...Args>
-		std::shared_ptr<T> CreateControllerPtr(Args&&... args)
-		{
-			std::shared_ptr<T> controller;
-			if (std::is_base_of_v<IPlayerControllerBase, T>)
-			{
-				controller = std::make_shared<T>(std::forward<Args>(args)...);
-				SetController(controller);
-			}
-			return controller;
-		}
-
-		//void SetController(std::shared_ptr<IPlayerControllerBase> controller);
-		//std::shared_ptr<IPlayerControllerBase> GetController() { return _controller_ptr; }
-
-		/*template<typename T>
-		std::shared_ptr<T> GetController() 
-		{ 
-			return std::static_pointer_cast<T>(_controller_ptr);
-		}*/
+	/// <summary>
+	/// ///////////////////////////////////// old 
+	/// </summary>
 
 	protected:
-		void SetClearColor(float red, float green, float blue, float alpha);
-		void SetClearColor(glm::vec4 color);
-
 
 		void AddLayer(IEventLayer* layer);
 		void PopLayer();
@@ -175,75 +201,22 @@ namespace INVENT
 
 		float GetAspectRatio() const { return _window_size.x / _window_size.y; }
 
-		
-
-		void DeleteActor(const IBaseActor* actor);
-
-		// 添加到此的实例将在关卡析构时释放，谨慎使用
-		void AddActor(IBaseActor* actor);
-		// will render ,不会自动释放，谨慎使用
-		void AddSquare2dActor(ISquare2dActor* actor);
-		void EraseSquare2dActor(ISquare2dActor* actor);
-
-		void AddTileMap(ITileMap* actor);
-		void EraseTileMap(ITileMap* actor);
-
-	public:
-		void AddStaticCollider(IColliderBase* collider);
-		void EraseStaticCollider(const IColliderBase* collider);
-		void AddStaticColliders(const std::vector<IColliderBase*>& collider);
-		void AddDynamicCollider(IColliderBase* collider);
-		void EraseDynamicCollider(const IColliderBase* collider);
-		void AddDynamicColliders(const std::vector<IColliderBase*>& collider);
-
-		IThreadPool* GetIWindowThreadPool();
-
-	private:
-		// clear opengl buffer
-		void _clear();
-
-		void _clear_color() const;
-
-		void _collision_detection();
-		void _deal_collision();
-
-	protected:
-		IEventLayer* ObjectEventLayer;
-
 	private:
 		// 事件分发顺序
 		std::vector<IEventLayer*> _event_layers;
 		// layer 管理
 		std::vector<IEventLayer*> layers;
-		// 所有 继承自IBaseActor 的实例，即在关卡中 Update 的实例
-		// 一般情况下使用 CreateActor 创建
-		// 凡添加到本数组的实例统一由 this Level 管理，不需要手动释放内存
-		std::vector<IBaseActor*> _actors;
-		// 以下实例数组为记录可渲染实例，不需要释放
-		std::vector<ISquare2dActor*> _square_2d_actors;
-		std::vector<ITileMap*>		 _tile_map_actors;
 
-		std::vector<IColliderBase*> _static_colliders;
-		std::vector<IColliderBase*> _dynamic_colliders;
-		// 碰撞体回调函数，统一在主线程调用
-		// 更改代码时，注意多线程资源竞争
-		std::vector<std::function<void()>> _collider_callbacks;
-		std::vector<std::function<void()>> _collision_handings;
-		// 由 ICollisionHandling 管理，若更改逻辑，需要更改 ICollisionHandling::StartCollisionHandle 函数中逻辑
-		bool _is_over_collision_detection = true;
+		
+		
+
 
 		//std::shared_ptr<IPlayerControllerBase> _controller_ptr;
 
 		glm::vec2 _window_size;
+		
 
-		glm::vec4 _clear_color_vec;
-
-		std::mutex _mutex;
-		std::mutex _tile_map_mutex;
-		std::mutex _collision_mutex;
-		std::mutex _colliders_mutex;
-
-		ICollisionHandling* _colli_handler;
+		
 
 		IImguiUILayer* _imgui_showing_layer = nullptr;
 

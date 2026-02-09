@@ -9,11 +9,11 @@
 
 namespace INVENT
 {
-	class IBaseLevel;
+	class IScene;
 	class ICollisionHandling
 	{
 	public:
-		ICollisionHandling(IBaseLevel* level);
+		ICollisionHandling(IScene* scene);
 		~ICollisionHandling();
 
 		void StartCollisionHandleDynamic(const std::vector<IColliderBase*>& static_colliders, const std::vector<IColliderBase*>& dynamic_colliders);
@@ -64,7 +64,7 @@ namespace INVENT
 		}
 
 	private:
-		IBaseLevel* _level;
+		IScene* _scene;
 		IThreadPool* _tpool;
 	};
 }

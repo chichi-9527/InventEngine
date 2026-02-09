@@ -2,7 +2,6 @@
 #define _IENGINE_
 
 #include "ILog.h"
-#include "IBase/IScene.h"
 
 #include <glm/glm.hpp>
 
@@ -16,6 +15,7 @@ namespace INVENT
 	class IBaseGameInstance;
 	class IWindow;
 	class IThreadPool;
+	class IScene;
 
 	class IEngine 
 	{
@@ -43,16 +43,7 @@ namespace INVENT
 		unsigned int GetWindowSizeX();
 		unsigned int GetWindowSizeY();
 
-		template<typename T>
-		IScene::ILevelID CreateLevelInstance()
-		{
-			return IScene::InstancePtr()->CreateLevelInstance<T>();
-		}
-		template<typename T>
-		IScene::ILevelID ShowLevelInstance(const glm::vec3& position = { 0.0f })
-		{
-			return IScene::InstancePtr()->ShowLevelInstance<T>(position);
-		}
+		std::shared_ptr<IScene> GetMainScene();
 
 		void SetGameInstance(std::shared_ptr<IBaseGameInstance> game_instance_ptr);
 		std::shared_ptr<IBaseGameInstance> GetGameInstance() { return _game_instance_ptr; }
@@ -91,6 +82,7 @@ namespace INVENT
 
 		std::shared_ptr<IWindow> _iwindow_ptr;
 		std::shared_ptr<IBaseGameInstance> _game_instance_ptr;
+		std::shared_ptr<IScene> _main_scene;
 
 		IThreadPool* _threadpool;
 		IThreadPool* _work_thread_pool;

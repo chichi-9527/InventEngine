@@ -27,9 +27,7 @@ namespace INVENT
 	void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	{
 		IWindow* iwindow = static_cast<IWindow*>(glfwGetWindowUserPointer(window));
-#ifdef USE_OPENGL
-		glViewport(0, 0, width, height);
-#endif // USE_OPENGL
+		iwindow->_render_thread->Viewport(width, height);
 		if (iwindow)
 		{
 			iwindow->Width = width;
@@ -268,7 +266,6 @@ namespace INVENT
 		: Width(width)
 		, Height(height)
 		, Title(title)
-		, _default_level(nullptr)
 		, Level(nullptr)
 		, delta_time(0.0f)
 	{
@@ -280,11 +277,7 @@ namespace INVENT
 
 	void IWindow::Begin()
 	{
-		if (nullptr == Level)
-		{
-			_default_level = new IBaseLevel;
-			Level = _default_level;
-		}
+		
 	
 		UI::IDrawString::Init("./Assets/TTF/VictorMono-Bold-2.otf");
 		UI::IDrawString::Init({ "./Assets/TTF/huawencaiyun.ttf", "./Assets/TTF/huawenfangsong.ttf" });
@@ -293,10 +286,6 @@ namespace INVENT
 	IWindow::~IWindow()
 	{
 		UI::IDrawString::Shutdown();
-
-		if (_default_level)
-			delete _default_level;
-		_default_level = nullptr;
 
 		glfwTerminate();
 	}
@@ -327,12 +316,7 @@ namespace INVENT
 			delta_time = std::chrono::duration<float>(current_frame - last_frame).count();
 			last_frame = current_frame;
 
-			// init textures
-			while(!TEXTURE_MANAGEMENT::GetUninitTextures().empty())
-			{
-				TEXTURE_MANAGEMENT::GetUninitTextures().front()->InitTextureID();
-				TEXTURE_MANAGEMENT::GetUninitTextures().pop();
-			}
+
 
 			// init other functions
 			while (!_main_thread_init_queue.empty())
@@ -351,9 +335,7 @@ namespace INVENT
 
 			//INVENT_LOG_DEBUG(std::to_string(delta_time));
 
-			//Level->_clear_color();
-			//Level->_clear();
-			Level->Update(delta_time);
+			IEngine::InstancePtr()->GetScene()->Update(delta_time);
 
 			///////////////////////////////////////////////////////////
 			///////////// Render Begin
@@ -380,6 +362,7 @@ namespace INVENT
 			glfwPollEvents();
 		}
 
+		_render_thread->ShutDown();
 		IEngine::InstancePtr()->GetGameInstance()->End();
 		AnimationManagement::Shutdown();
 		IUIImgui::End();

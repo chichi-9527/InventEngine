@@ -1,4 +1,4 @@
-#ifndef _IDELEGATE_
+﻿#ifndef _IDELEGATE_
 #define _IDELEGATE_
 
 #include "ThreadPool/IThreadPool.h"
@@ -11,7 +11,6 @@
 
 namespace INVENT
 {
-	using EventFunctionID = size_t;
 
 	namespace ITools
 	{
@@ -22,6 +21,8 @@ namespace INVENT
 	class Event 
 	{
 	public:
+		typedef size_t EventFunctionID;
+
 		Event() = default;
 		Event(const Event&) = delete;
 		void operator=(const Event&) = delete;

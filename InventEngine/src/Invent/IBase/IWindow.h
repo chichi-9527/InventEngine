@@ -81,8 +81,6 @@ namespace INVENT
 		// 2,3: old size
 		int _pos_size[4] = { 20,20,800,600 };
 
-		IBaseLevel* _default_level;
-
 		float delta_time;
 		std::chrono::steady_clock::time_point  last_frame;
 

@@ -140,6 +140,19 @@ namespace INVENT
 					}
 				}
 
+				// init textures
+				while (!TEXTURE_MANAGEMENT::GetUninitTextures().empty())
+				{
+					TEXTURE_MANAGEMENT::GetUninitTextures().front()->InitTextureID();
+					TEXTURE_MANAGEMENT::GetUninitTextures().pop();
+				}
+
+				// 
+				glClearColor(_clear_color_vec.r, _clear_color_vec.g, _clear_color_vec.b, _clear_color_vec.a);
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+				// render 
+
 
 				
 			}
@@ -174,4 +187,17 @@ namespace INVENT
 			});
 #endif // USE_OPENGL
 	}
+	void IRenderThread::SetBackgroundColor(float red, float green, float blue, float alpha)
+	{
+		_clear_color_vec.r = red;
+		_clear_color_vec.g = green;
+		_clear_color_vec.b = blue;
+		_clear_color_vec.a = alpha;
+	}
+
+	void IRenderThread::SetBackgroundColor(glm::vec4 color)
+	{
+		_clear_color_vec = color;
+	}
+
 }

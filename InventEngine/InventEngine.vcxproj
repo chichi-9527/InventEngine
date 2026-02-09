@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Invent\ITools\ISafeFastPtrVector.h" />
     <ClInclude Include="src\Invent\IBase\ILevel.h" />
     <ClInclude Include="src\Invent\IBase\IScene.h" />
     <ClInclude Include="src\Invent\IBase\IRenderThread.h" />
@@ -75,6 +76,9 @@
     <ClInclude Include="src\Invent\ThreadPool\IThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Invent\ITools\ISafeFastPtrVector.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Invent\IBase\ILevel.cpp" />
     <ClCompile Include="src\Invent\IBase\IScene.cpp" />
     <ClCompile Include="src\Invent\IBase\IRenderThread.cpp" />

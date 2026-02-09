@@ -3,6 +3,9 @@
 
 #include "ThreadPool/IThreadPool.h"
 #include "IEventLayer.h"
+#include "IBaseLevel.h"
+#include "ITools/ISafeFastPtrVector.h"
+#include "ILog.h"
 
 #include <glm/glm.hpp>
 
@@ -13,33 +16,100 @@
 namespace INVENT
 {
 	class ILevel;
-	class IBaseActor;
+	class IPlayerControllerBase;
 
-	class IScene : public IEventLayer
+	class IScene : public IBaseLevel, public IEventLayer
 	{
+		friend ICollisionHandling;
+		IScene();
 	public:
-		struct SLevel
+		/*struct SLevel
 		{
-			ILevel* Level = nullptr;
+			size_t Level = (size_t)-1;
 			glm::vec3 Position = {};
-		};
+
+			SLevel() = default;
+			SLevel(size_t level, const glm::vec3& position)
+			{
+				Level = level;
+				Position = position;
+			}
+			~SLevel()
+			{
+				Level = (size_t)-1;
+				Position = {};
+			}
+		};*/
 
 		~IScene();
 
-		static std::shared_ptr<IScene> InstancePtr();
+		virtual void Begin() override;
+		virtual void Update(float delta) override;
+		virtual void End() override;
 
-		virtual void Update(float delta);
+		/// <summary>
+		/// 创建 PlayerController
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <typeparam name="...Args"></typeparam>
+		/// <param name="...args"></param>
+		/// <returns>如果不是 IPlayerControllerBase 子类将返回 nullptr</returns>
+		template<typename T, typename ...Args>
+		std::weak_ptr<T> CreateController(Args&&... args)
+		{
+			if constexpr (!std::is_base_of_v<IPlayerControllerBase, T>)
+			{
+				INVENT_LOG_ERROR(std::format("[Scene] Controller class type error; {}", typeid(T).name()));
+				return nullptr;
+			}
+			std::shared_ptr<T> controller = std::make_shared<T>(std::forward<Args>(args)...);
+			_set_controller(controller);
+			return controller;
+		}
+
+		std::weak_ptr<IPlayerControllerBase> GetController() { return _controller_ptr; }
+		template<typename T>
+		std::weak_ptr<T> GetController()
+		{
+			return std::static_pointer_cast<T>(_controller_ptr);
+		}
+
+		void DestoryController();
 
 		typedef size_t ILevelID;
 		/// <summary>
 		/// 创建关卡实例
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <returns>关卡id</returns>
+		/// <typeparam name="T">关卡类</typeparam>
+		/// <returns>关卡id, 若不是 ILevel 的派生类将不创建实例并返回错误值 size_t(-1)</returns>
 		template<typename T>
-		ILevelID CreateLevelInstance()
+		ILevelID CreateLevelInstance(const glm::vec3& position)
 		{
-			return 0;
+			if constexpr (!std::is_base_of_v<ILevel, T>)
+			{
+				INVENT_LOG_ERROR(std::format("[Scene] Level class type error; {}", typeid(T).name()));
+				return size_t(-1);
+			}
+
+			auto id = _all_levels.size();
+			if (!_id_queue.empty())
+			{
+				std::lock_guard<std::mutex> lock(_all_levels_mutex);
+				id = _id_queue.front();
+				_id_queue.pop();
+				_all_levels.push_back(nullptr);
+			}
+
+			_create_pool.Submit(0, [this, id, &position]() {
+				
+				auto level = new T(position);
+
+				std::lock_guard<std::mutex> lock(_all_levels_mutex);
+
+				_all_levels[id] = (ILevel*)level;
+				});
+			
+			return id;
 		}
 
 		/// <summary>
@@ -49,36 +119,54 @@ namespace INVENT
 		/// <param name="position">关卡实例在场景中的位置</param>
 		/// <returns>关卡id</returns>
 		template<typename T>
-		ILevelID ShowLevelInstance(const glm::vec3& position = { 0.0f })
+		ILevelID ShowLevelInstance(const glm::vec3& position = {})
 		{
-
+			auto id = CreateLevelInstance<T>();
+			ShowLevelInstance(id);
 		}
 
+		void ShowLevelInstance(ILevelID id);
+
+		/// <summary>
+		/// 隐藏指定的关卡实例。不会销毁实例
+		/// </summary>
+		/// <param name="id">要隐藏的关卡实例的标识</param>
+		void HideLevelInstance(ILevelID id);
+		/// <summary>
+		/// 销毁关卡实例 
+		/// 销毁后使用 id 获取关卡实例时若未复用将返回 nullptr，若已复用将返回新的关卡实例（可能会返回与预期不同的实例）
+		/// </summary>
+		/// <param name="id">要销毁的关卡实例的标识</param>
+		void DestoryLevelInstance(ILevelID id);
 		
-		template<typename T, bool IsRender>
-		T* CreateActor()
-		{
-			if constexpr (!std::is_base_of_v<IBaseActor, T>)
-			{
-				INVENT_LOG_ERROR(std::format("[IEngine] Window class type error; {}", typeid(T).name()));
-				return nullptr;
-			}
+		static std::shared_ptr<IScene> CreateInstancePtr();
+	private:
+		void _set_controller(std::shared_ptr<IPlayerControllerBase>& controller_ptr);
 
-			auto actor = new T;
-
-			_get_engine_work_thread_pool()->Submit(0, [this, actor]() {
-				
-
-				});
-		}
+		void _collision_detection();
+		void _deal_collision();
 
 	private:
-		IScene();
+		IThreadPool _create_pool;
+		std::shared_ptr<IPlayerControllerBase> _controller_ptr;
+		std::vector<ILevel*> _all_levels;
+		std::queue<size_t> _id_queue;
+		std::unordered_set<ILevelID> _show_levels;
+		std::vector<IColliderBase*> _all_show_static_colliders;
+		std::vector<IColliderBase*> _all_show_dynamic_colliders;
 
-		IThreadPool* _get_engine_work_thread_pool();
+		std::mutex _all_levels_mutex;
+		std::mutex _show_levels_mutex;
 
-	private:
-		std::vector<SLevel> _scene_levels;
+		// 碰撞体回调函数，统一在主线程调用
+		// 更改代码时，注意多线程资源竞争
+		std::vector<std::function<void()>> _collider_callbacks;
+		std::vector<std::function<void()>> _collision_handings;
+		std::mutex _collision_mutex;
+		ICollisionHandling* _colli_handler;
+
+		// 由 ICollisionHandling 管理，若更改逻辑，需要更改 ICollisionHandling::StartCollisionHandle 函数中逻辑
+		bool _is_over_collision_detection = true;
 
 	};
 

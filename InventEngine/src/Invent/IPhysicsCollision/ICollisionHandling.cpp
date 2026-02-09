@@ -2,13 +2,13 @@
 
 #include "ICollisionDetection.h"
 
-#include "IBase/IBaseLevel.h"
+#include "IBase/IScene.h"
 #include "IBase/IBaseActor.h"
 
 namespace INVENT
 {
-	ICollisionHandling::ICollisionHandling(IBaseLevel* level)
-		: _level(level)
+	ICollisionHandling::ICollisionHandling(IScene* scene)
+		: _scene(scene)
 		, _tpool(new IThreadPool)
 	{
 		_tpool->Start();
@@ -18,6 +18,7 @@ namespace INVENT
 	{
 		if (_tpool)
 		{
+			_tpool->Shutdown();
 			delete _tpool;
 			_tpool = nullptr;
 		}
@@ -32,7 +33,7 @@ namespace INVENT
 
 	void ICollisionHandling::StartCollisionHandle(const std::vector<IColliderBase*>& static_colliders, const std::vector<IColliderBase*>& dynamic_colliders)
 	{
-		_level->_is_over_collision_detection = false;
+		_scene->_is_over_collision_detection = false;
 
 		for (auto colider : static_colliders)
 		{
@@ -85,7 +86,7 @@ namespace INVENT
 					{
 						if (distance)
 						{
-							_level->_collision_handings.push_back(std::bind(&ICollisionHandling::UpdateBlockActorPosition, dynamic_colliders[i], dynamic_colliders[j], direction, distance));
+							_scene->_collision_handings.push_back(std::bind(&ICollisionHandling::UpdateBlockActorPosition, dynamic_colliders[i], dynamic_colliders[j], direction, distance));
 						}
 						dynamic_colliders[i]->_blocks.insert(dynamic_colliders[j]);
 						dynamic_colliders[j]->_blocks.insert(dynamic_colliders[i]);
@@ -123,7 +124,7 @@ namespace INVENT
 					{
 						if (distance)
 						{
-							_level->_collision_handings.push_back(std::bind(&ICollisionHandling::UpdateBlockActorPosition, dynamic_colliders[i], static_colliders[k], direction, distance));
+							_scene->_collision_handings.push_back(std::bind(&ICollisionHandling::UpdateBlockActorPosition, dynamic_colliders[i], static_colliders[k], direction, distance));
 							dynamic_colliders[i]->_blocks.insert(static_colliders[k]);
 							static_colliders[k]->_blocks.insert(dynamic_colliders[i]);
 						}
@@ -135,7 +136,7 @@ namespace INVENT
 			
 		}
 
-		auto push2levelcallbacks = [this](IColliderBase* collider) {
+		static auto push2levelcallbacks = [this](IColliderBase* collider) {
 
 			if (collider->_begin_overlap_func && collider->_begin_overlaps.size())
 			{
@@ -143,8 +144,8 @@ namespace INVENT
 					(collider->_begin_overlap_func)(collider->_begin_overlaps);
 					};
 
-				std::lock_guard<std::mutex> lock(_level->_collision_mutex);
-				_level->_collider_callbacks.push_back(collision_callback);
+				std::lock_guard<std::mutex> lock(_scene->_collision_mutex);
+				_scene->_collider_callbacks.push_back(collision_callback);
 			}
 			if (collider->_end_overlaps.size())
 			{
@@ -158,8 +159,8 @@ namespace INVENT
 						(collider->_end_overlap_func)(collider->_end_overlaps);
 						};
 
-					std::lock_guard<std::mutex> lock(_level->_collision_mutex);
-					_level->_collider_callbacks.push_back(collision_callback);
+					std::lock_guard<std::mutex> lock(_scene->_collision_mutex);
+					_scene->_collider_callbacks.push_back(collision_callback);
 				}
 			}
 			if (collider->_block_collision_func && collider->_blocks.size())
@@ -168,8 +169,8 @@ namespace INVENT
 					(collider->_block_collision_func)(collider->_blocks);
 					};
 
-				std::lock_guard<std::mutex> lock(_level->_collision_mutex);
-				_level->_collider_callbacks.push_back(collision_callback);
+				std::lock_guard<std::mutex> lock(_scene->_collision_mutex);
+				_scene->_collider_callbacks.push_back(collision_callback);
 			}
 
 			};
@@ -187,7 +188,7 @@ namespace INVENT
 		}
 
 		// end
-		_level->_is_over_collision_detection = true;
+		_scene->_is_over_collision_detection = true;
 
 	}
 

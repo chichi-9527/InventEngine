@@ -8,10 +8,12 @@ namespace INVENT
 	class ILevel : public IBaseLevel
 	{
 	public:
-		ILevel();
+		ILevel(const glm::vec3& position = {});
 		virtual ~ILevel();
 
-
+		virtual void Begin() override;
+		virtual void Update(float delta) override;
+		virtual void End() override;
 
 	private:
 

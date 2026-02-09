@@ -1,10 +1,11 @@
-#include "IEpch.h"
+﻿#include "IEpch.h"
 #include "IEngine.h"
 
 #include "ThreadPool/IThreadPool.h"
 #include "IBase/IWindow.h"
 #include "IBase/IBaseLevel.h"
 #include "IBase/IGameInstance.h"
+#include "IBase/IScene.h"
 
 static const auto StartTimePoint = std::chrono::high_resolution_clock::now();
 
@@ -16,6 +17,7 @@ namespace INVENT
 		: _threadpool(nullptr)
 		, _work_thread_pool(new IThreadPool)
 	{
+		_main_scene = IScene::CreateInstancePtr();
 		_work_thread_pool->Start();
 	}
 
@@ -67,6 +69,11 @@ namespace INVENT
 	unsigned int IEngine::GetWindowSizeY()
 	{
 		return _iwindow_ptr->GetHeight();
+	}
+
+	std::shared_ptr<IScene> IEngine::GetMainScene()
+	{
+		return _main_scene;
 	}
 
 	void IEngine::SetGameInstance(std::shared_ptr<IBaseGameInstance> game_instance_ptr)

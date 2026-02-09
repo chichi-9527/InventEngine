@@ -4,6 +4,7 @@
 #include "Invent/2D/ITileMap.h"
 #include "Invent/IBase/IController.h"
 #include "Invent/IBase/IActor.h"
+#include "Invent/IBase/ILevel.h"
 
 #include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -197,11 +198,11 @@ private:
 
 };
 
-class MyLevel : public INVENT::IBaseLevel 
+class MyLevel : public INVENT::ILevel 
 {
 public:
 	MyLevel()
-		: IBaseLevel()
+		: ILevel()
 	{
 		auto act = this->CreateActor<MyActor>();
 		auto act2 = this->CreateActor<MyActor>();
