@@ -100,7 +100,7 @@ namespace INVENT
 			_create_pool.Submit(0, [this, id, &position]() {
 				
 				auto level = new T(position);
-
+				level->Begin();
 				std::lock_guard<std::mutex> lock(_all_levels_mutex);
 
 				_all_levels[id] = (ILevel*)level;
@@ -177,7 +177,8 @@ namespace INVENT
 		// 更改代码时，注意多线程资源竞争
 		std::vector<std::function<void()>> _collider_callbacks;
 		std::vector<std::function<void()>> _collision_handings;
-		std::mutex _collision_mutex;
+		std::mutex _callback_mutex;
+		std::mutex _handing_mutex;
 		ICollisionHandling* _colli_handler;
 
 		ShowLevelActorVecters _show_level_actor_vectors;

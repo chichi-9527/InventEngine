@@ -21,7 +21,6 @@ namespace INVENT
 		virtual const std::vector<IObject*>& GetChildren() const { return _children; }		
 
 		virtual void SetWorldPosition(const glm::vec3& position) override;
-		//virtual const glm::vec3& GetWorldPosition() override;
 
 		virtual void SetRelativePosition(const glm::vec3& position);
 		virtual const glm::vec3& GetRelativePosition();

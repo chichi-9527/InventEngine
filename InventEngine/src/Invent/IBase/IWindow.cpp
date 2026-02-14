@@ -40,6 +40,21 @@ namespace INVENT
 		
 		UI::IDrawString::Init("./Assets/TTF/VictorMono-Bold-2.otf");
 		UI::IDrawString::Init({ "./Assets/TTF/huawencaiyun.ttf", "./Assets/TTF/huawenfangsong.ttf" });
+
+		ICollisionPresets::Init();
+		AnimationManagement::Start();
+		IEngine::InstancePtr()->GetMainScene()->Begin();
+		IEngine::InstancePtr()->GetGameInstance()->Begin();
+		
+	}
+
+	void IWindow::End()
+	{
+		_render_thread->ShutDown();
+		IEngine::InstancePtr()->GetGameInstance()->End();
+		IEngine::InstancePtr()->GetMainScene()->End();
+		AnimationManagement::Shutdown();
+		
 	}
 
 	IWindow::~IWindow()
@@ -53,15 +68,6 @@ namespace INVENT
 	bool IWindow::Start()
 	{
 		Begin();
-		
-		ICollisionPresets::Init();
-		
-		//IUIImgui::Init(Window);
-		AnimationManagement::Start();
-	
-		IEngine::InstancePtr()->GetMainScene()->Begin();
-		IEngine::InstancePtr()->GetGameInstance()->Begin();
-		
 
 		///////////////////////////////////////////////////////////
 		////////// Begin Loop
@@ -94,13 +100,7 @@ namespace INVENT
 			glfwPollEvents();
 		}
 
-		
-		IEngine::InstancePtr()->GetGameInstance()->End();
-		IEngine::InstancePtr()->GetMainScene()->End();
-		AnimationManagement::Shutdown();
-		//IUIImgui::End();
-		
-		_render_thread->ShutDown();
+		End();
 
 		return 0;
 	}

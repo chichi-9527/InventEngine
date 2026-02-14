@@ -245,10 +245,6 @@ public:
 		act->AddCollider(collider1);
 		act2->AddCollider(collider2);*/
 
-		
-
-		
-
 	}
 
 	virtual ~MyLevel()
@@ -259,9 +255,8 @@ public:
 	virtual void Begin() override
 	{
 		auto game_instance = std::static_pointer_cast<MyGameInstance>(INVENT::IEngine::InstancePtr()->GetGameInstance());
-		
-		game_instance->Controller.lock()->AddPlayer((INVENT::IBasePawnControl2D*)act);
-		game_instance->Controller.lock()->AddPlayer((INVENT::IBasePawnControl2D*)act2);
+		game_instance->Controller.lock()->AddPlayer((INVENT::ISquare2dPawn*)act);
+		game_instance->Controller.lock()->AddPlayer((INVENT::ISquare2dPawn*)act2);
 	}
 
 	INVENT::IActor3D* actor3d;
@@ -282,19 +277,6 @@ public:
 		: IWindow(width, height, title)
 	{
 		
-	}
-
-	virtual void Begin() override
-	{
-		INVENT::IWindow::Begin();
-
-		this->SetLevel(new MyLevel);
-
-		/*std::thread create_level([this]() {
-			this->SetLevel(new MyLevel);
-			});
-
-		create_level.detach();*/
 	}
 
 	virtual void Render3d() override

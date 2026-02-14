@@ -351,6 +351,10 @@ namespace INVENT
 		IEngine::InstancePtr()->GetWorkThreadPool()->Submit(0, [this, flag_true_if_should_flip, tex_break_width_num, tex_break_height_num, id](const std::string& Name, const std::string& Path) {
 			auto texture = new ITexture2D(Name, Path, flag_true_if_should_flip, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
 			std::lock_guard<std::mutex> lock(_mutex);
+			if (_vector_textrues.size() <= id)
+			{
+				return;
+			}
 			_vector_textrues[id] = (ITextureBase*)texture;
 			_textrues[Name].first = (ITextureBase*)texture;
 			}, name, path);

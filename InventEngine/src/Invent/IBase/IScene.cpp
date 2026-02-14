@@ -73,19 +73,22 @@ namespace INVENT
 	{
 		_create_pool.Shutdown();
 
+		if (_colli_handler)
+		{
+			_colli_handler->Shutdown();
+			delete _colli_handler;
+			_colli_handler = nullptr;
+		}
+
 		for (auto& level : _all_levels)
 		{
 			if (level)
 			{
+				level->End();
 				delete level;
 			}
 		}
 
-		if (_colli_handler)
-		{
-			delete _colli_handler;
-			_colli_handler = nullptr;
-		}
 	}
 
 	void IScene::DestoryController()
@@ -112,6 +115,7 @@ namespace INVENT
 		{
 			if (_all_levels[id])
 			{
+				_all_levels[id]->End();
 				delete _all_levels[id];
 				_all_levels[id] = nullptr;
 				_id_queue.push(id);
@@ -288,15 +292,19 @@ namespace INVENT
 	void IScene::_deal_collision()
 	{
 		{
-			std::lock_guard<std::mutex> lock(_collision_mutex);
+			std::lock_guard<std::mutex> lock(_handing_mutex);
 			for (auto& func : _collision_handings)
 			{
-				func();
+				if (func)
+				{
+					func();
+				}
+				
 			}
 			_collision_handings.clear();
 		}
 		{
-			std::lock_guard<std::mutex> lock(_collision_mutex);
+			std::lock_guard<std::mutex> lock(_callback_mutex);
 			for (auto& func : _collider_callbacks)
 			{
 				func();

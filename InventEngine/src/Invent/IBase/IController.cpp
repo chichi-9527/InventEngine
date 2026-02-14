@@ -1,6 +1,6 @@
 ﻿#include "IEpch.h"
 #include "IController.h"
-
+#include "2D/ISquare2dPawn.h"
 #include "IEngine.h"
 
 namespace INVENT
@@ -48,24 +48,24 @@ namespace INVENT
 		
 	}
 
-	size_t IPlayerController2D::AddPlayer(IBasePawnControl2D * pawn)
+	size_t IPlayerController2D::AddPlayer(ISquare2dPawn* pawn)
 	{
 		_pawns.push_back(pawn);
 		return _pawns.size() - 1;
 	}
 
-	void IPlayerController2D::ErasePlayer(IBasePawnControl2D* pawn)
+	void IPlayerController2D::ErasePlayer(ISquare2dPawn* pawn)
 	{
 		_pawns.erase(std::remove(_pawns.begin(), _pawns.end(), pawn), _pawns.end());
 	}
 
-	size_t IPlayerController2D::GetPlayerIndex(IBasePawnControl2D* pawn)
+	size_t IPlayerController2D::GetPlayerIndex(ISquare2dPawn* pawn)
 	{
 		auto iter = std::find(_pawns.begin(), _pawns.end(), pawn);
 		return iter - _pawns.begin();
 	}
 
-	bool IPlayerController2D::SetControlPlayer(IBasePawnControl2D* pawn)
+	bool IPlayerController2D::SetControlPlayer(ISquare2dPawn* pawn)
 	{
 		return SetControlPlayerIndex(GetPlayerIndex(pawn));
 	}
@@ -78,7 +78,7 @@ namespace INVENT
 		return true;
 	}
 
-	const IBasePawnControl2D* IPlayerController2D::Get2DPlayerController(size_t index) const
+	const ISquare2dPawn* IPlayerController2D::Get2DPlayerController(size_t index) const
 	{
 		if (_pawns.size() > index)
 		{
@@ -86,7 +86,7 @@ namespace INVENT
 		}
 		return nullptr;
 	}
-	IBasePawnControl2D* IPlayerController2D::Get2DPlayerController(size_t index)
+	ISquare2dPawn* IPlayerController2D::Get2DPlayerController(size_t index)
 	{
 		if (_pawns.size() > index)
 		{
@@ -97,11 +97,17 @@ namespace INVENT
 
 	void IPlayerController2D::EventUp(float delta)
 	{
-		if (_pawns.empty())
+		if (_pawns.size() > _control_player_index)
 		{
-			return;
+			if (auto pawn = _pawns[_control_player_index])
+			{
+				pawn->MoveUp(delta);
+			}
 		}
-		_pawns[_control_player_index]->MoveUp(delta);
+		else
+		{
+			INVENT_LOG_WARNING("_pawns.size() <= _control_player_index");
+		}
 
 	}
 

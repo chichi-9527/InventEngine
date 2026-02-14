@@ -37,7 +37,7 @@ namespace INVENT
 
 	protected:
 		virtual void Begin();
-
+		virtual void End();
 		// TEST
 		virtual void Render3d(){}
 

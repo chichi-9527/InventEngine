@@ -16,6 +16,10 @@ namespace INVENT
 
 	ICollisionHandling::~ICollisionHandling()
 	{
+	}
+
+	void ICollisionHandling::Shutdown()
+	{
 		if (_tpool)
 		{
 			_tpool->Shutdown();
@@ -86,7 +90,12 @@ namespace INVENT
 					{
 						if (distance)
 						{
-							_scene->_collision_handings.push_back(std::bind(&ICollisionHandling::UpdateBlockActorPosition, dynamic_colliders[i], dynamic_colliders[j], direction, distance));
+
+							std::lock_guard<std::mutex> lock(_scene->_handing_mutex);
+							_scene->_collision_handings.push_back([&dynamic_colliders, i, j, direction, distance]() {
+								ICollisionHandling::UpdateBlockActorPosition(dynamic_colliders[i], dynamic_colliders[j], direction, distance);
+								});
+							
 						}
 						dynamic_colliders[i]->_blocks.insert(dynamic_colliders[j]);
 						dynamic_colliders[j]->_blocks.insert(dynamic_colliders[i]);
@@ -124,7 +133,13 @@ namespace INVENT
 					{
 						if (distance)
 						{
-							_scene->_collision_handings.push_back(std::bind(&ICollisionHandling::UpdateBlockActorPosition, dynamic_colliders[i], static_colliders[k], direction, distance));
+							{
+								std::lock_guard<std::mutex> lock(_scene->_handing_mutex);
+								_scene->_collision_handings.push_back([&dynamic_colliders, i, k, direction, distance]() {
+									ICollisionHandling::UpdateBlockActorPosition(dynamic_colliders[i], dynamic_colliders[k], direction, distance);
+									});
+							}
+							
 							dynamic_colliders[i]->_blocks.insert(static_colliders[k]);
 							static_colliders[k]->_blocks.insert(dynamic_colliders[i]);
 						}
@@ -144,7 +159,7 @@ namespace INVENT
 					(collider->_begin_overlap_func)(collider->_begin_overlaps);
 					};
 
-				std::lock_guard<std::mutex> lock(_scene->_collision_mutex);
+				std::lock_guard<std::mutex> lock(_scene->_callback_mutex);
 				_scene->_collider_callbacks.push_back(collision_callback);
 			}
 			if (collider->_end_overlaps.size())
@@ -159,7 +174,7 @@ namespace INVENT
 						(collider->_end_overlap_func)(collider->_end_overlaps);
 						};
 
-					std::lock_guard<std::mutex> lock(_scene->_collision_mutex);
+					std::lock_guard<std::mutex> lock(_scene->_callback_mutex);
 					_scene->_collider_callbacks.push_back(collision_callback);
 				}
 			}
@@ -169,7 +184,7 @@ namespace INVENT
 					(collider->_block_collision_func)(collider->_blocks);
 					};
 
-				std::lock_guard<std::mutex> lock(_scene->_collision_mutex);
+				std::lock_guard<std::mutex> lock(_scene->_callback_mutex);
 				_scene->_collider_callbacks.push_back(collision_callback);
 			}
 

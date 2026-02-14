@@ -1,4 +1,4 @@
-#ifndef _ICOMPONENTMANAGEMENT_
+﻿#ifndef _ICOMPONENTMANAGEMENT_
 #define _ICOMPONENTMANAGEMENT_
 
 #include "ILog.h"
@@ -8,6 +8,7 @@
 #include <unordered_set>
 
 #include <memory>
+#include <mutex>
 
 #include <type_traits>
 
@@ -112,6 +113,7 @@ namespace INVENT
 	private:
 		std::vector<std::vector<std::pair<T, IBool>>*> _vec;
 		std::vector<IComponentManagement*> _component_managements;
+		std::mutex _mutex;
 	};
 
 	class IComponentManagement 
@@ -128,6 +130,8 @@ namespace INVENT
 		template<typename T, typename... Args>
 		T& Emplace(Entity t, Args&&... args)
 		{
+			std::lock_guard<std::mutex> lock(_component_mutex);
+
 			_b_arr_set.insert(std::dynamic_pointer_cast<IBaseComponentManagementArray>(IComponentManagementArray<T>::Instance()));
 
 			std::vector<std::pair<T, IBool>>*  component_array = IComponentManagementArray<T>::Instance()->GetComponentArray(this);
@@ -142,6 +146,8 @@ namespace INVENT
 		template<typename T>
 		T* Get(Entity t)
 		{
+			std::lock_guard<std::mutex> lock(_component_mutex);
+
 			std::vector<std::pair<T, IBool>>* component_array = IComponentManagementArray<T>::Instance()->HasComponentArray(this);
 			if (component_array)
 			{
@@ -158,6 +164,8 @@ namespace INVENT
 		template<typename T>
 		T& GetNotSafe(Entity t)
 		{
+			std::lock_guard<std::mutex> lock(_component_mutex);
+
 			std::vector<std::pair<T, IBool>>* component_array = IComponentManagementArray<T>::Instance()->HasComponentArray(this);
 
 			return (*component_array)[t].first;
@@ -167,6 +175,8 @@ namespace INVENT
 		template<typename T>
 		bool Has(Entity t)
 		{
+			std::lock_guard<std::mutex> lock(_component_mutex);
+
 			std::vector<std::pair<T, IBool>>* component_array = IComponentManagementArray<T>::Instance()->HasComponentArray(this);
 			if (component_array)
 			{
@@ -182,6 +192,8 @@ namespace INVENT
 		template<typename T>
 		void Remove(Entity t)
 		{
+			std::lock_guard<std::mutex> lock(_component_mutex);
+
 			std::vector<std::pair<T, IBool>>* component_array = IComponentManagementArray<T>::Instance()->HasComponentArray(this);
 			if (component_array)
 			{
@@ -196,6 +208,7 @@ namespace INVENT
 	private:
 		std::vector<int> _handles;
 		std::unordered_set< std::shared_ptr<IBaseComponentManagementArray>> _b_arr_set;
+		std::mutex _component_mutex;
 	};
 
 	namespace ITools

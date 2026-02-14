@@ -1,13 +1,12 @@
-#ifndef _ICONTROLLER_
+﻿#ifndef _ICONTROLLER_
 #define _ICONTROLLER_
 
 #include "IEventLayer.h"
-#include "IBasePawnControl.h"
 #include "ICamera.h"
 
 namespace INVENT
 {
-
+	class ISquare2dPawn;
 	class IPlayerControllerBase : public IEventLayer 
 	{
 	public:
@@ -43,23 +42,23 @@ namespace INVENT
 		virtual const ICamera* GetSceneCamera() const override { return _scene_camera; }
 		virtual void UpdateCameraWindowAspect() const override { if (_scene_camera) _scene_camera->UpdateWindowAspect(); }
 
-		size_t AddPlayer(IBasePawnControl2D* pawn);
-		void ErasePlayer(IBasePawnControl2D* pawn);
+		size_t AddPlayer(ISquare2dPawn* pawn);
+		void ErasePlayer(ISquare2dPawn* pawn);
 
-		size_t GetPlayerIndex(IBasePawnControl2D* pawn);
+		size_t GetPlayerIndex(ISquare2dPawn* pawn);
 
-		bool SetControlPlayer(IBasePawnControl2D* pawn);
+		bool SetControlPlayer(ISquare2dPawn* pawn);
 		bool SetControlPlayerIndex(size_t index);
 		size_t GetControlPlayerIndex() const { return _control_player_index; }
 
-		const std::vector<IBasePawnControl2D*>& Get2DPlayers() const { return _pawns; }
-		const IBasePawnControl2D* Get2DPlayerController(size_t index) const;
-		IBasePawnControl2D* Get2DPlayerController(size_t index);
+		const std::vector<ISquare2dPawn*>& Get2DPlayers() const { return _pawns; }
+		const ISquare2dPawn* Get2DPlayerController(size_t index) const;
+		ISquare2dPawn* Get2DPlayerController(size_t index);
 
 		template<typename T>
 		const T* Get2DPlayerController(size_t index) const
 		{
-			if (std::is_base_of_v<IBasePawnControl2D, T>)
+			if (std::is_base_of_v<ISquare2dPawn, T>)
 			{
 				return (T*)Get2DPlayerController(index);
 			}
@@ -68,7 +67,7 @@ namespace INVENT
 		template<typename T>
 		T* Get2DPlayerController(size_t index)
 		{
-			if (std::is_base_of_v<IBasePawnControl2D, T>)
+			if (std::is_base_of_v<ISquare2dPawn, T>)
 			{
 				return (T*)Get2DPlayerController(index);
 			}
@@ -81,7 +80,7 @@ namespace INVENT
 		virtual void EventRight(float delta);
 
 	private:
-		std::vector<IBasePawnControl2D*> _pawns;
+		std::vector<ISquare2dPawn*> _pawns;
 
 		size_t _control_player_index;
 

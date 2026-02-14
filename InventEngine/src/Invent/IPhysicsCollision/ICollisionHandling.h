@@ -16,6 +16,8 @@ namespace INVENT
 		ICollisionHandling(IScene* scene);
 		~ICollisionHandling();
 
+		void Shutdown();
+
 		void StartCollisionHandleDynamic(const std::vector<IColliderBase*>& static_colliders, const std::vector<IColliderBase*>& dynamic_colliders);
 		void StartCollisionHandle(const std::vector<IColliderBase*>& static_colliders, const std::vector<IColliderBase*>& dynamic_colliders);
 

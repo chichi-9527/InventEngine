@@ -27,6 +27,8 @@ namespace INVENT
 
 		void SubmitOpenglInitFuncs(std::function<void()>&& func);
 
+		const std::atomic_bool& IsRunning() const { return _running; }
+
 	private:
 		IRenderThread(IWindow& iwindow);
 
