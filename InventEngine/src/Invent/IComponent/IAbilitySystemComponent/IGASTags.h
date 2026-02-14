@@ -1,7 +1,7 @@
-#ifndef _IGASTAGS_
+﻿#ifndef _IGASTAGS_
 #define _IGASTAGS_
 
-#include "ITools/ITrieTag.h"
+#include "Invent/ITools/ITrieTag.h"
 
 namespace INVENT
 {

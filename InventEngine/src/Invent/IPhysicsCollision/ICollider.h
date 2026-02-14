@@ -3,7 +3,7 @@
 
 #include "ICollisionPresets.h"
 
-#include "IBase/IObjectBase.h"
+#include "Invent/IBase/IObjectBase.h"
 
 #include <glm/glm.hpp>
 

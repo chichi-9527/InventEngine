@@ -1,11 +1,11 @@
-#include "IEpch.h"
+﻿#include "IEpch.h"
 #include "ISquare2dActor.h"
 
 #include "IComponent/InventComponent.h"
 #include "2DComponent/Invent2DComponent.h"
 
 #include "IEngine.h"
-#include "IBase/IWindow.h"
+#include "IBase/IRenderThread.h"
 
 namespace INVENT
 {
@@ -19,7 +19,7 @@ namespace INVENT
 	{
 		AddComponent<Scale2DComponent>(glm::vec2{ 1.0f,1.0f });
 
-		IEngine::InstancePtr()->GetIWindow()->GetMainThreadInitQueue().push([this]() {
+		IEngine::InstancePtr()->GetRenderThreadPtr()->SubmitOpenglInitFuncs([this]() {
 			_shader = IShaderManagement::GetDefaultSquare2DShader();
 			});
 		

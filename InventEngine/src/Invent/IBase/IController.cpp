@@ -1,4 +1,4 @@
-#include "IEpch.h"
+﻿#include "IEpch.h"
 #include "IController.h"
 
 #include "IEngine.h"
@@ -8,9 +8,9 @@ namespace INVENT
 
 	IPlayerControllerBase::IPlayerControllerBase()
 	{
-		this->SetAllEventReturn(false);
-		this->CursorPositionEventReturn = false;
-		this->MouseButtonEventReturn = false;
+		this->EventKeyFrameDone = false;
+		this->EventCursorPositionFrameDone = false;
+		this->EventMouseButtonDone = false;
 	}
 
 	IController::IController()
@@ -27,10 +27,10 @@ namespace INVENT
 		, _scene_camera(nullptr)
 		, _control_player_index(0)
 	{
-		IEngine::InstancePtr()->RegisterNormalProcessInputFunction([this](float delta) {IPlayerController2D::EventUp(delta); }, INVENT_KEY_W);
-		IEngine::InstancePtr()->RegisterNormalProcessInputFunction([this](float delta) {IPlayerController2D::EventLeft(delta); }, INVENT_KEY_A);
-		IEngine::InstancePtr()->RegisterNormalProcessInputFunction([this](float delta) {IPlayerController2D::EventDown(delta); }, INVENT_KEY_S);
-		IEngine::InstancePtr()->RegisterNormalProcessInputFunction([this](float delta) {IPlayerController2D::EventRight(delta); }, INVENT_KEY_D);
+		this->RegisterEventKeyFrameFunction([this](float delta) {IPlayerController2D::EventUp(delta); }, INVENT_KEY_W);
+		this->RegisterEventKeyFrameFunction([this](float delta) {IPlayerController2D::EventLeft(delta); }, INVENT_KEY_A);
+		this->RegisterEventKeyFrameFunction([this](float delta) {IPlayerController2D::EventDown(delta); }, INVENT_KEY_S);
+		this->RegisterEventKeyFrameFunction([this](float delta) {IPlayerController2D::EventRight(delta); }, INVENT_KEY_D);
 	}
 
 	IPlayerController2D::~IPlayerController2D()
@@ -97,24 +97,40 @@ namespace INVENT
 
 	void IPlayerController2D::EventUp(float delta)
 	{
+		if (_pawns.empty())
+		{
+			return;
+		}
 		_pawns[_control_player_index]->MoveUp(delta);
 
 	}
 
 	void IPlayerController2D::EventLeft(float delta)
 	{
+		if (_pawns.empty())
+		{
+			return;
+		}
 		_pawns[_control_player_index]->MoveLeft(delta);
 
 	}
 
 	void IPlayerController2D::EventDown(float delta)
 	{
+		if (_pawns.empty())
+		{
+			return;
+		}
 		_pawns[_control_player_index]->MoveDown(delta);
 
 	}
 
 	void IPlayerController2D::EventRight(float delta)
 	{
+		if (_pawns.empty())
+		{
+			return;
+		}
 		_pawns[_control_player_index]->MoveRight(delta);
 
 	}

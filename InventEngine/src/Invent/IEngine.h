@@ -16,10 +16,14 @@ namespace INVENT
 	class IWindow;
 	class IThreadPool;
 	class IScene;
+	class IEventLayer;
+	class IRenderThread;
 
 	class IEngine 
 	{
 		friend class IWindow;
+
+		IEngine();
 	public:
 
 		~IEngine();
@@ -64,21 +68,9 @@ namespace INVENT
 		IThreadPool* GetThreadPool() const { return _threadpool; }
 		IThreadPool* GetWorkThreadPool() const { return _work_thread_pool; }
 
-		typedef size_t NormalInputFunctionID;
-		typedef size_t CursorPositionFunctionID;
-		NormalInputFunctionID RegisterNormalProcessInputFunction(std::function<void(float)>&& callback, int key);
-		void CancellationNormalProcessInputFunction(NormalInputFunctionID id);
-		CursorPositionFunctionID RegisterCursorPositionFunction(std::function<void(float, bool, double, double)>&& callback);
-		void CancellationCursorPositionFunction(CursorPositionFunctionID id);
+		std::shared_ptr<IRenderThread> GetRenderThreadPtr();
 
 	private:
-
-		IEngine();
-
-	private:
-
-		std::vector<std::pair<std::function<void(float)>, int>> _normal_input_callbacks;
-		std::vector<std::function<void(float, bool, double, double)>> _cursor_position_input_callbacks;
 
 		std::shared_ptr<IWindow> _iwindow_ptr;
 		std::shared_ptr<IBaseGameInstance> _game_instance_ptr;

@@ -6,11 +6,11 @@
 //#include "IController.h"
 //#include "ICamera.h"
 
-#include "UI/IUIImgui.h"
+#include "Invent/UI/IUIImgui.h"
 
-#include "ThreadPool/IThreadPool.h"
-
-#include "ILog.h"
+#include "Invent/ThreadPool/IThreadPool.h"
+#include "IEventLayer.h"
+#include "Invent/ILog.h"
 
 #include <glm/glm.hpp>
 
@@ -27,14 +27,9 @@ namespace INVENT
 	class ITileMap;
 	class IColliderBase;
 
-	class IBaseLevel
+	class IBaseLevel : public IEventLayer
 	{
 		friend class IScene;
-		friend void register_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-		friend void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
-		friend void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
-		friend void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-		friend void cursor_enter_callback(GLFWwindow* window, int entered);
 	public:
 		
 		IBaseLevel(const glm::vec3& position = {});
@@ -175,42 +170,9 @@ namespace INVENT
 
 	protected:
 
-		void AddLayer(IEventLayer* layer);
-		void PopLayer();
-		void PopLayer(IEventLayer* layer);
-
-		// must Inherited from IEventLayer
-		template<typename T>
-		T* CreateLayer()
-		{
-			if (!std::is_base_of_v<IEventLayer, T>)
-			{
-				INVENT_ASSERT(false, "this class is not Inherited from IEventLayer");
-				INVENT_ASSERT(false, std::string(typeid(T).name()));
-				return nullptr;
-			}
-			T* layer = new T;
-			layers.push_back((IEventLayer*)layer);
-			return layer;
-		}
-
-		void ShowImguiUILayer(IImguiUILayer* layer);
-		void HideImguiUILayer();
-
-		void EraseLayer(IEventLayer* layer);
-
 		float GetAspectRatio() const { return _window_size.x / _window_size.y; }
 
 	private:
-		// 事件分发顺序
-		std::vector<IEventLayer*> _event_layers;
-		// layer 管理
-		std::vector<IEventLayer*> layers;
-
-		
-		
-
-
 		//std::shared_ptr<IPlayerControllerBase> _controller_ptr;
 
 		glm::vec2 _window_size;

@@ -3,6 +3,13 @@
 
 #include "IEngine.h"
 #include "IWindow.h"
+#include "IScene.h"
+#include "IController.h"
+
+#include "2D/ITileMap.h"
+
+#include "Renderer/IRenderer.h"
+#include "Renderer/IRenderer2D.h"
 
 namespace INVENT
 {
@@ -56,6 +63,120 @@ namespace INVENT
 	{
 	}
 
+	IRenderThread::~IRenderThread()
+	{
+		ShutDown();
+	}
+
+	std::shared_ptr<IRenderThread> IRenderThread::InstancePtr(IWindow& iwindow)
+	{
+		static auto rthread = std::shared_ptr<IRenderThread>(new IRenderThread(iwindow));
+		return rthread;
+	}
+
+#ifdef USE_OPENGL
+	static std::queue<std::function<void()>> OpenglInitFuncs;
+	static std::mutex OpenglInitFuncsMutex;
+	void IRenderThread::Start()
+	{
+		_running = true;
+		_thread = new std::thread([this]() {
+			glfwMakeContextCurrent(_iwindow.GetGLFWWindow());
+
+			if (_init_opengl())
+			{
+				return;
+			}
+
+			IRenderer::Init();
+
+			while (_running)
+			{
+				// call opengl funcs
+				{
+					std::lock_guard<std::mutex> lock(OpenglInitFuncsMutex);
+					while (!OpenglInitFuncs.empty())
+					{
+						if (auto& func = OpenglInitFuncs.front())
+						{
+							func();
+						}
+						OpenglInitFuncs.pop();
+					}
+				}
+
+				// init textures
+				while (!TEXTURE_MANAGEMENT::GetUninitTextureFuncs().empty())
+				{
+					if (auto& func = TEXTURE_MANAGEMENT::GetUninitTextureFuncs().front())
+					{
+						func();
+					}
+					TEXTURE_MANAGEMENT::GetUninitTextureFuncs().pop();
+				}
+
+				// 
+				glClearColor(_clear_color_vec.r, _clear_color_vec.g, _clear_color_vec.b, _clear_color_vec.a);
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+				// render 
+				this->_opengl_render();
+				
+				//
+				glfwSwapBuffers(_iwindow.GetGLFWWindow());
+			}
+
+			IRenderer::Shutdown();
+
+			glfwMakeContextCurrent(nullptr);
+			});
+	}
+#elif USE_VULKAN
+	void IRenderThread::Start()
+	{
+
+	}
+#else
+#error "must to use opengl or vulkan"
+#endif // USE_OPENGL
+
+	void IRenderThread::ShutDown()
+	{
+		_running = false;
+		if (_thread && _thread->joinable())
+		{
+			_thread->join();
+			delete _thread;
+			_thread = nullptr;
+		}
+	}
+
+	void IRenderThread::Viewport(int width, int height, int x, int y)
+	{
+#ifdef USE_OPENGL
+		OpenglInitFuncs.push([x, y, width, height]() {
+			glViewport(x, y, width, height);
+			});
+#endif // USE_OPENGL
+	}
+	void IRenderThread::SetBackgroundColor(float red, float green, float blue, float alpha)
+	{
+		_clear_color_vec.r = red;
+		_clear_color_vec.g = green;
+		_clear_color_vec.b = blue;
+		_clear_color_vec.a = alpha;
+	}
+
+	void IRenderThread::SetBackgroundColor(glm::vec4 color)
+	{
+		_clear_color_vec = color;
+	}
+
+	void IRenderThread::SubmitOpenglInitFuncs(std::function<void()>&& func)
+	{
+		return OpenglInitFuncs.push(std::forward<std::function<void()>>(func));
+	}
+
 #ifdef USE_OPENGL
 	int IRenderThread::_init_opengl()
 	{
@@ -102,102 +223,26 @@ namespace INVENT
 	}
 #endif // USE_OPENGL
 
-	IRenderThread::~IRenderThread()
+	void IRenderThread::_opengl_render()
 	{
-		ShutDown();
-	}
+		IRenderer2D::BeginRender(IEngine::InstancePtr()->GetMainScene()->GetController().lock() ? 
+			IEngine::InstancePtr()->GetMainScene()->GetController().lock()->GetSceneCamera() : nullptr);
 
-	std::shared_ptr<IRenderThread> IRenderThread::InstancePtr(IWindow& iwindow)
-	{
-		static auto rthread = std::shared_ptr<IRenderThread>(new IRenderThread(iwindow));
-		return rthread;
-	}
+		auto& show_vectors = IEngine::InstancePtr()->GetMainScene()->GetShowLevelActorVectors();
 
-#ifdef USE_OPENGL
-	static std::queue<std::function<void()>> OpenglInitFuncs;
-	static std::mutex OpenglInitFuncsMutex;
-	void IRenderThread::Start()
-	{
-		_running = true;
-		_thread = new std::thread([this]() {
-			if (_init_opengl())
-			{
-				return;
-			}
-
-			while (_running)
-			{
-				// call opengl funcs
-				{
-					std::lock_guard<std::mutex> lock(OpenglInitFuncsMutex);
-					while (!OpenglInitFuncs.empty())
-					{
-						if (auto& func = OpenglInitFuncs.front())
-						{
-							func();
-						}
-						OpenglInitFuncs.pop();
-					}
-				}
-
-				// init textures
-				while (!TEXTURE_MANAGEMENT::GetUninitTextures().empty())
-				{
-					TEXTURE_MANAGEMENT::GetUninitTextures().front()->InitTextureID();
-					TEXTURE_MANAGEMENT::GetUninitTextures().pop();
-				}
-
-				// 
-				glClearColor(_clear_color_vec.r, _clear_color_vec.g, _clear_color_vec.b, _clear_color_vec.a);
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-				// render 
-
-
-				
-			}
-
-			});
-	}
-#elif USE_VULKAN
-	void IRenderThread::Start()
-	{
-
-	}
-#else
-#error "must to use opengl or vulkan"
-#endif // USE_OPENGL
-
-	void IRenderThread::ShutDown()
-	{
-		_running = false;
-		if (_thread && _thread->joinable())
+		for (auto square_actor : show_vectors.Square2dActors)
 		{
-			_thread->join();
-			delete _thread;
-			_thread = nullptr;
+			IRenderer2D::DrawSquare(square_actor);
 		}
-	}
-
-	void IRenderThread::Viewport(int width, int height, int x, int y)
-	{
-#ifdef USE_OPENGL
-		OpenglInitFuncs.push([x, y, width, height]() {
-			glViewport(x, y, width, height);
-			});
-#endif // USE_OPENGL
-	}
-	void IRenderThread::SetBackgroundColor(float red, float green, float blue, float alpha)
-	{
-		_clear_color_vec.r = red;
-		_clear_color_vec.g = green;
-		_clear_color_vec.b = blue;
-		_clear_color_vec.a = alpha;
-	}
-
-	void IRenderThread::SetBackgroundColor(glm::vec4 color)
-	{
-		_clear_color_vec = color;
+		for (auto tile_map : show_vectors.TileMaps)
+		{
+			for (auto& square : tile_map->GetSquares())
+			{
+				IRenderer2D::DrawSquare(&square);
+			}
+		}
+		IRenderer2D::DrawWString(std::wstring(L"fps: no"), { 0.5f, 0.8f, 0.2f, 1.0f }, { 0.8f, 0.9f }, 32.0f, 1);
+		IRenderer2D::EndRender();
 	}
 
 }

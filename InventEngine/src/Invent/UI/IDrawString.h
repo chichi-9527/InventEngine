@@ -1,7 +1,7 @@
 ﻿#ifndef _IDRAWSTRING_
 #define _IDRAWSTRING_
 
-#include "ITexture/ITexture.h"
+#include "Invent/ITexture/ITexture.h"
 
 #include <cwchar>
 

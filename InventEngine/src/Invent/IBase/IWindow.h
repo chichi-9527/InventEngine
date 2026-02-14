@@ -1,9 +1,6 @@
 ﻿#ifndef _IWINDOW_
 #define _IWINDOW_
 
-#include "Renderer/IRenderer.h"
-#include "Renderer/IRenderer2D.h"
-
 #include <string>
 
 struct GLFWwindow;
@@ -16,12 +13,7 @@ namespace INVENT
 
 	class IWindow
 	{
-		friend void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-		friend void register_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-		friend void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
-		friend void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
-		friend void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-		friend void cursor_enter_callback(GLFWwindow* window, int entered);
+		friend class IEngine;
 	public:
 		IWindow(unsigned int width = 800, unsigned int height = 600, std::string title = "title");
 		virtual ~IWindow();
@@ -43,12 +35,8 @@ namespace INVENT
 
 		void SetLevel(IBaseLevel* level);
 
-		std::queue<std::function<void()>>& GetMainThreadInitQueue() { return _main_thread_init_queue; }
-
 	protected:
 		virtual void Begin();
-
-		static void Render(IBaseLevel* level);
 
 		// TEST
 		virtual void Render3d(){}
@@ -58,10 +46,14 @@ namespace INVENT
 		int _glfw_init();
 		void _window_size_change();
 
-		// 已废弃 现在通过注册回调函数
-		//void _process_input(float delta);
-
 		void _process_input_callback(float delta);
+
+		void _framebuffer_size_callback(int width, int height);
+		void _register_key_callback(int key, int scancode, int action, int mods);
+		void _cursor_position_callback(double xpos, double ypos);
+		void _mouse_button_callback(int button, int action, int mods);
+		void _scroll_callback(double xoffset, double yoffset);
+		void _cursor_enter_callback(int entered);
 
 	protected:
 		IBaseLevel* Level;
@@ -74,8 +66,6 @@ namespace INVENT
 
 	private:
 		std::shared_ptr<IRenderThread> _render_thread;
-
-		std::queue<std::function<void()>> _main_thread_init_queue;
 
 		// 0,1: old position
 		// 2,3: old size

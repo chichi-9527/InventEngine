@@ -1,11 +1,10 @@
 ﻿#ifndef _ISCENE_
 #define _ISCENE_
 
-#include "ThreadPool/IThreadPool.h"
-#include "IEventLayer.h"
+#include "Invent/ThreadPool/IThreadPool.h"
 #include "IBaseLevel.h"
-#include "ITools/ISafeFastPtrVector.h"
-#include "ILog.h"
+#include "Invent/ITools/ISafeFastPtrVector.h"
+#include "Invent/ILog.h"
 
 #include <glm/glm.hpp>
 
@@ -18,29 +17,24 @@ namespace INVENT
 	class ILevel;
 	class IPlayerControllerBase;
 
-	class IScene : public IBaseLevel, public IEventLayer
+	class IScene : public IBaseLevel
 	{
-		friend ICollisionHandling;
+		friend class ICollisionHandling;
+		friend class IWindow;
 		IScene();
 	public:
-		/*struct SLevel
+		struct ShowLevelActorVecters 
 		{
-			size_t Level = (size_t)-1;
-			glm::vec3 Position = {};
+			std::vector<ISquare2dActor*> Square2dActors;
+			std::vector<ITileMap*> TileMaps;
 
-			SLevel() = default;
-			SLevel(size_t level, const glm::vec3& position)
+			void Clear()
 			{
-				Level = level;
-				Position = position;
+				Square2dActors.clear();
+				TileMaps.clear();
 			}
-			~SLevel()
-			{
-				Level = (size_t)-1;
-				Position = {};
-			}
-		};*/
-
+		};
+		
 		~IScene();
 
 		virtual void Begin() override;
@@ -63,7 +57,7 @@ namespace INVENT
 				return nullptr;
 			}
 			std::shared_ptr<T> controller = std::make_shared<T>(std::forward<Args>(args)...);
-			_set_controller(controller);
+			_set_controller(std::static_pointer_cast<IPlayerControllerBase>(controller));
 			return controller;
 		}
 
@@ -92,12 +86,15 @@ namespace INVENT
 			}
 
 			auto id = _all_levels.size();
-			if (!_id_queue.empty())
+			if (_id_queue.empty())
+			{
+				_all_levels.push_back(nullptr);
+			}
+			else
 			{
 				std::lock_guard<std::mutex> lock(_all_levels_mutex);
 				id = _id_queue.front();
 				_id_queue.pop();
-				_all_levels.push_back(nullptr);
 			}
 
 			_create_pool.Submit(0, [this, id, &position]() {
@@ -121,8 +118,10 @@ namespace INVENT
 		template<typename T>
 		ILevelID ShowLevelInstance(const glm::vec3& position = {})
 		{
-			auto id = CreateLevelInstance<T>();
+			auto id = CreateLevelInstance<T>(position);
 			ShowLevelInstance(id);
+
+			return id;
 		}
 
 		void ShowLevelInstance(ILevelID id);
@@ -138,13 +137,29 @@ namespace INVENT
 		/// </summary>
 		/// <param name="id">要销毁的关卡实例的标识</param>
 		void DestoryLevelInstance(ILevelID id);
+
+		ShowLevelActorVecters& GetShowLevelActorVectors();
 		
 		static std::shared_ptr<IScene> CreateInstancePtr();
+
+	protected:
+
+		virtual IsEventDone EVENT_CURSOR_POSITION_FRAME(float delta, bool cursor_inside_window, double xpos, double ypos) override;
+		virtual IsEventDone EVENT_KEY_FRAME(float delta, GLFWwindow* glfw_window) override;
+		virtual IsEventDone EVENT_KEY(int key, int action, int mods) override;
+		virtual IsEventDone EVENT_MOUSE_BUTTON(double xpos, double ypos, int button, int action, int mods) override;
+		virtual IsEventDone EVNET_SCROLL(double cursor_xpos, double cursor_ypos, double xoffset, double yoffset) override;
+		virtual IsEventDone EVENT_CURSOR_POSITION(double xpos, double ypos) override;
+
 	private:
-		void _set_controller(std::shared_ptr<IPlayerControllerBase>& controller_ptr);
+		void _set_controller(std::shared_ptr<IPlayerControllerBase> controller_ptr);
 
 		void _collision_detection();
 		void _deal_collision();
+
+		void _add_layer(IEventLayer* layer);
+		void _pop_layer();
+		void _pop_layer(IEventLayer* layer);
 
 	private:
 		IThreadPool _create_pool;
@@ -164,6 +179,9 @@ namespace INVENT
 		std::vector<std::function<void()>> _collision_handings;
 		std::mutex _collision_mutex;
 		ICollisionHandling* _colli_handler;
+
+		ShowLevelActorVecters _show_level_actor_vectors;
+		std::vector<IEventLayer*> _event_layers;
 
 		// 由 ICollisionHandling 管理，若更改逻辑，需要更改 ICollisionHandling::StartCollisionHandle 函数中逻辑
 		bool _is_over_collision_detection = true;

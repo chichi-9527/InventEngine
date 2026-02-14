@@ -1,7 +1,7 @@
 ﻿#ifndef _IDELEGATE_
 #define _IDELEGATE_
 
-#include "ThreadPool/IThreadPool.h"
+#include "Invent/ThreadPool/IThreadPool.h"
 
 #include <functional>
 #include <memory>

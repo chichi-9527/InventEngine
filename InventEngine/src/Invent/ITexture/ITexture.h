@@ -1,10 +1,11 @@
-#ifndef _IITEXTURE_
+﻿#ifndef _IITEXTURE_
 #define _IITEXTURE_
 
 #include <string>
 #include <vector>
 #include <queue>
 #include <unordered_map>
+#include <functional>
 
 #include <thread>
 #include <mutex>
@@ -152,7 +153,7 @@ namespace INVENT
 
 	namespace TEXTURE_MANAGEMENT
 	{
-		std::queue<ITextureBase*>& GetUninitTextures();
+		std::queue<std::function<void()>>& GetUninitTextureFuncs();
 	}
 
 	class ITexture2DManagement 

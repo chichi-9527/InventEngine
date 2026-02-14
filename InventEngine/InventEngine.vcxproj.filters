@@ -39,9 +39,6 @@
     <ClInclude Include="src\Invent\IBase\IEventLayer.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\Invent\IBase\IBaseEventFunction.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="src\Invent\IBase\IBindEvent.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -225,9 +222,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Invent\IBase\IEventLayer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Invent\IBase\IBaseEventFunction.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Invent\IBase\IBindEvent.cpp">

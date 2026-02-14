@@ -1,8 +1,9 @@
 ﻿#include "IEpch.h"
 #include "ITexture.h"
 
-#include "IEngine.h"
-#include "IBase/IWindow.h"
+#include "Invent/IEngine.h"
+#include "Invent/IBase/IWindow.h"
+#include "Invent/ThreadPool/IThreadPool.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -111,24 +112,28 @@ namespace INVENT
 		_texture_breakup.is_valid = false;
 		_name = "DefaultWhiteTexture";
 
-		unsigned int _color_white = 0xffffffff;
+		TEXTURE_MANAGEMENT::GetUninitTextureFuncs().push([this]() {
+			unsigned int _color_white = 0xffffffff;
 
 #ifdef USE_OPENGL
-		glCreateTextures(GL_TEXTURE_2D, 1, &_texture_id);
+			glCreateTextures(GL_TEXTURE_2D, 1, &_texture_id);
 
-		glTextureStorage2D(_texture_id, 1, GL_RGBA8, _width, _height);
+			glTextureStorage2D(_texture_id, 1, GL_RGBA8, _width, _height);
 
-		glTextureParameteri(_texture_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(_texture_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTextureParameteri(_texture_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTextureParameteri(_texture_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		glTextureParameteri(_texture_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(_texture_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTextureParameteri(_texture_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTextureParameteri(_texture_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-		glTextureSubImage2D(_texture_id, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, (void*)&_color_white);
+			glTextureSubImage2D(_texture_id, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, (void*)&_color_white);
 #endif // USE_OPENGL
-		
+			IsValid = true;
+
+			});
+
 		_type = ITextureBase::TextureType::TEXTURE_2D;
-		IsValid = true;
+		
 	}
 
 	ITexture2D::ITexture2D(const std::string& name, const std::string& path, int flag_true_if_should_flip, const _UInt2& breakup)
@@ -149,7 +154,9 @@ namespace INVENT
 		_height = height;
 		_channels = channels;
 
-		TEXTURE_MANAGEMENT::GetUninitTextures().push((ITextureBase*)this);
+		TEXTURE_MANAGEMENT::GetUninitTextureFuncs().push([this]() {
+			this->InitTextureID();
+			});
 		_type = ITextureBase::TextureType::TEXTURE_2D;
 	}
 
@@ -168,7 +175,9 @@ namespace INVENT
 		memcpy(_tex_data, character.Buffer, (size_t)_width * (size_t)_height);
 		_charcharacter = character;
 
-		TEXTURE_MANAGEMENT::GetUninitTextures().push((ITextureBase*)this);
+		TEXTURE_MANAGEMENT::GetUninitTextureFuncs().push([this]() {
+			this->InitTextureID();
+			});
 		_type = ITextureBase::TextureType::TEXTURE_2D;
 	}
 
@@ -466,7 +475,9 @@ namespace INVENT
 			
 		}
 
-		TEXTURE_MANAGEMENT::GetUninitTextures().push((ITextureBase*)this);
+		TEXTURE_MANAGEMENT::GetUninitTextureFuncs().push([this]() {
+			this->InitTextureID();
+			});
 		_type = ITextureBase::TextureType::TEXTURE_CUBE_MAP;
 	}
 
@@ -522,11 +533,11 @@ namespace INVENT
 	}
 
 
-	static std::queue<ITextureBase*> UninitTextrues;
+	static std::queue<std::function<void()>> UninitTextrueFunctions;
 
-	std::queue<ITextureBase*>& TEXTURE_MANAGEMENT::GetUninitTextures()
+	std::queue<std::function<void()>>& TEXTURE_MANAGEMENT::GetUninitTextureFuncs()
 	{
-		return UninitTextrues;
+		return UninitTextrueFunctions;
 	}
 
 	/// <summary>

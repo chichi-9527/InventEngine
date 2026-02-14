@@ -9,7 +9,8 @@ namespace INVENT
 {
 
 	IBaseLevel::IBaseLevel(const glm::vec3& position)
-		: _position(position)
+		: IEventLayer()
+		, _position(position)
 		, _window_size({ 0.0f, 0.0f })
 	{
 		
@@ -18,14 +19,6 @@ namespace INVENT
 
 	IBaseLevel::~IBaseLevel()
 	{
-		for (auto layer : layers)
-		{
-			if (layer)
-			{
-				delete layer;
-				layer = nullptr;
-			}
-		}
 
 		for (auto actor : _all_actors)
 		{
@@ -155,75 +148,6 @@ namespace INVENT
 	void IBaseLevel::_update_actor_position(IActor* actor)
 	{
 		actor->SetWorldPosition(actor->GetWorldPosition() + _position);
-	}
-
-	
-
-
-	void IBaseLevel::AddLayer(IEventLayer* layer)
-	{
-		_event_layers.push_back(layer);
-	}
-
-	void IBaseLevel::PopLayer()
-	{
-		_event_layers.pop_back();
-	}
-
-	void IBaseLevel::PopLayer(IEventLayer * layer)
-	{
-		for (auto iter = _event_layers.begin(); iter != _event_layers.end(); iter++)
-		{
-			if ((*iter) == layer)
-			{
-				_event_layers.erase(iter);
-				break;
-			}
-		}
-
-	}
-
-
-	void IBaseLevel::ShowImguiUILayer(IImguiUILayer* layer)
-	{
-		if (_imgui_showing_layer)
-		{
-			HideImguiUILayer();
-		}
-		_imgui_showing_layer = layer;
-		this->AddLayer((IEventLayer*)layer);
-
-	}
-
-	void IBaseLevel::HideImguiUILayer()
-	{
-		if (_imgui_showing_layer)
-		{
-			this->PopLayer((IEventLayer*)_imgui_showing_layer);
-			_imgui_showing_layer = nullptr;
-		}
-	}
-
-	void IBaseLevel::EraseLayer(IEventLayer* layer)
-	{
-		if (layer)
-		{
-			for (auto iter = layers.begin(); iter != layers.end(); iter++)
-			{
-				if ((*iter) == layer)
-				{
-					layers.erase(iter);
-					break;
-				}
-			}
-
-			PopLayer(layer);
-
-			// erase layer in ui_layers
-
-			delete layer;
-			layer = nullptr;
-		}
 	}
 
 }

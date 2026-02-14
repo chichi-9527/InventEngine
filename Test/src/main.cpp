@@ -5,6 +5,8 @@
 #include "Invent/IBase/IController.h"
 #include "Invent/IBase/IActor.h"
 #include "Invent/IBase/ILevel.h"
+#include "Invent/IBase/IScene.h"
+#include "Invent/IBase/IRenderThread.h"
 
 #include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -22,6 +24,19 @@
 #include "Invent/Renderer/IRenderer.h"
 
 
+class MyLevel;
+class MyController : public INVENT::IPlayerController2D
+{
+public:
+	MyController()
+		: INVENT::IPlayerController2D()
+	{}
+	virtual ~MyController() {}
+
+
+
+};
+
 class MyGameInstance : public INVENT::IGameInstance<MyGameInstance>
 {
 	INVENT_GAMEINSTANCE(MyGameInstance)
@@ -32,8 +47,15 @@ public:
 	{
 		std::cout << std::filesystem::current_path() << "\n";
 
-		//auto id = INVENT::ITexture2DManagement::Instance().CreateTexture(nullptr, "./Assets/Textures/test.png");
-		//std::cout << id;
+		Controller = INVENT::IEngine::InstancePtr()->GetMainScene()->CreateController<MyController>();
+
+		INVENT::IEngine::InstancePtr()->GetMainScene()->ShowLevelInstance<MyLevel>();
+		//INVENT::IEngine::InstancePtr()->GetRenderThreadPtr()->SetBackgroundColor({ 0.5f, 0.5f,0.0f,1.0f });
+
+		auto camera = new INVENT::ICamera();
+		camera->SetWorldPosition({ 0.0f,0.0f,10.0f });
+		Controller.lock()->SetSceneCamera(camera);
+
 	}
 
 	virtual void Update(float delta) override
@@ -45,6 +67,9 @@ public:
 	{
 		
 	}
+
+public:
+	std::weak_ptr<MyController> Controller;
 
 };
 
@@ -117,16 +142,6 @@ public:
 		//std::cout << "actor position : " << glm::to_string(this->GetWorldPosition()) << "\n";
 	}
 
-	virtual void PRESS_EVENT(int key) override
-	{
-		if (key == INVENT_KEY_2)
-		{
-			this->SetTexture(INVENT::ITexture2DManagement::Instance().GetTexture("backpack_Scene_-_Root_diffuse"));
-			std::cout << "PRESS_EVENT_KEY_2\n";
-		}
-		
-	}
-
 	virtual void SetWorldRotation(const glm::vec3& rotation) override
 	{
 		ISquare2dPawn::SetWorldRotation(rotation);
@@ -138,25 +153,7 @@ private:
 	INVENT::AColliderID collider_id;
 };
 
-class MyController : public INVENT::IPlayerController2D
-{
-public:
-	MyController()
-		: INVENT::IPlayerController2D()
-	{}
-	virtual ~MyController() {}
 
-	/*virtual bool PRESS_EVENT_KEY_2() override
-	{
-		INVENT::IEventLayer::PRESS_EVENT_KEY_2();
-
-		auto actor = (MyActor*)(this->Get2DPlayerController(0));
-		actor->SetFlip(false, true);
-
-		return false;
-	}*/
-
-};
 
 class MyTileMap : public INVENT::ITileMap
 {
@@ -201,11 +198,11 @@ private:
 class MyLevel : public INVENT::ILevel 
 {
 public:
-	MyLevel()
-		: ILevel()
+	MyLevel(const glm::vec3& position = {})
+		: ILevel(position)
 	{
-		auto act = this->CreateActor<MyActor>();
-		auto act2 = this->CreateActor<MyActor>();
+		act = this->CreateActor<MyActor>();
+		act2 = this->CreateActor<MyActor>();
 		act->SetWorldPosition({ 0.0f,2.0f,0.0f });
 		//act2->SetWorldRotation({ 0.0f,0.0f,45.0f });
 
@@ -248,62 +245,28 @@ public:
 		act->AddCollider(collider1);
 		act2->AddCollider(collider2);*/
 
-		camera = new INVENT::ICamera();
-		camera->SetWorldPosition({ 0.0f,0.0f,10.0f });
+		
 
-		/*this->CreateControllerPtr<MyController>()->SetSceneCamera(camera);
-		this->GetController<MyController>()->AddPlayer(act);
-		this->GetController<MyController>()->AddPlayer(act2);*/
+		
 
 	}
-
-	//virtual bool PRESS_EVENT(int key) override
-	//{
-	//	if (key == INVENT_KEY_1)
-	//	{
-	//		this->GetController<MyController>()->SetControlPlayerIndex(this->GetController<MyController>()->GetControlPlayerIndex() == 0 ? 1 : 0);
-
-	//	}
-	//	IBaseLevel::PRESS_EVENT(key);
-	//	//auto actor = this->GetController<MyController>()->Get2DPlayerController<MyActor>(0);
-	//	//actor->SetScale({ 1.0f,0.1f });
-
-	//	//INVENT::IEngine::InstancePtr()->GetIWindow()->SetFullScreen(true);
-
-	//	return false;
-	//}
-
-	//virtual bool PRESS_EVENT_KEY_2() override
-	//{
-	//	//INVENT::IEngine::InstancePtr()->GetIWindow()->SetFullScreen(false);
-
-	//	return false;
-	//}
-
-	//virtual bool EVENT_CURSOR_POSITION(double xpos, double ypos) override
-	//{
-	//	IBaseLevel::EVENT_CURSOR_POSITION(xpos, ypos);
-	//	std::cout << "mouse xpos: " << xpos << " ; ypos : " << ypos << "\n";
-
-	//	return true;
-	//}
-
-	/*virtual bool EVENT_CURSOR_POSITION_FRAME(float delta, bool cursor_inside_window, double xpos, double ypos) override
-	{
-		if (cursor_inside_window)
-			std::cout << "mouse xpos: " << xpos << " ; ypos : " << ypos << "\n";
-		else
-			std::cout << "mouse not inside the window \n";
-
-		return true;
-	}*/
 
 	virtual ~MyLevel()
 	{
 
 	}
 
+	virtual void Begin() override
+	{
+		auto game_instance = std::static_pointer_cast<MyGameInstance>(INVENT::IEngine::InstancePtr()->GetGameInstance());
+		
+		game_instance->Controller.lock()->AddPlayer((INVENT::IBasePawnControl2D*)act);
+		game_instance->Controller.lock()->AddPlayer((INVENT::IBasePawnControl2D*)act2);
+	}
+
 	INVENT::IActor3D* actor3d;
+	INVENT::IActor2D* act;
+	INVENT::IActor2D* act2;
 
 private:
 	INVENT::ICamera* camera;

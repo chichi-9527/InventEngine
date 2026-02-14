@@ -25,12 +25,15 @@ namespace INVENT
 		void SetBackgroundColor(float red, float green, float blue, float alpha);
 		void SetBackgroundColor(glm::vec4 color);
 
+		void SubmitOpenglInitFuncs(std::function<void()>&& func);
+
 	private:
 		IRenderThread(IWindow& iwindow);
 
 #ifdef USE_OPENGL
 		int _init_opengl();
 #endif
+		void _opengl_render();
 
 	public:
 		// 限制帧率为与显示器帧率的反比，0 为不限制

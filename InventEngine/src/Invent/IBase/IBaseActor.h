@@ -5,13 +5,11 @@
 
 #include "IPhysicsCollision/ICollider.h"
 
-#include "IBaseEventFunction.h"
-
 namespace INVENT
 {
 	struct IActionComponent;
 	class IBaseLevel;
-	class IBaseActor : public IBaseEventFunction
+	class IBaseActor
 	{
 	public:
 		enum class WorldColliderType

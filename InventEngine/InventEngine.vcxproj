@@ -33,7 +33,6 @@
     <ClInclude Include="src\Invent\IBase\IBaseActor.h" />
     <ClInclude Include="src\Invent\IBase\IBasePawnControl.h" />
     <ClInclude Include="src\Invent\IBase\IBindEvent.h" />
-    <ClInclude Include="src\Invent\IBase\IBaseEventFunction.h" />
     <ClInclude Include="src\Invent\IBase\ICamera.h" />
     <ClInclude Include="src\Invent\IBase\IComponentManagement.h" />
     <ClInclude Include="src\Invent\IBase\IController.h" />
@@ -78,6 +77,7 @@
   <ItemGroup>
     <ClCompile Include="src\Invent\ITools\ISafeFastPtrVector.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Invent\IBase\ILevel.cpp" />
     <ClCompile Include="src\Invent\IBase\IScene.cpp" />
@@ -99,7 +99,6 @@
     <ClCompile Include="src\Invent\IBase\IBaseActor.cpp" />
     <ClCompile Include="src\Invent\IBase\IBasePawnControl.cpp" />
     <ClCompile Include="src\Invent\IBase\IBindEvent.cpp" />
-    <ClCompile Include="src\Invent\IBase\IBaseEventFunction.cpp" />
     <ClCompile Include="src\Invent\IBase\ICamera.cpp" />
     <ClCompile Include="src\Invent\IBase\IComponentManagement.cpp" />
     <ClCompile Include="src\Invent\IBase\IController.cpp" />
@@ -228,13 +227,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)\bin\$(Platform)-$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)\bin-int\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\Glfw34\include;$(SolutionDir)\boost1_87_0\include;$(SolutionDir)\Glm1.0.1;$(SolutionDir)\Imgui\src;$(SolutionDir)\FreeType\include;$(SolutionDir)\Assimp543\include</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\Glfw34\include;$(SolutionDir)\boost1_87_0\include;$(SolutionDir)\Glm1.0.1;$(SolutionDir)\Imgui\src;$(SolutionDir)\FreeType\include;$(SolutionDir)\Assimp543\include;$(SolutionDir)\InventEngine\src;$(SolutionDir)\InventEngine\src\Glad;$(SolutionDir)\InventEngine\src\Extended;$(SolutionDir)\InventEngine\src\StbImage;$(SolutionDir)\InventEngine\src\Invent</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)\Glfw34\lib;$(SolutionDir)\boost1_87_0\lib;$(SolutionDir)\FreeType\lib;$(SolutionDir)\Assimp543\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)\bin\$(Platform)-$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)\bin-int\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\Glfw34\include;$(SolutionDir)\boost1_87_0\include;$(SolutionDir)\Glm1.0.1;$(SolutionDir)\Imgui\src;$(SolutionDir)\FreeType\include;$(SolutionDir)\Assimp543\include</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\Glfw34\include;$(SolutionDir)\boost1_87_0\include;$(SolutionDir)\Glm1.0.1;$(SolutionDir)\Imgui\src;$(SolutionDir)\FreeType\include;$(SolutionDir)\Assimp543\include;$(SolutionDir)\InventEngine\src;$(SolutionDir)\InventEngine\src\Glad;$(SolutionDir)\InventEngine\src\Extended;$(SolutionDir)\InventEngine\src\StbImage;$(SolutionDir)\InventEngine\src\Invent</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)\Glfw34\lib;$(SolutionDir)\boost1_87_0\lib;$(SolutionDir)\FreeType\lib;$(SolutionDir)\Assimp543\lib</LibraryPath>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
@@ -250,7 +249,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>IEpch.h</PrecompiledHeaderFile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)\InventEngine\src\Invent;$(SolutionDir)\InventEngine\src\Glad;$(SolutionDir)\InventEngine\src\StbImage;$(SolutionDir)\InventEngine\src\Extended</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -270,7 +270,8 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>IEpch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\InventEngine\src\Invent;$(SolutionDir)\InventEngine\src\Glad;$(SolutionDir)\InventEngine\src\StbImage;$(SolutionDir)\InventEngine\src\Extended</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

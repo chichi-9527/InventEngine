@@ -1,12 +1,12 @@
-#ifndef _IRENDERER_
+﻿#ifndef _IRENDERER_
 #define _IRENDERER_
 
 #include "IRendererCommand.h"
 #include "IVertexArray.h"
 
-#include "IBase/ICamera.h"
+#include "Invent/IBase/ICamera.h"
 
-#include "Shader/IShader.h"
+#include "Invent/Shader/IShader.h"
 
 #include <memory>
 

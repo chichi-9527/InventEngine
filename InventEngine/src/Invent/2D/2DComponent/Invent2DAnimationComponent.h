@@ -1,7 +1,7 @@
-#ifndef _INVENT2DANIMATIONCOMPONENT_
+﻿#ifndef _INVENT2DANIMATIONCOMPONENT_
 #define _INVENT2DANIMATIONCOMPONENT_
 
-#include "2D/ISquare2dActor.h"
+#include "Invent/2D/ISquare2dActor.h"
 
 namespace INVENT
 {
