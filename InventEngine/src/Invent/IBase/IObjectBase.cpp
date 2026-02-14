@@ -1,10 +1,11 @@
-#include "IEpch.h"
+﻿#include "IEpch.h"
 #include "IObjectBase.h"
 
 #include "IComponent/InventComponent.h"
 
 namespace INVENT
 {
+	static std::mutex ObjectMutex;
 
 	IObjectBase::IObjectBase()
 	{
@@ -48,12 +49,19 @@ namespace INVENT
 
 	void IObjectBase::SetWorldPosition(const glm::vec3& position)
 	{
+		std::lock_guard<std::mutex> lock(ObjectMutex);
 		GetComponent<WorldPositionComponent>()->WorldPosition = position;
 	}
 
 	const glm::vec3& IObjectBase::GetWorldPosition()
 	{
+		std::lock_guard<std::mutex> lock(ObjectMutex);
 		return GetComponent<WorldPositionComponent>()->WorldPosition;
+	}
+
+	std::mutex& IObjectBase::GetObjectMutex()
+	{
+		return ObjectMutex;
 	}
 
 }

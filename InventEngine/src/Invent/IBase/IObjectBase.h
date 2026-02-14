@@ -1,4 +1,4 @@
-#ifndef _IOBJECTBASE_
+﻿#ifndef _IOBJECTBASE_
 #define _IOBJECTBASE_
 
 #include <glm/glm.hpp>
@@ -61,8 +61,11 @@ namespace INVENT
 		}
 
 	protected:
-		std::vector<std::string> Tags;
+		std::mutex& GetObjectMutex();
 
+	protected:
+		std::vector<std::string> Tags;
+		
 	private:
 
 		IComponentManagement::Entity _entity;

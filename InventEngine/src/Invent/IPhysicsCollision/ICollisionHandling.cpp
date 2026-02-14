@@ -90,6 +90,8 @@ namespace INVENT
 					{
 						if (distance)
 						{
+							// 碰撞处理太快会造成位置设置错误
+							std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
 							std::lock_guard<std::mutex> lock(_scene->_handing_mutex);
 							_scene->_collision_handings.push_back([&dynamic_colliders, i, j, direction, distance]() {
@@ -133,6 +135,7 @@ namespace INVENT
 					{
 						if (distance)
 						{
+							std::this_thread::sleep_for(std::chrono::milliseconds(1));
 							{
 								std::lock_guard<std::mutex> lock(_scene->_handing_mutex);
 								_scene->_collision_handings.push_back([&dynamic_colliders, i, k, direction, distance]() {
