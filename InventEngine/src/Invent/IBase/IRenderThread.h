@@ -25,7 +25,9 @@ namespace INVENT
 		void SetBackgroundColor(float red, float green, float blue, float alpha);
 		void SetBackgroundColor(glm::vec4 color);
 
+#ifdef USE_OPENGL
 		void SubmitOpenglInitFuncs(std::function<void()>&& func);
+#endif
 
 		const std::atomic_bool& IsRunning() const { return _running; }
 

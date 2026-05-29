@@ -369,3 +369,5 @@ FodyWeavers.xsd
 /Test/Assets/Car01
 /Test/Assets/backpack
 /bin-int
+/Vulkan
+/ShaderSlang

@@ -5,7 +5,6 @@
 #include "Invent/IBase/IWindow.h"
 #include "Invent/ThreadPool/IThreadPool.h"
 
-#define STB_IMAGE_IMPLEMENTATION
 #include "StbImage/stb_image.h"
 
 namespace INVENT

@@ -16,6 +16,7 @@
     <ClInclude Include="src\imgui_impl_glfw.h" />
     <ClInclude Include="src\imgui_impl_opengl3.h" />
     <ClInclude Include="src\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="src\imgui_impl_vulkan.h" />
     <ClInclude Include="src\imgui_internal.h" />
     <ClInclude Include="src\imgui_stdlib.h" />
     <ClInclude Include="src\imstb_rectpack.h" />
@@ -28,6 +29,7 @@
     <ClCompile Include="src\imgui_draw.cpp" />
     <ClCompile Include="src\imgui_impl_glfw.cpp" />
     <ClCompile Include="src\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="src\imgui_impl_vulkan.cpp" />
     <ClCompile Include="src\imgui_stdlib.cpp" />
     <ClCompile Include="src\imgui_tables.cpp" />
     <ClCompile Include="src\imgui_widgets.cpp" />
@@ -77,14 +79,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)\bin\$(Platform)-$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)\bin-int\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\Glfw34\include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)\Glfw34\lib</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Glfw34\include;$(SolutionDir)Vulkan\Include</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)Glfw34\lib;$(SolutionDir)Vulkan\Lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)\bin\$(Platform)-$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)\bin-int\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\Glfw34\include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)\Glfw34\lib</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Glfw34\include;$(SolutionDir)Vulkan\Include</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)Glfw34\lib;$(SolutionDir)Vulkan\Lib</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

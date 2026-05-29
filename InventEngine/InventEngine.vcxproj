@@ -73,6 +73,8 @@
     <ClInclude Include="src\Invent\UI\IUIText.h" />
     <ClInclude Include="src\StbImage\stb_image.h" />
     <ClInclude Include="src\Invent\ThreadPool\IThreadPool.h" />
+    <ClInclude Include="src\VulkanMemoryAllocator\vk_mem_alloc.h" />
+    <ClInclude Include="src\VulkanMemoryAllocator\VmaUsage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\ITools\ISafeFastPtrVector.cpp">
@@ -174,6 +176,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\StbImage\stb_image.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\VulkanMemoryAllocator\VmaUsage.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md">
@@ -227,21 +237,21 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)\bin\$(Platform)-$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)\bin-int\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\Glfw34\include;$(SolutionDir)\boost1_87_0\include;$(SolutionDir)\Glm1.0.1;$(SolutionDir)\Imgui\src;$(SolutionDir)\FreeType\include;$(SolutionDir)\Assimp543\include;$(SolutionDir)\InventEngine\src</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)\Glfw34\lib;$(SolutionDir)\boost1_87_0\lib;$(SolutionDir)\FreeType\lib;$(SolutionDir)\Assimp543\lib</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Glfw34\include;$(SolutionDir)boost1_87_0\include;$(SolutionDir)Glm1.0.1;$(SolutionDir)\Imgui\src;$(SolutionDir)FreeType\include;$(SolutionDir)Assimp543\include;$(SolutionDir)ShaderSlang\include;$(SolutionDir)Vulkan\Include;$(SolutionDir)InventEngine\src</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)\Glfw34\lib;$(SolutionDir)\boost1_87_0\lib;$(SolutionDir)\FreeType\lib;$(SolutionDir)\Assimp543\lib;$(SolutionDir)Vulkan\Lib;$(SolutionDir)ShaderSlang\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)\bin\$(Platform)-$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)\bin-int\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\Glfw34\include;$(SolutionDir)\boost1_87_0\include;$(SolutionDir)\Glm1.0.1;$(SolutionDir)\Imgui\src;$(SolutionDir)\FreeType\include;$(SolutionDir)\Assimp543\include;$(SolutionDir)\InventEngine\src</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)\Glfw34\lib;$(SolutionDir)\boost1_87_0\lib;$(SolutionDir)\FreeType\lib;$(SolutionDir)\Assimp543\lib</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Glfw34\include;$(SolutionDir)boost1_87_0\include;$(SolutionDir)Glm1.0.1;$(SolutionDir)\Imgui\src;$(SolutionDir)FreeType\include;$(SolutionDir)Assimp543\include;$(SolutionDir)ShaderSlang\include;$(SolutionDir)Vulkan\Include;$(SolutionDir)InventEngine\src</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)\Glfw34\lib;$(SolutionDir)\boost1_87_0\lib;$(SolutionDir)\FreeType\lib;$(SolutionDir)\Assimp543\lib;$(SolutionDir)Vulkan\Lib;$(SolutionDir)ShaderSlang\dlib</LibraryPath>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>USE_OPENGL;WATCH_LOG;_WIN32_WINNT=0x0A00;USE_BOOST;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_VULKAN;WATCH_LOG;_WIN32_WINNT=0x0A00;USE_BOOST;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -263,7 +273,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>USE_OPENGL;WATCH_LOG;_WIN32_WINNT=0x0A00;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_VULKAN;WATCH_LOG;_WIN32_WINNT=0x0A00;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>

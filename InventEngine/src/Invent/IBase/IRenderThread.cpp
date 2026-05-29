@@ -172,12 +172,13 @@ namespace INVENT
 		_clear_color_vec = color;
 	}
 
+#ifdef USE_OPENGL
 	void IRenderThread::SubmitOpenglInitFuncs(std::function<void()>&& func)
 	{
 		return OpenglInitFuncs.push(std::forward<std::function<void()>>(func));
 	}
 
-#ifdef USE_OPENGL
+
 	int IRenderThread::_init_opengl()
 	{
 		if (_iwindow.GetGLFWWindow())

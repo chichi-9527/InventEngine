@@ -48,10 +48,22 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#elif defined(USE_VULKAN)
+
+#include "VulkanMemoryAllocator/VmaUsage.h"
+
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_vulkan.h"
+
 #endif // USE_OPENGL
 
 #include <GLFW/glfw3.h>
 
+#define GLM_FORCE_RADIANS
+#ifdef USE_VULKAN
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#endif // USE_OPENGL
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
