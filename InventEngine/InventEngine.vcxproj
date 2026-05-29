@@ -71,6 +71,7 @@
     <ClInclude Include="src\Invent\UI\IDrawString.h" />
     <ClInclude Include="src\Invent\UI\IUIImgui.h" />
     <ClInclude Include="src\Invent\UI\IUIText.h" />
+    <ClInclude Include="src\ShaderCompiler\ShaderCompiler.h" />
     <ClInclude Include="src\StbImage\stb_image.h" />
     <ClInclude Include="src\Invent\ThreadPool\IThreadPool.h" />
     <ClInclude Include="src\VulkanMemoryAllocator\vk_mem_alloc.h" />
@@ -175,6 +176,10 @@
     <ClCompile Include="src\Invent\UI\IUIText.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\ShaderCompiler\ShaderCompiler.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\StbImage\stb_image.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
