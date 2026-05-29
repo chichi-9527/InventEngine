@@ -38,11 +38,11 @@
 
 #include <math.h>
 
-#include "ILog.h"
+#include "Invent/ILog.h"
 
 #ifdef USE_OPENGL
 
-#include "glad/glad.h"
+#include "Glad/glad/glad.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -58,7 +58,7 @@
 
 
 #if defined(_WIN32) && defined(USE_OPENGL)
-#include "wglext.h"
+#include "Extended/wglext.h"
 #endif
 
 

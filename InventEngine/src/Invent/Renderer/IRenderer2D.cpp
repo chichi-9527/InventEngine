@@ -1,17 +1,17 @@
-#include "IEpch.h"
+﻿#include "IEpch.h"
 #include "IRenderer2D.h"
 
 #include "IRendererCommand.h"
 #include "IVertexArray.h"
 #include "IUniformBuffer.h"
 
-#include "Shader/IShader.h"
+#include "Invent/Shader/IShader.h"
 
-#include "ITexture/ITexture.h"
+#include "Invent/ITexture/ITexture.h"
 
-#include "UI/IDrawString.h"
+#include "Invent/UI/IDrawString.h"
 
-#include "IEngine.h"
+#include "Invent/IEngine.h"
 
 #include <array>
 

@@ -51,7 +51,7 @@
     <ClInclude Include="src\Invent\IComponent\InventComponent.h" />
     <ClInclude Include="src\Invent\IEngine.h" />
     <ClInclude Include="src\Invent\ILog.h" />
-    <ClInclude Include="src\Invent\IEpch.h" />
+    <ClInclude Include="src\IEpch.h" />
     <ClInclude Include="src\Invent\Invent.h" />
     <ClInclude Include="src\Invent\IPhysicsCollision\ICollider.h" />
     <ClInclude Include="src\Invent\IPhysicsCollision\ICollisionDetection.h" />
@@ -124,7 +124,7 @@
     </ClCompile>
     <ClCompile Include="src\Invent\IEngine.cpp" />
     <ClCompile Include="src\Invent\ILog.cpp" />
-    <ClCompile Include="src\Invent\IEpch.cpp">
+    <ClCompile Include="src\IEpch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
@@ -227,13 +227,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)\bin\$(Platform)-$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)\bin-int\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\Glfw34\include;$(SolutionDir)\boost1_87_0\include;$(SolutionDir)\Glm1.0.1;$(SolutionDir)\Imgui\src;$(SolutionDir)\FreeType\include;$(SolutionDir)\Assimp543\include;$(SolutionDir)\InventEngine\src;$(SolutionDir)\InventEngine\src\Glad;$(SolutionDir)\InventEngine\src\Extended;$(SolutionDir)\InventEngine\src\StbImage;$(SolutionDir)\InventEngine\src\Invent</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\Glfw34\include;$(SolutionDir)\boost1_87_0\include;$(SolutionDir)\Glm1.0.1;$(SolutionDir)\Imgui\src;$(SolutionDir)\FreeType\include;$(SolutionDir)\Assimp543\include;$(SolutionDir)\InventEngine\src</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)\Glfw34\lib;$(SolutionDir)\boost1_87_0\lib;$(SolutionDir)\FreeType\lib;$(SolutionDir)\Assimp543\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)\bin\$(Platform)-$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)\bin-int\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\Glfw34\include;$(SolutionDir)\boost1_87_0\include;$(SolutionDir)\Glm1.0.1;$(SolutionDir)\Imgui\src;$(SolutionDir)\FreeType\include;$(SolutionDir)\Assimp543\include;$(SolutionDir)\InventEngine\src;$(SolutionDir)\InventEngine\src\Glad;$(SolutionDir)\InventEngine\src\Extended;$(SolutionDir)\InventEngine\src\StbImage;$(SolutionDir)\InventEngine\src\Invent</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\Glfw34\include;$(SolutionDir)\boost1_87_0\include;$(SolutionDir)\Glm1.0.1;$(SolutionDir)\Imgui\src;$(SolutionDir)\FreeType\include;$(SolutionDir)\Assimp543\include;$(SolutionDir)\InventEngine\src</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)\Glfw34\lib;$(SolutionDir)\boost1_87_0\lib;$(SolutionDir)\FreeType\lib;$(SolutionDir)\Assimp543\lib</LibraryPath>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>

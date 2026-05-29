@@ -4,7 +4,7 @@
 #include <functional>
 #include <mutex>
 
-#include "ILog.h"
+#include "Invent/ILog.h"
 
 namespace INVENT
 {

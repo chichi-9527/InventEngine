@@ -1,12 +1,12 @@
 ﻿#include "IEpch.h"
 #include "ILoadModel.h"
 
-#include "3D/IMesh.h"
-#include "IComponent/InventComponent.h"
-#include "ITexture/ITexture.h"
+#include "Invent/3D/IMesh.h"
+#include "Invent/IComponent/InventComponent.h"
+#include "Invent/ITexture/ITexture.h"
 
-#include "IEngine.h"
-#include "IBase/IWindow.h"
+#include "Invent/IEngine.h"
+#include "Invent/IBase/IWindow.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>

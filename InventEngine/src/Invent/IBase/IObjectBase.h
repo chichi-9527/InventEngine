@@ -7,7 +7,7 @@
 #include <string>
 
 #include "IComponentManagement.h"
-#include "ILog.h"
+#include "Invent/ILog.h"
 
 namespace INVENT
 {

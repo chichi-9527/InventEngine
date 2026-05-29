@@ -1,7 +1,7 @@
 ﻿#ifndef _IACTOR2D_
 #define _IACTOR2D_
 
-#include "IBase/IActor.h"
+#include "Invent/IBase/IActor.h"
 
 namespace INVENT
 {

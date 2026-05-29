@@ -4,7 +4,7 @@
 #include "IObject.h"
 #include "IBaseActor.h"
 
-#include "IPhysicsCollision/ICollider.h"
+#include "Invent/IPhysicsCollision/ICollider.h"
 
 namespace INVENT
 {

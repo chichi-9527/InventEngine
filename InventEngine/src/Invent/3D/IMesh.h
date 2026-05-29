@@ -1,7 +1,7 @@
 ﻿#ifndef _IMESH_
 #define _IMESH_
 
-#include "IBase/IObjectBase.h"
+#include "Invent/IBase/IObjectBase.h"
 
 #include <string>
 #include <vector>

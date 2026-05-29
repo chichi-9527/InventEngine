@@ -1,9 +1,9 @@
 ﻿#ifndef _IRENDERER2D_
 #define _IRENDERER2D_
 
-#include "IBase/ICamera.h"
+#include "Invent/IBase/ICamera.h"
 
-#include "2D/ISquare2dActor.h"
+#include "Invent/2D/ISquare2dActor.h"
 
 namespace INVENT
 {

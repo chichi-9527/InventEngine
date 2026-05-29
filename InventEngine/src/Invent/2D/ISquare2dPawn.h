@@ -2,7 +2,7 @@
 #define _ISQUARE2DPAWN_
 
 #include "ISquare2dActor.h"
-#include "IBase/IBasePawnControl.h"
+#include "Invent/IBase/IBasePawnControl.h"
 
 namespace INVENT
 {

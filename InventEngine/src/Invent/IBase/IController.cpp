@@ -1,7 +1,7 @@
 ﻿#include "IEpch.h"
 #include "IController.h"
-#include "2D/ISquare2dPawn.h"
-#include "IEngine.h"
+#include "Invent/2D/ISquare2dPawn.h"
+#include "Invent/IEngine.h"
 
 namespace INVENT
 {

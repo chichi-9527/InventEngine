@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "IPhysicsCollision/ICollider.h"
+#include "Invent/IPhysicsCollision/ICollider.h"
 
 namespace INVENT
 {

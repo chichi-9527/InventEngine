@@ -1,6 +1,6 @@
-#include "ICollisionDetection.h"
+﻿#include "ICollisionDetection.h"
 
-#include "ILog.h"
+#include "Invent/ILog.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 

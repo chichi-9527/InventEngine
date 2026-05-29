@@ -128,7 +128,7 @@ public:
 		collider_id = this->CreateCollider<INVENT::IColliderBox>(this, glm::vec3{ 0.0f,0.0f,0.0f }, glm::vec3{ 1.0f,1.0f,1.0f });
 
 		this->GetCollider<INVENT::IColliderBox>(collider_id)->BindBlockCollisionFunc([](const std::unordered_set<INVENT::IColliderBase*>& colliders) {
-			std::cout << "Block other Colliders num : " << colliders.size() << "\n";
+			//std::cout << "Block other Colliders num : " << colliders.size() << "\n";
 			});
 		//this->SetScale({ 0.1f,0.1f });
 

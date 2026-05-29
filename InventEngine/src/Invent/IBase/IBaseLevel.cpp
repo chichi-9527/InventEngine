@@ -2,8 +2,8 @@
 #include "IBaseLevel.h"
 #include "IBaseActor.h"
 
-#include "IEngine.h"
-#include "IActor.h"
+#include "Invent/IEngine.h"
+#include "Invent/IBase/IActor.h"
 
 namespace INVENT
 {

@@ -1,8 +1,8 @@
 ﻿#include "IEpch.h"
 #include "ITileMap.h"
 
-#include "IEngine.h"
-#include "ThreadPool/IThreadPool.h"
+#include "Invent/IEngine.h"
+#include "Invent/ThreadPool/IThreadPool.h"
 
 namespace INVENT
 {

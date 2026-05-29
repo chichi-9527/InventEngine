@@ -1,6 +1,6 @@
-#include "Invent2DAnimationComponent.h"
+﻿#include "Invent2DAnimationComponent.h"
 
-#include "IEngine.h"
+#include "Invent/IEngine.h"
 
 #include <chrono>
 

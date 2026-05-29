@@ -1,11 +1,11 @@
 ﻿#include "IEpch.h"
 #include "ISquare2dActor.h"
 
-#include "IComponent/InventComponent.h"
-#include "2DComponent/Invent2DComponent.h"
+#include "Invent/IComponent/InventComponent.h"
+#include "Invent/2D/2DComponent/Invent2DComponent.h"
 
-#include "IEngine.h"
-#include "IBase/IRenderThread.h"
+#include "Invent/IEngine.h"
+#include "Invent/IBase/IRenderThread.h"
 
 namespace INVENT
 {

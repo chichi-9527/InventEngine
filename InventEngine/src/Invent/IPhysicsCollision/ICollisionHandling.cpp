@@ -2,8 +2,8 @@
 
 #include "ICollisionDetection.h"
 
-#include "IBase/IScene.h"
-#include "IBase/IBaseActor.h"
+#include "Invent/IBase/IScene.h"
+#include "Invent/IBase/IBaseActor.h"
 
 namespace INVENT
 {

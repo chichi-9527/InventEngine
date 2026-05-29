@@ -1,10 +1,10 @@
 ﻿#include "IEpch.h"
 #include "IScene.h"
 
-#include "IEngine.h"
+#include "Invent/IEngine.h"
 #include "ILevel.h"
 #
-#include "IPhysicsCollision/ICollisionHandling.h"
+#include "Invent/IPhysicsCollision/ICollisionHandling.h"
 
 namespace INVENT
 {

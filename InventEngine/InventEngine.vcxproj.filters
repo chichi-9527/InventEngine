@@ -18,7 +18,7 @@
     <ClInclude Include="src\Invent\Invent.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\Invent\IEpch.h">
+    <ClInclude Include="src\IEpch.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\Invent\ILog.h">
@@ -206,7 +206,7 @@
     <ClCompile Include="src\Invent\Invent.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\Invent\IEpch.cpp">
+    <ClCompile Include="src\IEpch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Invent\ILog.cpp">

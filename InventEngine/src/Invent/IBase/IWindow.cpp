@@ -1,18 +1,18 @@
 ﻿#include "IEpch.h"
 #include "IWindow.h"
 
-#include "IPhysicsCollision//ICollisionPresets.h"
-#include "2D/2DComponent/Invent2DAnimationComponent.h"
+#include "Invent/IPhysicsCollision//ICollisionPresets.h"
+#include "Invent/2D/2DComponent/Invent2DAnimationComponent.h"
 
-#include "IEngine.h"
+#include "Invent/IEngine.h"
 #include "IGameInstance.h"
-#include "ThreadPool/IThreadPool.h"
+#include "Invent/ThreadPool/IThreadPool.h"
 #include "IRenderThread.h"
 #include "IBaseLevel.h"
-#include "IBase/IScene.h"
+#include "Invent/IBase/IScene.h"
 
-#include "UI/IUIImgui.h"
-#include "UI/IDrawString.h"
+#include "Invent/UI/IUIImgui.h"
+#include "Invent/UI/IDrawString.h"
 
 #include <chrono>
 

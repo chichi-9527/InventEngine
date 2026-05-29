@@ -1,7 +1,7 @@
 ﻿#ifndef _ICOMPONENTMANAGEMENT_
 #define _ICOMPONENTMANAGEMENT_
 
-#include "ILog.h"
+#include "Invent/ILog.h"
 
 #include <vector>
 #include <utility>

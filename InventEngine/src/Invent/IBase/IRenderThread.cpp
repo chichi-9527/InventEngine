@@ -1,15 +1,15 @@
 ﻿#include "IEpch.h"
 #include "IRenderThread.h"
 
-#include "IEngine.h"
+#include "Invent/IEngine.h"
 #include "IWindow.h"
 #include "IScene.h"
 #include "IController.h"
 
-#include "2D/ITileMap.h"
+#include "Invent/2D/ITileMap.h"
 
-#include "Renderer/IRenderer.h"
-#include "Renderer/IRenderer2D.h"
+#include "Invent/Renderer/IRenderer.h"
+#include "Invent/Renderer/IRenderer2D.h"
 
 namespace INVENT
 {

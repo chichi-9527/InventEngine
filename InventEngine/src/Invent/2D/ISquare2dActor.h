@@ -3,11 +3,11 @@
 
 #include "IActor2D.h"
 
-#include "Shader/IShader.h"
+#include "Invent/Shader/IShader.h"
 
-#include "IBase/ICamera.h"
+#include "Invent/IBase/ICamera.h"
 
-#include "ITexture/ITexture.h"
+#include "Invent/ITexture/ITexture.h"
 
 namespace INVENT
 {

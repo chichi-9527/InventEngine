@@ -3,11 +3,11 @@
 
 #include "IRenderer2D.h"
 
-#include "3D/IMesh.h"
+#include "Invent/3D/IMesh.h"
 #include "IBuffer.h"
 #include "IUniformBuffer.h"
 #include "IShaderStorageBuffer.h"
-#include "IComponent/InventComponent.h"
+#include "Invent/IComponent/InventComponent.h"
 
 
 #define INVENT_MAX_VERTEX_RENDER_ONCE  20000 * 6

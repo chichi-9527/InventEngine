@@ -1,8 +1,8 @@
 ﻿#include "IEpch.h"
 #include "ICamera.h"
 
-#include "IEngine.h"
-#include "IBase/IWindow.h"
+#include "Invent/IEngine.h"
+#include "Invent/IBase/IWindow.h"
 
 namespace INVENT
 {

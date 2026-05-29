@@ -1,8 +1,6 @@
 ﻿#ifndef _IBASELEVEL_
 #define _IBASELEVEL_
 
-#include "IEventLayer.h"
-
 //#include "IController.h"
 //#include "ICamera.h"
 

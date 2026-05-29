@@ -1,6 +1,6 @@
-#include "IDrawString.h"
+﻿#include "IDrawString.h"
 
-#include "ILog.h"
+#include "Invent/ILog.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H

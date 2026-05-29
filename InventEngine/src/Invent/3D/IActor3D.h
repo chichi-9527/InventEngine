@@ -1,7 +1,7 @@
 ﻿#ifndef _IACTOR3D_
 #define _IACTOR3D_
 
-#include "IBase/IActor.h"
+#include "Invent/IBase/IActor.h"
 #include "IMesh.h"
 
 #include <string>

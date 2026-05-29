@@ -1,7 +1,7 @@
-#include "IEpch.h"
+﻿#include "IEpch.h"
 #include "IActor3D.h"
 
-#include "IComponent/InventComponent.h"
+#include "Invent/IComponent/InventComponent.h"
 
 namespace INVENT
 {
