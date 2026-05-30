@@ -242,14 +242,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)\bin\$(Platform)-$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)\bin-int\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Glfw34\include;$(SolutionDir)boost1_87_0\include;$(SolutionDir)Glm1.0.1;$(SolutionDir)\Imgui\src;$(SolutionDir)FreeType\include;$(SolutionDir)Assimp543\include;$(SolutionDir)ShaderSlang\include;$(SolutionDir)Vulkan\Include;$(SolutionDir)InventEngine\src</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)\Glfw34\lib;$(SolutionDir)\boost1_87_0\lib;$(SolutionDir)\FreeType\lib;$(SolutionDir)\Assimp543\lib;$(SolutionDir)Vulkan\Lib;$(SolutionDir)ShaderSlang\lib</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Glfw34\include;$(SolutionDir)boost1_87_0\include;$(SolutionDir)Glm1.0.1;$(SolutionDir)\Imgui\src;$(SolutionDir)FreeType\include;$(SolutionDir)Assimp543\include;$(SolutionDir)ShaderSlang\include;$(SolutionDir)Vulkan\Include;$(SolutionDir)bullet3\include;$(SolutionDir)InventEngine\src</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)\Glfw34\lib;$(SolutionDir)\boost1_87_0\lib;$(SolutionDir)\FreeType\lib;$(SolutionDir)\Assimp543\lib;$(SolutionDir)Vulkan\Lib;$(SolutionDir)bullet3\lib;$(SolutionDir)ShaderSlang\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)\bin\$(Platform)-$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)\bin-int\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Glfw34\include;$(SolutionDir)boost1_87_0\include;$(SolutionDir)Glm1.0.1;$(SolutionDir)\Imgui\src;$(SolutionDir)FreeType\include;$(SolutionDir)Assimp543\include;$(SolutionDir)ShaderSlang\include;$(SolutionDir)Vulkan\Include;$(SolutionDir)InventEngine\src</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)\Glfw34\lib;$(SolutionDir)\boost1_87_0\lib;$(SolutionDir)\FreeType\lib;$(SolutionDir)\Assimp543\lib;$(SolutionDir)Vulkan\Lib;$(SolutionDir)ShaderSlang\dlib</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Glfw34\include;$(SolutionDir)boost1_87_0\include;$(SolutionDir)Glm1.0.1;$(SolutionDir)\Imgui\src;$(SolutionDir)FreeType\include;$(SolutionDir)Assimp543\include;$(SolutionDir)ShaderSlang\include;$(SolutionDir)Vulkan\Include;$(SolutionDir)bullet3\include;$(SolutionDir)InventEngine\src</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)\Glfw34\lib;$(SolutionDir)\boost1_87_0\lib;$(SolutionDir)\FreeType\lib;$(SolutionDir)\Assimp543\lib;$(SolutionDir)Vulkan\Lib;$(SolutionDir)bullet3\lib;$(SolutionDir)ShaderSlang\dlib</LibraryPath>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
