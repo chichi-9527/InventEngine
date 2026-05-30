@@ -210,6 +210,9 @@
     <ClInclude Include="src\ShaderCompiler\ShaderCompiler.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Invent\IMemPool\IMemPool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\Invent.cpp">

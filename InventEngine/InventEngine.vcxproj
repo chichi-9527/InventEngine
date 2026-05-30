@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Invent\IMemPool\IMemPool.h" />
     <ClInclude Include="src\Invent\ITools\ISafeFastPtrVector.h" />
     <ClInclude Include="src\Invent\IBase\ILevel.h" />
     <ClInclude Include="src\Invent\IBase\IScene.h" />
