@@ -15,7 +15,7 @@ namespace INVENT
 	{
 		friend class IEngine;
 	public:
-		IWindow(unsigned int width = 800, unsigned int height = 600, std::string title = "title");
+		IWindow(unsigned int width = 800, unsigned int height = 600, std::string title = "title", bool is_resizable = true);
 		virtual ~IWindow();
 
 		bool Start();
@@ -42,8 +42,8 @@ namespace INVENT
 		virtual void Render3d(){}
 
 	private:
-		void _create_window();
-		int _glfw_init();
+		void _create_window(bool is_resizable);
+		int _glfw_init(bool is_resizable);
 		void _window_size_change();
 
 		void _process_input_callback(float delta);

@@ -25,6 +25,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <queue>
+#include <set>
 #include <cstring>
 #include <format>
 #include <tuple>
@@ -57,8 +58,11 @@
 #include "imgui_impl_vulkan.h"
 
 #endif // USE_OPENGL
-
 #include <GLFW/glfw3.h>
+#ifdef _WIN32
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>
+#endif // _WIN32
 
 #define GLM_FORCE_RADIANS
 #ifdef USE_VULKAN

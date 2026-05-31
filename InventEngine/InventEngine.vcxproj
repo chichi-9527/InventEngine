@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Invent\IEngineTools.h" />
     <ClInclude Include="src\Invent\IMemPool\IMemPool.h" />
     <ClInclude Include="src\Invent\ITools\ISafeFastPtrVector.h" />
     <ClInclude Include="src\Invent\IBase\ILevel.h" />
@@ -77,6 +78,7 @@
     <ClInclude Include="src\Invent\ThreadPool\IThreadPool.h" />
     <ClInclude Include="src\VulkanMemoryAllocator\vk_mem_alloc.h" />
     <ClInclude Include="src\VulkanMemoryAllocator\VmaUsage.h" />
+    <ClInclude Include="src\Invent\IBase\VulkanBase.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\ITools\ISafeFastPtrVector.cpp">
@@ -190,6 +192,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\Invent\IBase\VulkanBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md">
@@ -257,7 +260,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>USE_VULKAN;WATCH_LOG;_WIN32_WINNT=0x0A00;USE_BOOST;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SLANG_STATIC;USE_VULKAN;WATCH_LOG;_WIN32_WINNT=0x0A00;USE_BOOST;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -279,7 +282,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>USE_VULKAN;WATCH_LOG;_WIN32_WINNT=0x0A00;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SLANG_STATIC;USE_VULKAN;WATCH_LOG;_WIN32_WINNT=0x0A00;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>

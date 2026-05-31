@@ -22,6 +22,10 @@
 
 static constexpr uint32_t GENERAL_POOL_BLOCK_SIZE = 4096;
 
+#define MSVC_STR2(x) #x
+#define MSVC_STR1(x) MSVC_STR2(x)
+#define TODO_REMINDER(msg) __pragma(message(__FILE__ "(" MSVC_STR1(__LINE__) ") : warning: " msg))
+
 namespace INVENT
 {
 
@@ -564,7 +568,12 @@ namespace INVENT
 				node.PreNode = UINT32_MAX;
 				node.NextNode = _used_list_head;
 
-				static_assert(std::is_trivially_copyable_v<T>, "General pool only supports Trivially Copyable types due to defragmentation/move.");
+				//static_assert(std::is_trivially_copyable_v<T>, "General pool only supports Trivially Copyable types due to defragmentation/move.");
+#if defined(__GNUC__) || defined(__clang__) || (__cplusplus >= 202302L)
+#warning "the generic pool may throw an undefined error when dealing with types that are not easily copyable due to defragmentation/move."
+#elif defined(_MSC_VER)
+				TODO_REMINDER("the generic pool may throw an undefined error when dealing with types that are not easily copyable due to defragmentation/move.")
+#endif
 				node.RelocCallBack = [](void* dst, void* src, uint32_t count) {
 					std::memmove(dst, src, (size_t)count * sizeof(T));
 					};

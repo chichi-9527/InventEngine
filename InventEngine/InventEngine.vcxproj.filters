@@ -213,6 +213,12 @@
     <ClInclude Include="src\Invent\IMemPool\IMemPool.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Invent\IEngineTools.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Invent\IBase\VulkanBase.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\Invent.cpp">
@@ -384,6 +390,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\ShaderCompiler\ShaderCompiler.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\IBase\VulkanBase.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

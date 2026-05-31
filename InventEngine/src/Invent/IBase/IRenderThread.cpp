@@ -3,6 +3,7 @@
 
 #include "Invent/IEngine.h"
 #include "IWindow.h"
+#include "VulkanBase.h"
 #include "IScene.h"
 #include "IController.h"
 
@@ -13,6 +14,9 @@
 
 namespace INVENT
 {
+	static VmaAllocator vmaAllocator = nullptr;
+	static std::unordered_map<void*, VmaAllocation> MapBufferAllocation;
+
 #if defined(_WIN32) && defined(USE_OPENGL)
 	// Source - https://stackoverflow.com/a/589232
 	// Posted by eugensk, modified by community. See post 'Timeline' for change history
@@ -77,14 +81,16 @@ namespace INVENT
 #ifdef USE_OPENGL
 	static std::queue<std::function<void()>> OpenglInitFuncs;
 	static std::mutex OpenglInitFuncsMutex;
-	void IRenderThread::Start()
+	bool IRenderThread::Start()
 	{
 		_running = true;
-		_thread = new std::thread([this]() {
+		bool isOK = true;
+		_thread = new std::thread([this, &isOK]() {
 			glfwMakeContextCurrent(_iwindow.GetGLFWWindow());
 
 			if (_init_opengl())
 			{
+				isOK = false;
 				return;
 			}
 
@@ -130,11 +136,26 @@ namespace INVENT
 
 			glfwMakeContextCurrent(nullptr);
 			});
+
+		return isOK;
 	}
 #elif USE_VULKAN
-	void IRenderThread::Start()
+	bool IRenderThread::Start()
 	{
+		_running = true;
+		bool isOK = true;
 
+		if (_init_vulkan() != 0)
+		{
+			INVENT_LOG_ERROR(" [ IRenderThread ] Init Vulkan error \n");
+			return false;
+		}
+
+		_thread = new std::thread([this, &isOK]() {
+
+			});
+
+		return isOK;
 	}
 #else
 #error "must to use opengl or vulkan"
@@ -222,7 +243,7 @@ namespace INVENT
 		}
 		return -1;
 	}
-#endif // USE_OPENGL
+
 
 	void IRenderThread::_opengl_render()
 	{
@@ -245,5 +266,55 @@ namespace INVENT
 		IRenderer2D::DrawWString(std::wstring(L"fps: no"), { 0.5f, 0.8f, 0.2f, 1.0f }, { 0.8f, 0.9f }, 32.0f, 1);
 		IRenderer2D::EndRender();
 	}
+
+#elif defined(USE_VULKAN)
+
+	int IRenderThread::_init_vulkan()
+	{
+		// 失败则返回nullptr，并意味着此设备不支持Vulkan。
+		uint32_t extensionCount = 0;
+		const char** extensionNames;
+		extensionNames = glfwGetRequiredInstanceExtensions(&extensionCount);
+		if (!extensionNames)
+		{
+			INVENT_LOG_TRACE(std::format("[ IRenderThread ] Vulkan is not available on this machine!\n"));
+			return -1;
+		}
+		for (size_t i = 0; i < extensionCount; i++)
+		{
+
+			VulkanBase::Base().AddInstanceExtension(extensionNames[i]);
+		}
+
+		VulkanBase::Base().AddDeviceExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+		VulkanBase::Base().CreateVulkanInstance();
+
+		// 创建window surface
+		VkSurfaceKHR surface = VK_NULL_HANDLE;
+		if (VkResult result = glfwCreateWindowSurface(VulkanBase::Base().GetVkInstance(), _iwindow.GetGLFWWindow(), nullptr, &surface))
+		{
+			std::cout << std::format("[ InitializeWindow ] ERROR\nFailed to create a window surface!\nError code: {}\n", int32_t(result));
+			glfwTerminate();
+			return -1;
+		}
+		VulkanBase::Base().SetSurface(surface);
+
+		// start init vulkan
+		if (!VulkanBase::Base().PickPhysicalDevice() ||
+			!VulkanBase::Base().CreateLogicalDevice() ||
+			!VulkanBase::Base().CreateSwapChain() ||
+			!VulkanBase::Base().CreateSwapChainImageView())
+		{
+			return -1;
+		}
+
+
+		return 0;
+	}
+
+	void IRenderThread::_vulkan_render()
+	{}
+
+#endif // USE_OPENGL
 
 }

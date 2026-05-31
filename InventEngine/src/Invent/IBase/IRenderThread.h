@@ -17,7 +17,7 @@ namespace INVENT
 		~IRenderThread();
 		static std::shared_ptr<IRenderThread> InstancePtr(IWindow& iwindow);
 
-		void Start();
+		bool Start();
 		void ShutDown();
 
 		void Viewport(int width, int height, int x = 0, int y = 0);
@@ -36,8 +36,13 @@ namespace INVENT
 
 #ifdef USE_OPENGL
 		int _init_opengl();
-#endif
 		void _opengl_render();
+
+#elif defined(USE_VULKAN)
+		int _init_vulkan();
+		void _vulkan_render();
+
+#endif
 
 	public:
 		// 限制帧率为与显示器帧率的反比，0 为不限制

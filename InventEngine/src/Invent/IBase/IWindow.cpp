@@ -22,7 +22,7 @@ namespace INVENT
 	static GLFWwindow* Window = nullptr;
 	static GLFWmonitor* Monitor = nullptr;
 
-	IWindow::IWindow(unsigned int width, unsigned int height, std::string title)
+	IWindow::IWindow(unsigned int width, unsigned int height, std::string title, bool is_resizable)
 		: Width(width)
 		, Height(height)
 		, Title(title)
@@ -30,7 +30,7 @@ namespace INVENT
 		, delta_time(0.0f)
 	{
 		ILog::Instance().IINFO("Log init done");
-		_create_window();
+		_create_window(is_resizable);
 
 		_render_thread = IRenderThread::InstancePtr(*this);
 	}
@@ -73,7 +73,11 @@ namespace INVENT
 		////////// Begin Loop
 		//////////////////////////////////////////////////////////
 
-		_render_thread->Start();
+		if (!_render_thread->Start())
+		{
+			End();
+			return false;
+		}
 
 		//last_frame = static_cast<float>(glfwGetTime());
 		last_frame = std::chrono::high_resolution_clock::now();
@@ -102,7 +106,7 @@ namespace INVENT
 
 		End();
 
-		return 0;
+		return true;
 	}
 
 	void IWindow::SetWindowSize(unsigned int width, unsigned int height) const
@@ -158,9 +162,9 @@ namespace INVENT
 		float TexIndex;
 	};
 
-	void IWindow::_create_window()
+	void IWindow::_create_window(bool is_resizable)
 	{
-		if (-1 == _glfw_init())
+		if (-1 == _glfw_init(is_resizable))
 			return;
 		//glfwSwapInterval(0);
 		glfwSetErrorCallback([](int error, const char* description) {
@@ -228,19 +232,25 @@ namespace INVENT
 
 	}
 
-	int IWindow::_glfw_init()
+	int IWindow::_glfw_init(bool is_resizable)
 	{
 		if (GLFW_FALSE == glfwInit())
 		{
-			INVENT_LOG_ERROR("glfwInit() error");
+			INVENT_LOG_ERROR("[IWindow] glfwInit() error");
 			return -1;
 		}
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 #ifdef USE_OPENGL
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#elif defined(USE_VULKAN)
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif // USE_OPENGL
 		//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
+		// 是否可拉伸
+		glfwWindowHint(GLFW_RESIZABLE, is_resizable);
+
 		return 0;
 	}
 
