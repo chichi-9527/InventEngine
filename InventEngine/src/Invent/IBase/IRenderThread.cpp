@@ -14,8 +14,6 @@
 
 namespace INVENT
 {
-	static VmaAllocator vmaAllocator = nullptr;
-	static std::unordered_map<void*, VmaAllocation> MapBufferAllocation;
 
 #if defined(_WIN32) && defined(USE_OPENGL)
 	// Source - https://stackoverflow.com/a/589232
@@ -84,15 +82,17 @@ namespace INVENT
 	bool IRenderThread::Start()
 	{
 		_running = true;
-		bool isOK = true;
-		_thread = new std::thread([this, &isOK]() {
+		std::promise<bool> initDonePromise;
+		std::future<bool> initDoneFuture = initDonePromise.get_future();
+		_thread = new std::thread([this, &initDonePromise]() {
 			glfwMakeContextCurrent(_iwindow.GetGLFWWindow());
 
-			if (_init_opengl())
+			if (_init_opengl() != 0)
 			{
-				isOK = false;
+				initDonePromise.set_value(false);
 				return;
 			}
+			initDonePromise.set_value(true);
 
 			IRenderer::Init();
 
@@ -137,13 +137,13 @@ namespace INVENT
 			glfwMakeContextCurrent(nullptr);
 			});
 
-		return isOK;
+		initDoneFuture.wait();
+		return initDoneFuture.get();
 	}
 #elif USE_VULKAN
 	bool IRenderThread::Start()
 	{
 		_running = true;
-		bool isOK = true;
 
 		if (_init_vulkan() != 0)
 		{
@@ -151,11 +151,13 @@ namespace INVENT
 			return false;
 		}
 
-		_thread = new std::thread([this, &isOK]() {
+		_thread = new std::thread([this]() -> bool {
 
+
+			return true;
 			});
 
-		return isOK;
+		return true;
 	}
 #else
 #error "must to use opengl or vulkan"
@@ -170,6 +172,12 @@ namespace INVENT
 			delete _thread;
 			_thread = nullptr;
 		}
+
+#ifdef USE_VULKAN
+
+#endif // USE_VULKAN
+
+
 	}
 
 	void IRenderThread::Viewport(int width, int height, int x, int y)
@@ -303,9 +311,25 @@ namespace INVENT
 		if (!VulkanBase::Base().PickPhysicalDevice() ||
 			!VulkanBase::Base().CreateLogicalDevice() ||
 			!VulkanBase::Base().CreateSwapChain() ||
-			!VulkanBase::Base().CreateSwapChainImageView())
+			!VulkanBase::Base().CreateSwapChainImageView() ||
+			!VulkanBase::Base().CreateVmaAllocator() ||
+			!VulkanBase::Base().GetDepthFormat() ||
+			!VulkanBase::Base().InitializeAllOffscreenPasses())
 		{
 			return -1;
+		}
+
+		VulkanBase::Base().WaitForWindowEvents = []() {
+			glfwWaitEvents();
+			};
+
+		if (!VulkanBase::Base().Version_1_3_OrHigher())
+		{
+			if (!VulkanBase::Base().CreateDefaultRenderPasses() ||
+				!VulkanBase::Base().CreateDefaultFramebuffers())
+			{
+				return -1;
+			}
 		}
 
 
