@@ -79,6 +79,11 @@ namespace INVENT
 		_use_lastest_api_version();
 		INVENT_LOG_INFO(std::format("[VulkanBase] vulkan api version : {}\n", _api_version));
 
+		if (!Version_1_2_OrHigher())
+		{
+			AddDeviceExtension(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
+		}
+
 #ifndef NDEBUG
 		AddValidationLayer("VK_LAYER_KHRONOS_validation");
 		AddInstanceExtension(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
@@ -278,6 +283,7 @@ namespace INVENT
 				&& deviceFeatures.samplerAnisotropy
 				&& _queue_family_indices.IsComplete()
 				&& _check_device_extension_support(device)
+				&& _check_and_enable_bindless_feature(device)
 				&& swapChainAdequate();
 			};
 
@@ -321,6 +327,24 @@ namespace INVENT
 		VkPhysicalDeviceVulkan11Features feat11 = {};
 		feat11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
 		feat11.shaderDrawParameters = VK_TRUE;
+
+		VkPhysicalDeviceVulkan12Features feat12{};
+		feat12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+		feat12.descriptorBindingPartiallyBound = VK_TRUE;
+		feat12.runtimeDescriptorArray = VK_TRUE;
+		feat12.shaderSampledImageArrayNonUniformIndexing = VK_TRUE;
+
+		if (Version_1_2_OrHigher())
+		{
+			feat11.pNext = &feat12;
+		}
+		else
+		{
+			_enabled_indexing_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT;
+			_enabled_indexing_features.pNext = nullptr;
+			feat11.pNext = &_enabled_indexing_features;
+			
+		}
 
 		VkDeviceCreateInfo deviceCreateInfo{};
 		deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -1266,36 +1290,78 @@ namespace INVENT
 			INVENT_LOG_ERROR(std::format(" [ VulkanBase ] Failed to get the count of device extension! Error code: {}\n", int32_t(result)));
 			return false;
 		}
-		if (extensionCount)
+		std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+		if (extensionCount > 0)
 		{
-			std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+
 			if (VkResult result = vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data()))
 			{
 				INVENT_LOG_ERROR(std::format(" [ VulkanBase ] Failed to enumerate device extension properties! Error code: {}\n", int32_t(result)));
 				return false;
 			}
-			bool found = false;
-			for (auto& i : deviceExtensions)
+		}
+		// 1. 將所有可用的擴展名字放入集合（Set）中，方便 O(1) 快速查找
+		std::unordered_set<std::string> availableNameSet;
+		for (const auto& ext : availableExtensions)
+		{
+			availableNameSet.insert(ext.extensionName);
+		}
+		// 2. 建立一個臨時陣列，只保留確定支援的擴展
+		std::vector<const char*> validExtensions;
+		bool allRequiredSupported = true;
+
+		for (const auto& requiredExt : deviceExtensions)
+		{
+			if (requiredExt == nullptr) continue;
+
+			if (availableNameSet.count(requiredExt) > 0)
 			{
-				for (auto& j : availableExtensions)
-					if (!strcmp(i, j.extensionName))
-					{
-						found = true;
-						break;
-					}
-				if (!found)
-					i = nullptr;
+				validExtensions.push_back(requiredExt);
+			}
+			else
+			{
+				INVENT_LOG_ERROR(std::format(" [ VulkanBase ] Required extension NOT supported: {}\n", requiredExt));
+				allRequiredSupported = false;
 			}
 		}
-		else
-		{
-			deviceExtensions.clear();
-		}
+
+		deviceExtensions = validExtensions;
+
 		INVENT_LOG_INFO(std::format(" Check deviceExtensions done, Num : {}  :\n", deviceExtensions.size()));
 		for (auto& name : deviceExtensions)
 		{
 			INVENT_LOG_INFO(std::format("\t {} \n", name));
 		}
+		return allRequiredSupported;
+	}
+
+	bool VulkanBase::_check_and_enable_bindless_feature(VkPhysicalDevice device)
+	{
+		if (Version_1_2_OrHigher()) return true;
+
+		//  如果是 Vulkan 1.0 或 1.1，必須手動透過 pNext 鏈條向硬體查詢擴展特性
+		VkPhysicalDeviceDescriptorIndexingFeaturesEXT indexingFeatures{};
+		indexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT;
+
+		VkPhysicalDeviceFeatures2 deviceFeatures2{};
+		deviceFeatures2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+		deviceFeatures2.pNext = &indexingFeatures;
+
+		// 從選好的物理設備中查詢硬體支援情況
+		vkGetPhysicalDeviceFeatures2(device, &deviceFeatures2);
+
+		// 嚴格驗證 Shader-slang 和 Bindless 架構必須的三個基礎特性
+		bool hasPartiallyBound = (indexingFeatures.descriptorBindingPartiallyBound == VK_TRUE);
+		bool hasRuntimeArray = (indexingFeatures.runtimeDescriptorArray == VK_TRUE);
+		bool hasNonUniformIndex = (indexingFeatures.shaderSampledImageArrayNonUniformIndexing == VK_TRUE);
+
+		if (!hasPartiallyBound || !hasRuntimeArray || !hasNonUniformIndex)
+		{
+			return false;
+		}
+
+		_enabled_indexing_features = indexingFeatures;
+
 		return true;
 	}
 

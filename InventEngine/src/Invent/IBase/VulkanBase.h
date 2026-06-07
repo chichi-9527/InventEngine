@@ -137,6 +137,7 @@ namespace INVENT
 
 
 		bool Version_1_3_OrHigher() const { return _api_version >= VK_API_VERSION_1_3; }
+		bool Version_1_2_OrHigher() const { return _api_version >= VK_API_VERSION_1_2; }
 		void FrameBufferResize(uint32_t width, uint32_t height);
 
 	private:
@@ -144,6 +145,7 @@ namespace INVENT
 		QueueFamilyIndices _find_queue_families(VkPhysicalDevice device);
 		SwapChainSupportDetails _query_swap_chain_support(VkPhysicalDevice device);
 		bool _check_device_extension_support(VkPhysicalDevice device);
+		bool _check_and_enable_bindless_feature(VkPhysicalDevice device);
 		VkSurfaceFormatKHR _choose_swap_surface_format(const std::vector<VkSurfaceFormatKHR>& available_formats);
 		VkPresentModeKHR _choose_swap_presenta_mode(const std::vector<VkPresentModeKHR>& available_present_modes, VkPresentModeKHR mode = VK_PRESENT_MODE_MAILBOX_KHR);
 		VkExtent2D _choose_swap_extent(const VkSurfaceCapabilitiesKHR& capabilities);
@@ -196,6 +198,8 @@ namespace INVENT
 		OffscreenPassResources _temp_offscreen_depth_view = {};
 		// 容納 0 到 N 個離屏關卡資产
 		std::vector<OffscreenPassResources> _active_offscreen_levels;
+
+		VkPhysicalDeviceDescriptorIndexingFeaturesEXT _enabled_indexing_features = {};
 
 		std::vector<VkImage> _swap_chain_images;
 		std::vector<VkImageView> _swap_chain_image_views;

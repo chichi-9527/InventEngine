@@ -175,6 +175,7 @@ namespace INVENT
 
 #ifdef USE_VULKAN
 
+		VulkanBase::Base().CleanUp();
 #endif // USE_VULKAN
 
 
