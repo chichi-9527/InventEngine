@@ -219,6 +219,12 @@
     <ClInclude Include="src\Invent\IBase\VulkanBase.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Invent\Renderer\IVulkanRenderer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Invent\ITexture\IVulkanTexture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\Invent.cpp">
@@ -395,9 +401,18 @@
     <ClCompile Include="src\Invent\IBase\VulkanBase.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\Invent\Renderer\IVulkanRenderer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\ITexture\IVulkanTexture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Invent\IEngineTools.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Readme.md" />
+    <None Include="src\Invent\Renderer\Readme.md" />
     <None Include="src\Invent\ITools\Readme.md" />
   </ItemGroup>
 </Project>

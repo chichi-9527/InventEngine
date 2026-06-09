@@ -1,6 +1,8 @@
 ﻿#include "IEpch.h"
 #include "VulkanBase.h"
 
+#include "Invent/IEngineTools.h"
+
 namespace INVENT
 {
 
@@ -14,6 +16,7 @@ namespace INVENT
 	constexpr uint32_t TempLevelDepthSizeY = 1024;
 	constexpr uint32_t ShadowMapSizeX = 2048;
 	constexpr uint32_t ShadowMapSizeY = 2048;
+	constexpr uint32_t MAX_BINDLESS_TEXTURES = 200000;
 
 	// layers
 	static std::vector<const char*> validationLayers;
@@ -188,23 +191,25 @@ namespace INVENT
 		}
 
 		// 銷毀各個離屏資源結構體內存儲的 RenderPass（若在初始化時為每個 Frame 分配了獨立的 RenderPass）
-		for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
+		if (_render_pass_shadow != VK_NULL_HANDLE)
 		{
-			if (_shadow_pass_res[i].RenderPass != VK_NULL_HANDLE)
-			{
-				vkDestroyRenderPass(_device, _shadow_pass_res[i].RenderPass, nullptr);
-				_shadow_pass_res[i].RenderPass = VK_NULL_HANDLE;
-			}
-			if (_main_scene_res[i].RenderPass != VK_NULL_HANDLE)
-			{
-				vkDestroyRenderPass(_device, _main_scene_res[i].RenderPass, nullptr);
-				_main_scene_res[i].RenderPass = VK_NULL_HANDLE;
-			}
-			if (_postprocess_res[i].RenderPass != VK_NULL_HANDLE)
-			{
-				vkDestroyRenderPass(_device, _postprocess_res[i].RenderPass, nullptr);
-				_postprocess_res[i].RenderPass = VK_NULL_HANDLE;
-			}
+			vkDestroyRenderPass(_device, _render_pass_shadow, nullptr);
+			_render_pass_shadow = VK_NULL_HANDLE;
+		}
+		if (_render_pass_main != VK_NULL_HANDLE)
+		{
+			vkDestroyRenderPass(_device, _render_pass_main, nullptr);
+			_render_pass_main = VK_NULL_HANDLE;
+		}
+		if (_render_pass_postprocess != VK_NULL_HANDLE)
+		{
+			vkDestroyRenderPass(_device, _render_pass_postprocess, nullptr);
+			_render_pass_postprocess = VK_NULL_HANDLE;
+		}
+		if (_render_pass_active_offscreen_levels != VK_NULL_HANDLE)
+		{
+			vkDestroyRenderPass(_device, _render_pass_active_offscreen_levels, nullptr);
+			_render_pass_active_offscreen_levels = VK_NULL_HANDLE;
 		}
 
 		//  銷毀 VMA Allocator
@@ -302,6 +307,8 @@ namespace INVENT
 			return false;
 		}
 
+		_find_max_hardware_textures();
+
 		INVENT_LOG_INFO(std::format("[ VulkanBase ] device name : {} \n", deviceNmae));
 
 		return true;
@@ -333,6 +340,7 @@ namespace INVENT
 		feat12.descriptorBindingPartiallyBound = VK_TRUE;
 		feat12.runtimeDescriptorArray = VK_TRUE;
 		feat12.shaderSampledImageArrayNonUniformIndexing = VK_TRUE;
+		feat12.descriptorBindingSampledImageUpdateAfterBind = VK_TRUE;
 
 		if (Version_1_2_OrHigher())
 		{
@@ -341,6 +349,7 @@ namespace INVENT
 		else
 		{
 			_enabled_indexing_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT;
+			_enabled_indexing_features.descriptorBindingSampledImageUpdateAfterBind = VK_TRUE;
 			_enabled_indexing_features.pNext = nullptr;
 			feat11.pNext = &_enabled_indexing_features;
 			
@@ -511,7 +520,7 @@ namespace INVENT
 		}
 	}
 
-	bool VulkanBase::GetDepthFormat()
+	bool VulkanBase::FindDepthFormat()
 	{
 		_depth_format = _find_supported_format(
 			{ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
@@ -529,17 +538,17 @@ namespace INVENT
 	{
 		// shadowMap
 		{
-			VkFormat shadowDepthFormat = _find_supported_format(
+			_shadow_depth_format = _find_supported_format(
 				{ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D24_UNORM_S8_UINT, VK_FORMAT_D16_UNORM },
 				VK_IMAGE_TILING_OPTIMAL,
 				VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT
 			);
-			if (VK_FORMAT_UNDEFINED == shadowDepthFormat)
+			if (VK_FORMAT_UNDEFINED == _shadow_depth_format)
 			{
 				return false;
 			}
 			VkAttachmentDescription depth = {};
-			depth.format = shadowDepthFormat;
+			depth.format = _shadow_depth_format;
 			depth.samples = VK_SAMPLE_COUNT_1_BIT;
 			depth.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 			depth.storeOp = VK_ATTACHMENT_STORE_OP_STORE;          // 保留阴影图
@@ -565,13 +574,10 @@ namespace INVENT
 
 			std::vector<VkSubpassDependency> dependencies = { dependency };
 
-			for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
+			_render_pass_shadow = CreateRenderPass(attachments, subpasses, dependencies);
+			if (VK_NULL_HANDLE == _render_pass_shadow)
 			{
-				_shadow_pass_res[i].RenderPass = CreateRenderPass(attachments, subpasses, dependencies);
-				if (VK_NULL_HANDLE == _shadow_pass_res[i].RenderPass)
-				{
-					return false;
-				}
+				return false;
 			}
 
 		}
@@ -612,13 +618,11 @@ namespace INVENT
 
 			std::vector<VkSubpassDependency> dependencies = { dependency };
 
-			for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
+
+			_render_pass_main = CreateRenderPass(attachments, subpasses, dependencies);
+			if (VK_NULL_HANDLE == _render_pass_main)
 			{
-				_main_scene_res[i].RenderPass = CreateRenderPass(attachments, subpasses, dependencies);
-				if (VK_NULL_HANDLE == _main_scene_res[i].RenderPass)
-				{
-					return false;
-				}
+				return false;
 			}
 
 		}
@@ -652,13 +656,10 @@ namespace INVENT
 
 			std::vector<VkSubpassDependency> dependencies = { dependency };
 
-			for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
+			_render_pass_postprocess = CreateRenderPass(attachments, subpasses, dependencies);
+			if (VK_NULL_HANDLE == _render_pass_postprocess)
 			{
-				_postprocess_res[i].RenderPass = CreateRenderPass(attachments, subpasses, dependencies);
-				if (VK_NULL_HANDLE == _postprocess_res[i].RenderPass)
-				{
-					return false;
-				}
+				return false;
 			}
 		}
 
@@ -732,7 +733,7 @@ namespace INVENT
 				};
 				_shadow_pass_res[i].Framebuffer = CreateFramebuffer(ShadowMapSizeX,
 					ShadowMapSizeY,
-					_shadow_pass_res[i].RenderPass,
+					_render_pass_shadow,
 					1,
 					attachments);
 				if (VK_NULL_HANDLE == _shadow_pass_res[i].Framebuffer)
@@ -749,7 +750,7 @@ namespace INVENT
 				};
 				_main_scene_res[i].Framebuffer = CreateFramebuffer(w,
 					h,
-					_main_scene_res[i].RenderPass,
+					_render_pass_main,
 					2,
 					mainAttachments);
 				if (VK_NULL_HANDLE == _main_scene_res[i].Framebuffer)
@@ -762,7 +763,7 @@ namespace INVENT
 				};
 				_postprocess_res[i].Framebuffer = CreateFramebuffer(w,
 					h,
-					_postprocess_res[i].RenderPass,
+					_render_pass_postprocess,
 					1,
 					postprocessAttachments);
 				if (VK_NULL_HANDLE == _postprocess_res[i].Framebuffer)
@@ -811,6 +812,21 @@ namespace INVENT
 		}
 
 		return true;
+	}
+
+	bool VulkanBase::CreateBindlessDescriptorPool()
+	{
+		return _create_bindless_descriptor_pool();
+	}
+
+	bool VulkanBase::CreateGlobalPipelineLayout()
+	{
+		return _create_global_pipeline_layout();
+	}
+
+	bool VulkanBase::AllocaGlobalBindlessDescriptorSet()
+	{
+		return _alloca_global_bindless_descriptor_set();
 	}
 
 	bool VulkanBase::RecreateResizableResources()
@@ -901,7 +917,253 @@ namespace INVENT
 		return true;
 	}
 
-	VkRenderPass VulkanBase::CreateRenderPass(std::vector<VkAttachmentDescription>& attachments, 
+	VkDescriptorSetLayout VulkanBase::CreateDescriptorSetLayout(std::vector<VkDescriptorSetLayoutBinding>& bindings, bool is_bindless_set)
+	{
+		if (bindings.empty()) return VK_NULL_HANDLE;
+
+		std::vector<VkDescriptorBindingFlags> bindingFlags(bindings.size());
+		for (uint32_t i = 0; i < (uint32_t)bindings.size(); ++i)
+		{
+			if (is_bindless_set)
+			{
+				bindingFlags[i] = VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT |
+					VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT;
+				if (i == bindings.size() - 1)
+				{
+					bindingFlags[i] |= VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT; // 在最后一个binding, shader-slang 中可不写死数量
+				}
+			}
+			else
+			{
+				bindingFlags[i] = 0;
+			}
+		}
+
+		VkDescriptorSetLayoutBindingFlagsCreateInfo layoutBindingFlagsInfo{};
+		layoutBindingFlagsInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
+		layoutBindingFlagsInfo.bindingCount = static_cast<uint32_t>(bindingFlags.size());
+		layoutBindingFlagsInfo.pBindingFlags = bindingFlags.data();
+
+		VkDescriptorSetLayoutCreateInfo layoutInfo{};
+		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+		layoutInfo.pBindings = bindings.data();
+		layoutInfo.pNext = &layoutBindingFlagsInfo;
+		if (is_bindless_set)
+		{
+			layoutInfo.flags = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT;
+		}
+
+		VkDescriptorSetLayout descriptorSetLayout = VK_NULL_HANDLE;
+		if (VkResult result = vkCreateDescriptorSetLayout(_device, &layoutInfo, nullptr, &descriptorSetLayout))
+		{
+			INVENT_LOG_ERROR(std::format("ERROR : [ VulkanBase ] Failed to create descriptor set layout! Error code: {}\n", int32_t(result)));
+			return VK_NULL_HANDLE;
+		}
+
+		return descriptorSetLayout;
+	}
+
+	VkPipeline VulkanBase::CreateGraphicsPipeline(const GraphicsPipelineConfig& config)
+	{
+		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+
+		// shader 特化常数
+		std::vector<VkSpecializationMapEntry> specMapEntries(2);
+		specMapEntries[0].constantID = 0;
+		specMapEntries[0].offset = offsetof(SpecializationData, BlendMode);
+		specMapEntries[0].size = sizeof(int);
+		specMapEntries[0].constantID = 1;
+		specMapEntries[0].offset = offsetof(SpecializationData, PresetEffect);
+		specMapEntries[0].size = sizeof(int);
+
+		VkSpecializationInfo specInfo{};
+		specInfo.mapEntryCount = static_cast<uint32_t>(specMapEntries.size());
+		specInfo.pMapEntries = specMapEntries.data();
+		specInfo.dataSize = sizeof(SpecializationData);
+		specInfo.pData = &config.SpecData;
+
+		// 頂點階段
+		VkPipelineShaderStageCreateInfo vertStageInfo{};
+		vertStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		vertStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+		vertStageInfo.module = config.VertexShader;
+		vertStageInfo.pName = "main";
+		vertStageInfo.pSpecializationInfo = &specInfo;
+		shaderStages.push_back(vertStageInfo);
+
+		if (config.FragmentShader != VK_NULL_HANDLE)
+		{
+			VkPipelineShaderStageCreateInfo fragStageInfo{};
+			fragStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+			fragStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+			fragStageInfo.module = config.FragmentShader;
+			fragStageInfo.pName = "main";
+			fragStageInfo.pSpecializationInfo = &specInfo;
+			shaderStages.push_back(fragStageInfo);
+		}
+
+		// 頂點輸入狀態 (Manual Vertex Fetch 核心：保持留空)
+		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+
+		// 幾何拓撲
+		VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
+		inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+		inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+
+		// 光柵化
+		VkPipelineRasterizationStateCreateInfo rasterizer{};
+		rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+		rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+		rasterizer.lineWidth = 1.0f;
+		rasterizer.cullMode = config.CullMode;
+		rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		rasterizer.depthBiasEnable = (config.FragmentShader == VK_NULL_HANDLE) ? VK_TRUE : VK_FALSE;
+
+		// 多重採樣
+		VkPipelineMultisampleStateCreateInfo multisampling{};
+		multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+		multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+		// 深度測試狀態
+		VkPipelineDepthStencilStateCreateInfo depthStencil{};
+		depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+		depthStencil.depthTestEnable = config.EnableDepthTest;
+		depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+		if (config.BlendMode == ModelBlendMode::Translucent)
+		{
+			depthStencil.depthWriteEnable = VK_FALSE;
+		}
+		else
+		{
+			depthStencil.depthWriteEnable = config.EnableDepthTest;
+		}
+
+		// 顏色混合狀態
+		VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+		colorBlendAttachment.colorWriteMask = 0xf;
+		if (config.BlendMode == ModelBlendMode::Translucent)
+		{
+			colorBlendAttachment.blendEnable = VK_TRUE;
+			colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+			colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+			colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+			colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+			colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+		}
+		else
+		{
+			colorBlendAttachment.blendEnable = VK_FALSE;
+		}
+
+		VkPipelineColorBlendStateCreateInfo colorBlending{};
+		colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+		colorBlending.attachmentCount = (config.FragmentShader == VK_NULL_HANDLE) ? 0 : 1;
+		colorBlending.pAttachments = &colorBlendAttachment;
+
+		// 動態狀態
+		std::array<VkDynamicState, 2> dynamicStates = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+		VkPipelineDynamicStateCreateInfo dynamicState{};
+		dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+		dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
+		dynamicState.pDynamicStates = dynamicStates.data();
+
+		VkPipelineViewportStateCreateInfo viewportState{};
+		viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+		viewportState.viewportCount = 1;
+		viewportState.scissorCount = 1;
+
+		// 核心：Vulkan 1.3+ 動態渲染結構體設定
+		VkPipelineRenderingCreateInfo pipelineRenderingCI{};
+		pipelineRenderingCI.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
+		if (config.FragmentShader != VK_NULL_HANDLE)
+		{
+			pipelineRenderingCI.colorAttachmentCount = 1;
+			pipelineRenderingCI.pColorAttachmentFormats = &config.ColorAttachmentFormat;
+		}
+		else
+		{
+			pipelineRenderingCI.colorAttachmentCount = 0; // 陰影管線無顏色輸出
+		}
+		if (config.EnableDepthTest || config.FragmentShader == VK_NULL_HANDLE)
+		{
+			pipelineRenderingCI.depthAttachmentFormat = config.DepthAttachmentFormat;
+		}
+		else
+		{
+			pipelineRenderingCI.depthAttachmentFormat = VK_FORMAT_UNDEFINED;
+		}
+
+		// 總裝管線
+		VkGraphicsPipelineCreateInfo pipelineInfo{};
+		pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		pipelineInfo.stageCount = static_cast<uint32_t>(shaderStages.size());
+		pipelineInfo.pStages = shaderStages.data();
+		pipelineInfo.pVertexInputState = &vertexInputInfo;
+		pipelineInfo.pInputAssemblyState = &inputAssembly;
+		pipelineInfo.pViewportState = &viewportState;
+		pipelineInfo.pRasterizationState = &rasterizer;
+		pipelineInfo.pMultisampleState = &multisampling;
+		pipelineInfo.pDepthStencilState = &depthStencil;
+		pipelineInfo.pColorBlendState = &colorBlending;
+		pipelineInfo.pDynamicState = &dynamicState;
+		pipelineInfo.layout = _global_pipeline_layout;
+		if (Version_1_3_OrHigher())
+		{
+			pipelineInfo.pNext = &pipelineRenderingCI; // 1.3 核心：串接動態渲染格式
+			pipelineInfo.renderPass = VK_NULL_HANDLE;  // 不需要傳入實體 RenderPass
+		}
+		else
+		{
+			pipelineInfo.pNext = nullptr;
+			pipelineInfo.renderPass = config.RenderPass; // 舊版本依然走常規流程
+			pipelineInfo.subpass = config.Subpass;
+		}
+
+		VkPipeline graphicsPipeline;
+		if (VkResult result = vkCreateGraphicsPipelines(_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline))
+		{
+			INVENT_LOG_ERROR(std::format("ERROR : [ VulkanBase ] Failed to create graphics pipeline! Error code: {}\n", int32_t(result)));
+			return VK_NULL_HANDLE;
+		}
+
+		return graphicsPipeline;
+	}
+
+	VkShaderModule VulkanBase::CreateShaderMoudle(const std::string& path)
+	{
+		auto shaderCode = IEngineTools::ReadFile(path);
+
+		if (shaderCode.size() % sizeof(uint32_t) != 0)
+		{
+			INVENT_LOG_ERROR(std::format(" [ VulkanBase ] [ CreateShaderMoudle ] read shader code error : {}", path));
+			return VK_NULL_HANDLE;
+		}
+
+		VkShaderModuleCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		createInfo.codeSize = shaderCode.size();
+		createInfo.pCode = reinterpret_cast<const uint32_t*>(shaderCode.data());
+
+		VkShaderModule shaderMoudle;
+		if (VkResult result = vkCreateShaderModule(_device, &createInfo, nullptr, &shaderMoudle))
+		{
+			INVENT_LOG_ERROR(std::format(" [ VulkanBase ] [ CreateShaderMoudle ] Failed to create a shader module! Error code: {}\n", int32_t(result)));
+			return VK_NULL_HANDLE;
+		}
+
+		return shaderMoudle;
+	}
+
+	void VulkanBase::DestroyShaderMoudle(VkShaderModule shader_moudle)
+	{
+		if (shader_moudle != VK_NULL_HANDLE)
+			vkDestroyShaderModule(_device, shader_moudle, nullptr);
+	}
+
+	VkRenderPass VulkanBase::CreateRenderPass(std::vector<VkAttachmentDescription>& attachments,
 		std::vector<Subpass>& subpasses, 
 		std::vector<VkSubpassDependency>& dependencies)
 	{
@@ -1065,12 +1327,53 @@ namespace INVENT
 		return _create_image_view(image, format, aspect_flags, view_type, mip_levels, base_array_layer, layer_count);
 	}
 
-	bool VulkanBase::RequestOffscreenLevels(const std::vector<void*>& required_levels, VkFormat depth_format)
+	bool VulkanBase::RequestOffscreenLevels(const std::vector<void*>& required_levels)
 	{
 		_cleanup_active_offscreen_levels();
+		if (_render_pass_active_offscreen_levels != VK_NULL_HANDLE)
+		{
+			vkDestroyRenderPass(_device, _render_pass_active_offscreen_levels, nullptr);
+			_render_pass_active_offscreen_levels = VK_NULL_HANDLE;
+		}
 
 		if (required_levels.empty())
 			return true;
+
+		if (!Version_1_3_OrHigher())
+		{
+			VkAttachmentDescription color{};
+			color.format = VK_FORMAT_B8G8R8A8_UNORM;
+			color.samples = VK_SAMPLE_COUNT_1_BIT;
+			color.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			color.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+			color.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			color.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+			VkAttachmentDescription depth = {};
+			depth.format = _depth_format;
+			depth.samples = VK_SAMPLE_COUNT_1_BIT;
+			depth.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			depth.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			depth.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			depth.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+			std::vector<VkAttachmentDescription> attachments = { color, depth };
+
+			Subpass offscreenSub0;
+			offscreenSub0.ColorRefs = { {0,VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL} };
+			offscreenSub0.DepthStencilRef = { 1,VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL };
+
+			std::vector<Subpass> subpasses = { offscreenSub0 };
+			std::vector<VkSubpassDependency> dependencies = {};
+
+			_render_pass_active_offscreen_levels = CreateRenderPass(attachments, subpasses, dependencies);
+
+			if (VK_NULL_HANDLE == _render_pass_active_offscreen_levels)
+			{
+				INVENT_LOG_ERROR(std::format(" [ VulkanBase ] [ func RequestOffscreenLevels ] Failed to create render pass.\n"));
+				return false;
+			}
+		}
 
 		_active_offscreen_levels.reserve(required_levels.size());
 		for (void* level : required_levels)
@@ -1108,44 +1411,12 @@ namespace INVENT
 
 			if (!Version_1_3_OrHigher())
 			{
-				VkAttachmentDescription color{};
-				color.format = VK_FORMAT_B8G8R8A8_UNORM;
-				color.samples = VK_SAMPLE_COUNT_1_BIT;
-				color.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-				color.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-				color.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-				color.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
-				VkAttachmentDescription depth = {};
-				depth.format = _depth_format;
-				depth.samples = VK_SAMPLE_COUNT_1_BIT;
-				depth.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-				depth.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-				depth.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-				depth.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-				std::vector<VkAttachmentDescription> attachments = { color, depth };
-
-				Subpass offscreenSub0;
-				offscreenSub0.ColorRefs = { {0,VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL} };
-				offscreenSub0.DepthStencilRef = { 1,VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL };
-
-				std::vector<Subpass> subpasses = { offscreenSub0 };
-				std::vector<VkSubpassDependency> dependencies = {};
-
-				newLevel.RenderPass = CreateRenderPass(attachments, subpasses, dependencies);
-
-				if (VK_NULL_HANDLE == newLevel.RenderPass)
-				{
-					INVENT_LOG_ERROR(std::format(" [ VulkanBase ] [ func RequestOffscreenLevels ] Failed to create render pass. Level : {} \n", reinterpret_cast<uint64_t>(level)));
-					return false;
-				}
-
+				
 				VkImageView viewAttachments[] = { newLevel.View, newLevel.DepthView };
 
 				newLevel.Framebuffer = CreateFramebuffer(OffscreenLevelSizeX,
 					OffscreenLevelSizeY,
-					newLevel.RenderPass,
+					_render_pass_active_offscreen_levels,
 					2,
 					viewAttachments);
 
@@ -1342,6 +1613,7 @@ namespace INVENT
 		//  如果是 Vulkan 1.0 或 1.1，必須手動透過 pNext 鏈條向硬體查詢擴展特性
 		VkPhysicalDeviceDescriptorIndexingFeaturesEXT indexingFeatures{};
 		indexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT;
+		
 
 		VkPhysicalDeviceFeatures2 deviceFeatures2{};
 		deviceFeatures2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
@@ -1349,6 +1621,7 @@ namespace INVENT
 
 		// 從選好的物理設備中查詢硬體支援情況
 		vkGetPhysicalDeviceFeatures2(device, &deviceFeatures2);
+
 
 		// 嚴格驗證 Shader-slang 和 Bindless 架構必須的三個基礎特性
 		bool hasPartiallyBound = (indexingFeatures.descriptorBindingPartiallyBound == VK_TRUE);
@@ -1495,11 +1768,6 @@ namespace INVENT
 			vkDestroyFramebuffer(_device, res.Framebuffer, nullptr);
 			res.Framebuffer = VK_NULL_HANDLE;
 		}
-		if (res.RenderPass != VK_NULL_HANDLE)
-		{
-			vkDestroyRenderPass(_device, res.RenderPass, nullptr);
-			res.RenderPass = VK_NULL_HANDLE;
-		}
 		if (res.DepthView != VK_NULL_HANDLE)
 		{
 			vkDestroyImageView(_device, res.DepthView, nullptr);
@@ -1565,6 +1833,165 @@ namespace INVENT
 
 	void VulkanBase::_update_resizable_descriptor_sets()
 	{}
+
+	bool VulkanBase::_create_bindless_descriptor_pool()
+	{
+		VkDescriptorPoolSize poolSizes[1];
+		poolSizes[0].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		poolSizes[0].descriptorCount = std::min(MAX_BINDLESS_TEXTURES, _max_hardware_textures);
+
+		VkDescriptorPoolCreateInfo poolInfo{};
+		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		poolInfo.pNext = nullptr;
+		poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT;
+		poolInfo.maxSets = 1;
+		poolInfo.poolSizeCount = 1;
+		poolInfo.pPoolSizes = poolSizes;
+
+		if (VkResult result = vkCreateDescriptorPool(_device, &poolInfo, nullptr, &_bindless_descriptor_pool))
+		{
+			INVENT_LOG_ERROR(std::format("ERROR : [ VulkanBase ] Failed to create descriptor pool! Error code: {}\n", int32_t(result)));
+			return false;
+		}
+
+		return true;
+
+	}
+
+	void VulkanBase::_find_max_hardware_textures()
+	{
+		VkPhysicalDeviceDescriptorIndexingProperties indexingProps{};
+		indexingProps.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES;
+
+		VkPhysicalDeviceProperties2 deviceProps2{};
+		deviceProps2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+		deviceProps2.pNext = &indexingProps;
+
+		vkGetPhysicalDeviceProperties2(_physical_device, &deviceProps2);
+
+		_max_hardware_textures = indexingProps.maxPerStageDescriptorUpdateAfterBindSampledImages;
+	
+	}
+
+	bool VulkanBase::_create_global_pipeline_layout()
+	{
+		// Set0 
+		// binding 0 : ubo
+		VkDescriptorSetLayoutBinding uboLayoutBinding{};
+		uboLayoutBinding.binding = 0;
+		uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		uboLayoutBinding.descriptorCount = 1;
+		uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+		uboLayoutBinding.pImmutableSamplers = nullptr;
+		// binding 1 : point light ssbo
+		VkDescriptorSetLayoutBinding pointLightSSBOLayoutBinding{};
+		uboLayoutBinding.binding = 1;
+		uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		uboLayoutBinding.descriptorCount = 1;
+		uboLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		uboLayoutBinding.pImmutableSamplers = nullptr;
+		std::vector<VkDescriptorSetLayoutBinding> set0Bindings = {
+			uboLayoutBinding,
+			pointLightSSBOLayoutBinding
+		};
+		auto set0Layout = CreateDescriptorSetLayout(set0Bindings);
+
+		// Set1 Bindless Layout and Material SSBO
+		// binding 0 : 全局采样器
+		VkDescriptorSetLayoutBinding globalSamplerLayoutBinding{};
+		globalSamplerLayoutBinding.binding = 0;
+		globalSamplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
+		globalSamplerLayoutBinding.descriptorCount = 1;
+		globalSamplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		globalSamplerLayoutBinding.pImmutableSamplers = nullptr;
+		// binding 1 : 材质 SSBO
+		VkDescriptorSetLayoutBinding materialSSBOLayoutBinding{};
+		materialSSBOLayoutBinding.binding = 1;
+		materialSSBOLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		materialSSBOLayoutBinding.descriptorCount = 1;
+		materialSSBOLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+		materialSSBOLayoutBinding.pImmutableSamplers = nullptr;
+		// binding 2 : 贴图阵列
+		VkDescriptorSetLayoutBinding textureListLayoutBinding{};
+		textureListLayoutBinding.binding = 2;
+		textureListLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+		textureListLayoutBinding.descriptorCount = std::min(MAX_BINDLESS_TEXTURES, _max_hardware_textures);
+		textureListLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		textureListLayoutBinding.pImmutableSamplers = nullptr;
+		std::vector<VkDescriptorSetLayoutBinding> set1Bindings = {
+			globalSamplerLayoutBinding,
+			materialSSBOLayoutBinding,
+			textureListLayoutBinding
+		};
+		auto set1Layout = CreateDescriptorSetLayout(set1Bindings, true);
+
+		// Set2 几何 SSBO
+		// binding 0 : ssbo
+		VkDescriptorSetLayoutBinding vertexesSSBOLayoutBinding{};
+		vertexesSSBOLayoutBinding.binding = 0;
+		vertexesSSBOLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		vertexesSSBOLayoutBinding.descriptorCount = 1;
+		vertexesSSBOLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+		vertexesSSBOLayoutBinding.pImmutableSamplers = nullptr;
+		std::vector<VkDescriptorSetLayoutBinding> set2Bindings = {
+			vertexesSSBOLayoutBinding
+		};
+		auto set2Layout = CreateDescriptorSetLayout(set2Bindings);
+
+		_descriptor_set_layouts = {
+			set0Layout,
+			set1Layout,
+			set2Layout
+		};
+
+		// 配置全域 Push Constants (用來傳遞當前繪製的 MeshID 與頂點偏移)
+		VkPushConstantRange pushRange{};
+		pushRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+		pushRange.offset = 0;
+		pushRange.size = sizeof(uint32_t) * 2; // 傳入 2 個 uint32 (MeshID, BaseVertexOffset)
+
+		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+		pipelineLayoutInfo.setLayoutCount = 3;
+		pipelineLayoutInfo.pSetLayouts = _descriptor_set_layouts.data();
+		pipelineLayoutInfo.pushConstantRangeCount = 1;
+		pipelineLayoutInfo.pPushConstantRanges = &pushRange;
+
+		if (VkResult result = vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_global_pipeline_layout))
+		{
+			INVENT_LOG_ERROR(std::format("ERROR : [ VulkanBase ] Failed to create global pipeline layout! Error code: {}\n", int32_t(result)));
+			return false;
+		}
+
+		return true;
+	}
+
+	bool VulkanBase::_alloca_global_bindless_descriptor_set()
+	{
+		uint32_t descriptorCount = std::min(MAX_BINDLESS_TEXTURES, _max_hardware_textures);
+
+		// 1. 設置變長度陣列的實際分配數量
+		VkDescriptorSetVariableDescriptorCountAllocateInfo variableCountInfo{};
+		variableCountInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO;
+		variableCountInfo.descriptorSetCount = 1;
+		variableCountInfo.pDescriptorCounts = &descriptorCount;
+
+		// 2. 填充常規的 Allocate 資訊
+		VkDescriptorSetAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocInfo.descriptorPool = _bindless_descriptor_pool;
+		allocInfo.descriptorSetCount = 1;
+		allocInfo.pSetLayouts = &_descriptor_set_layouts[1]; // set1Layout (Bindless)
+		allocInfo.pNext = &variableCountInfo;
+
+		if (VkResult result = vkAllocateDescriptorSets(_device, &allocInfo, &_global_bindless_descriptor_set))
+		{
+			INVENT_LOG_ERROR(std::format("ERROR : [ VulkanBase ] Failed to create global descriptor set! Error code: {}\n", int32_t(result)));
+			return false;
+		}
+
+		return true;
+	}
 
 #ifndef NDEBUG
 

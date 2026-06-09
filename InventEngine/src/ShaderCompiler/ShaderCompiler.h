@@ -47,7 +47,20 @@ public:
 		STAGE_DEFAULT = STAGE_VERTEX | STAGE_FRAGMENT
 	};
 
+	struct EntryPointType
+	{
+		std::string EntryPointName;
+		CompFileFindCriteria Type = STAGE_NONE;
+	};
+
+	struct CompileInfo
+	{
+		std::string FilePath;
+		std::vector<EntryPointType> EntryPoints;
+	};
+
 public:
+
 	/// <summary>
 	/// 
 	/// </summary>

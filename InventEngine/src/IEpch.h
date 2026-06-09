@@ -30,7 +30,7 @@
 #include <format>
 #include <tuple>
 
-#include <iostream>
+#include <istream>
 #include <fstream>
 #include <memory>
 #include <mutex>

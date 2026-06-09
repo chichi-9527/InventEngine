@@ -314,8 +314,9 @@ namespace INVENT
 			!VulkanBase::Base().CreateSwapChain() ||
 			!VulkanBase::Base().CreateSwapChainImageView() ||
 			!VulkanBase::Base().CreateVmaAllocator() ||
-			!VulkanBase::Base().GetDepthFormat() ||
-			!VulkanBase::Base().InitializeAllOffscreenPasses())
+			!VulkanBase::Base().FindDepthFormat() ||
+			!VulkanBase::Base().InitializeAllOffscreenPasses() ||
+			!VulkanBase::Base().CreateBindlessDescriptorPool())
 		{
 			return -1;
 		}
