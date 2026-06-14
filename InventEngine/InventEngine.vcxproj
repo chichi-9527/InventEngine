@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Invent\ITools\IBitArray.h" />
     <ClInclude Include="src\Invent\ITexture\IVulkanTexture.h" />
     <ClInclude Include="src\Invent\Renderer\IVulkanRenderer.h" />
     <ClInclude Include="src\Invent\IEngineTools.h" />
@@ -83,6 +84,10 @@
     <ClInclude Include="src\Invent\IBase\VulkanBase.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Invent\ITools\IBitArray.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Invent\IEngineTools.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -203,7 +208,7 @@
     <ClCompile Include="src\Invent\IBase\VulkanBase.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\Invent\Renderer\Readme.md">
+    <None Include="Readme.md">
       <SubType>
       </SubType>
     </None>

@@ -11,9 +11,12 @@
 
 #include "Invent/Renderer/IRenderer.h"
 #include "Invent/Renderer/IRenderer2D.h"
+#include "Invent/Renderer/IVulkanRenderer.h"
 
 namespace INVENT
 {
+
+	static uint32_t FrameIndex = 0;
 
 #if defined(_WIN32) && defined(USE_OPENGL)
 	// Source - https://stackoverflow.com/a/589232
@@ -151,10 +154,37 @@ namespace INVENT
 			return false;
 		}
 
-		_thread = new std::thread([this]() -> bool {
+		if (!IVulkanRenderer::Init())
+		{
+			INVENT_LOG_ERROR(" [ IRenderThread ] Init Vulkan renderer error \n");
+			return false;
+		}
+
+		_thread = new std::thread([this]() {
+
+			int res = 0;
+			while (_running)
+			{
+				IVulkanRenderer::BeginRender(IEngine::InstancePtr()->GetMainScene()->GetController().lock() ?
+					IEngine::InstancePtr()->GetMainScene()->GetController().lock()->GetSceneCamera() : nullptr);
+				
+				if (!IVulkanRenderer::WaitForFence(FrameIndex))
+				{
+					break;
+				}
+				res = IVulkanRenderer::AcquireNextImage(FrameIndex);
+				if (res == -1) continue;
+				else if (res == -2)
+				{
+					break;
+				}
+				
 
 
-			return true;
+				FrameIndex = (++FrameIndex) % MAX_FRAMES_IN_FLIGHT;
+			}
+
+			IVulkanRenderer::Shutdown();
 			});
 
 		return true;
@@ -316,7 +346,8 @@ namespace INVENT
 			!VulkanBase::Base().CreateVmaAllocator() ||
 			!VulkanBase::Base().FindDepthFormat() ||
 			!VulkanBase::Base().InitializeAllOffscreenPasses() ||
-			!VulkanBase::Base().CreateBindlessDescriptorPool())
+			!VulkanBase::Base().CreateBindlessDescriptorPool() ||
+			!VulkanBase::Base().CreateCommandPool())
 		{
 			return -1;
 		}
@@ -339,7 +370,9 @@ namespace INVENT
 	}
 
 	void IRenderThread::_vulkan_render()
-	{}
+	{
+		
+	}
 
 #endif // USE_OPENGL
 

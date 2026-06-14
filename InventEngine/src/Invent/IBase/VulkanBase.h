@@ -1,6 +1,10 @@
 ﻿#ifndef _VULKANBASE_
 #define _VULKANBASE_
 
+#ifdef USE_VULKAN
+
+
+
 #include <vulkan/vulkan.hpp>
 
 #include <vector>
@@ -78,7 +82,7 @@ namespace INVENT
 		bool CreateBindlessDescriptorPool();
 		bool CreateGlobalPipelineLayout();
 		bool AllocaGlobalBindlessDescriptorSet();
-		
+		bool CreateCommandPool();
 
 		// tools
 
@@ -89,8 +93,8 @@ namespace INVENT
 		enum class ModelBlendMode
 		{
 			Opaque,       // 不透明（開啟深度寫入，關閉混合）
-			Masked,       // 鏤空/透明測試（開啟深度寫入，關閉混合，Shader 內 discard）
-			Translucent   // 半透明（關閉深度寫入，開啟 Alpha Blending）
+			Masked,       // 鏤空測試（開啟深度寫入，關閉混合，Shader 內 discard）
+			Translucent   // 透明（關閉深度寫入，開啟 Alpha Blending）
 		};
 		struct SpecializationData
 		{
@@ -104,6 +108,7 @@ namespace INVENT
 
 			ModelBlendMode BlendMode = ModelBlendMode::Opaque;
 			SpecializationData SpecData = {};
+			uint32_t SpecCount = 1;
 
 			// vulkan < 1.3
 			VkRenderPass RenderPass = VK_NULL_HANDLE;
@@ -120,6 +125,11 @@ namespace INVENT
 		VkPipeline CreateGraphicsPipeline(const GraphicsPipelineConfig& config);
 		VkShaderModule CreateShaderMoudle(const std::string& path);
 		void DestroyShaderMoudle(VkShaderModule shader_moudle);
+		void UpdateBindlessTextureSlot(uint32_t slot_id, VkImageView texture_image_view);
+		bool CreateSyncObjects(std::vector<VkFence>& frameFence,
+			std::vector<VkSemaphore>& acquireSemaphores,
+			std::vector<VkSemaphore>& submitSemaphores);
+		bool CreateCommandBuffers(std::vector<VkCommandBuffer>& buffers);
 
 		// vulkan < 1.3 tools
 
@@ -171,13 +181,16 @@ namespace INVENT
 		const std::vector<OffscreenPassResources>& GetActiveOffscreenLevels() const { return _active_offscreen_levels; }
 		VkImageView GetOffscreenLevelView(void* level);
 
+		VkFormat GetSwapChainImageFormat() const { return _swap_chain_image_format; }
 		VkFormat GetDepthFormat() const { return _depth_format; }
 		VkFormat GetShadowDepthFormat() const { return _shadow_depth_format; }
 		VkRenderPass GetShadowRenderPass() const { return _render_pass_shadow; }
 		VkRenderPass GetOffscreenRenderPass() const { return _render_pass_active_offscreen_levels; }
 		VkRenderPass GetMainRenderPass() const { return _render_pass_main; }
-		VkRenderPass GetPostprocessRenderPass() const { return _render_pass_postprocess; }
 		VkRenderPass GetUiRenderPass() const { return _render_pass_ui; }
+
+		VkDevice GetDevice() const { return _device; }
+		VkSwapchainKHR GetSwapChain() const { return _swap_chain; }
 
 		bool Version_1_3_OrHigher() const { return _api_version >= VK_API_VERSION_1_3; }
 		bool Version_1_2_OrHigher() const { return _api_version >= VK_API_VERSION_1_2; }
@@ -239,11 +252,11 @@ namespace INVENT
 		VkPipelineLayout _global_pipeline_layout = VK_NULL_HANDLE;
 		std::vector<VkDescriptorSetLayout> _descriptor_set_layouts;
 		VkDescriptorSet  _global_bindless_descriptor_set = VK_NULL_HANDLE;
+		VkCommandPool _command_pool = VK_NULL_HANDLE;
 		
 		VkRenderPass _render_pass_ui = VK_NULL_HANDLE;
 		VkRenderPass _render_pass_shadow = VK_NULL_HANDLE;
 		VkRenderPass _render_pass_main = VK_NULL_HANDLE;
-		VkRenderPass _render_pass_postprocess = VK_NULL_HANDLE;
 		std::array<OffscreenPassResources, MAX_FRAMES_IN_FLIGHT> _shadow_pass_res;
 		std::array<OffscreenPassResources, MAX_FRAMES_IN_FLIGHT> _main_scene_res;
 		std::array<OffscreenPassResources, MAX_FRAMES_IN_FLIGHT> _main_scene_depth_views;
@@ -273,6 +286,7 @@ namespace INVENT
 		uint32_t _frame_buffer_height = 0;
 		uint32_t _swap_chain_image_count = 0;
 		uint32_t _max_hardware_textures = 0;
+		uint32_t _current_descriptor_count = 0;
 
 		bool _framebuffer_resized = false;
 		
@@ -280,6 +294,8 @@ namespace INVENT
 	};
 
 }
+
+#endif // USE_VULKAN
 
 #endif // !_VULKANBASE_
 

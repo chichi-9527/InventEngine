@@ -1,6 +1,10 @@
 ﻿#include "IEpch.h"
 #include "VulkanBase.h"
 
+#ifdef USE_VULKAN
+
+
+
 #include "Invent/IEngineTools.h"
 
 namespace INVENT
@@ -16,7 +20,10 @@ namespace INVENT
 	constexpr uint32_t TempLevelDepthSizeY = 1024;
 	constexpr uint32_t ShadowMapSizeX = 2048;
 	constexpr uint32_t ShadowMapSizeY = 2048;
+
 	constexpr uint32_t MAX_BINDLESS_TEXTURES = 200000;
+	// 最大材质数量，pc最大一般大于 50,000,000个 (4GB内存)
+	constexpr uint32_t MAX_MATERIAL_COUNT = 200000;
 
 	// layers
 	static std::vector<const char*> validationLayers;
@@ -201,11 +208,6 @@ namespace INVENT
 			vkDestroyRenderPass(_device, _render_pass_main, nullptr);
 			_render_pass_main = VK_NULL_HANDLE;
 		}
-		if (_render_pass_postprocess != VK_NULL_HANDLE)
-		{
-			vkDestroyRenderPass(_device, _render_pass_postprocess, nullptr);
-			_render_pass_postprocess = VK_NULL_HANDLE;
-		}
 		if (_render_pass_active_offscreen_levels != VK_NULL_HANDLE)
 		{
 			vkDestroyRenderPass(_device, _render_pass_active_offscreen_levels, nullptr);
@@ -310,6 +312,7 @@ namespace INVENT
 		_find_max_hardware_textures();
 
 		INVENT_LOG_INFO(std::format("[ VulkanBase ] device name : {} \n", deviceNmae));
+		INVENT_LOG_INFO(std::format("[ VulkanBase ] device maximum number of sampled image descriptors : {} \n", _max_hardware_textures));
 
 		return true;
 	}
@@ -627,43 +630,7 @@ namespace INVENT
 
 		}
 
-		// postprocess
-		{
-			VkAttachmentDescription color = {};
-			color.format = _swap_chain_image_format;
-			color.samples = VK_SAMPLE_COUNT_1_BIT;
-			color.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-			color.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-			color.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-			color.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-			color.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-			color.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-			std::vector<VkAttachmentDescription> attachments = { color };
-
-			Subpass shaderMapSub0;
-			shaderMapSub0.ColorRefs = { { 0,VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL } };
-
-			std::vector<Subpass> subpasses = { shaderMapSub0 };
-
-			VkSubpassDependency dependency{};
-			dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-			dependency.dstSubpass = 0;
-			dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-			dependency.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-			dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-			dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-
-			std::vector<VkSubpassDependency> dependencies = { dependency };
-
-			_render_pass_postprocess = CreateRenderPass(attachments, subpasses, dependencies);
-			if (VK_NULL_HANDLE == _render_pass_postprocess)
-			{
-				return false;
-			}
-		}
-
-		// ui
+		// postprocess & ui
 		{
 			VkAttachmentDescription color = {};
 			color.format = _swap_chain_image_format;
@@ -763,7 +730,7 @@ namespace INVENT
 				};
 				_postprocess_res[i].Framebuffer = CreateFramebuffer(w,
 					h,
-					_render_pass_postprocess,
+					_render_pass_ui,
 					1,
 					postprocessAttachments);
 				if (VK_NULL_HANDLE == _postprocess_res[i].Framebuffer)
@@ -827,6 +794,21 @@ namespace INVENT
 	bool VulkanBase::AllocaGlobalBindlessDescriptorSet()
 	{
 		return _alloca_global_bindless_descriptor_set();
+	}
+
+	bool VulkanBase::CreateCommandPool()
+	{
+		VkCommandPoolCreateInfo poolInfo{};
+		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+		poolInfo.queueFamilyIndex = _queue_family_indices.GraphicsFamily;
+		if (VkResult result = vkCreateCommandPool(_device, &poolInfo, nullptr, &_command_pool))
+		{
+			INVENT_LOG_ERROR(std::format("ERROR : [ VulkanBase ] Failed to create command pool! Error code: {}\n", int32_t(result)));
+			return false;
+		}
+
+		return true;
 	}
 
 	bool VulkanBase::RecreateResizableResources()
@@ -957,7 +939,7 @@ namespace INVENT
 		VkDescriptorSetLayout descriptorSetLayout = VK_NULL_HANDLE;
 		if (VkResult result = vkCreateDescriptorSetLayout(_device, &layoutInfo, nullptr, &descriptorSetLayout))
 		{
-			INVENT_LOG_ERROR(std::format("ERROR : [ VulkanBase ] Failed to create descriptor set layout! Error code: {}\n", int32_t(result)));
+			INVENT_LOG_ERROR(std::format(" [ VulkanBase ] Failed to create descriptor set layout! Error code: {}\n", int32_t(result)));
 			return VK_NULL_HANDLE;
 		}
 
@@ -973,12 +955,12 @@ namespace INVENT
 		specMapEntries[0].constantID = 0;
 		specMapEntries[0].offset = offsetof(SpecializationData, BlendMode);
 		specMapEntries[0].size = sizeof(int);
-		specMapEntries[0].constantID = 1;
-		specMapEntries[0].offset = offsetof(SpecializationData, PresetEffect);
-		specMapEntries[0].size = sizeof(int);
+		specMapEntries[1].constantID = 1;
+		specMapEntries[1].offset = offsetof(SpecializationData, PresetEffect);
+		specMapEntries[1].size = sizeof(int);
 
 		VkSpecializationInfo specInfo{};
-		specInfo.mapEntryCount = static_cast<uint32_t>(specMapEntries.size());
+		specInfo.mapEntryCount = config.SpecCount;
 		specInfo.pMapEntries = specMapEntries.data();
 		specInfo.dataSize = sizeof(SpecializationData);
 		specInfo.pData = &config.SpecData;
@@ -1125,7 +1107,7 @@ namespace INVENT
 		VkPipeline graphicsPipeline;
 		if (VkResult result = vkCreateGraphicsPipelines(_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline))
 		{
-			INVENT_LOG_ERROR(std::format("ERROR : [ VulkanBase ] Failed to create graphics pipeline! Error code: {}\n", int32_t(result)));
+			INVENT_LOG_ERROR(std::format(" [ VulkanBase ] Failed to create graphics pipeline! Error code: {}\n", int32_t(result)));
 			return VK_NULL_HANDLE;
 		}
 
@@ -1161,6 +1143,89 @@ namespace INVENT
 	{
 		if (shader_moudle != VK_NULL_HANDLE)
 			vkDestroyShaderModule(_device, shader_moudle, nullptr);
+	}
+
+	void VulkanBase::UpdateBindlessTextureSlot(uint32_t slot_id, VkImageView texture_image_view)
+	{
+		if (slot_id == 0 ||
+			slot_id >= _current_descriptor_count ||
+			texture_image_view == VK_NULL_HANDLE)
+			return;
+
+		VkDescriptorImageInfo imageInfo{};
+		imageInfo.imageView = texture_image_view;
+		imageInfo.sampler = VK_NULL_HANDLE;
+		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+		VkWriteDescriptorSet textureWrite{};
+		textureWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		textureWrite.dstSet = _global_bindless_descriptor_set;
+		textureWrite.dstBinding = 1;
+		textureWrite.dstArrayElement = slot_id;
+		textureWrite.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+		textureWrite.descriptorCount = 1;
+		textureWrite.pImageInfo = &imageInfo;
+
+		vkUpdateDescriptorSets(_device, 1, &textureWrite, 0, nullptr);
+
+	}
+
+	bool VulkanBase::CreateSyncObjects(std::vector<VkFence>& frameFence, std::vector<VkSemaphore>& acquireSemaphores, std::vector<VkSemaphore>& submitSemaphores)
+	{
+		VkSemaphoreCreateInfo semaphoreInfo{};
+		semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+		VkFenceCreateInfo fenceInfo{};
+		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT; // 初始状态为已信号，避免第一次等待时死锁
+
+		frameFence.resize(MAX_FRAMES_IN_FLIGHT);
+		for (unsigned int i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
+		{
+			if (VkResult result = vkCreateFence(_device, &fenceInfo, nullptr, &frameFence[i]))
+			{
+				INVENT_LOG_ERROR(std::format(" [ VulkanBase ] Failed to create fences! Error codes: {},\n", int32_t(result)));
+				return false;
+			}
+		}
+		acquireSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+		for (unsigned int i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
+		{
+			if (VkResult result = vkCreateSemaphore(_device, &semaphoreInfo, nullptr, &acquireSemaphores[i]))
+			{
+				INVENT_LOG_ERROR(std::format(" [ VulkanBase ] Failed to create _acquire_semaphores! Error codes: {},\n", int32_t(result)));
+				return false;
+			}
+		}
+		submitSemaphores.resize(_swap_chain_image_count);
+		for (unsigned int i = 0; i < _swap_chain_image_count; ++i)
+		{
+			if (VkResult result = vkCreateSemaphore(_device, &semaphoreInfo, nullptr, &submitSemaphores[i]))
+			{
+				INVENT_LOG_ERROR(std::format(" [ VulkanBase ] Failed to create _submit_semaphores! Error codes: {},\n", int32_t(result)));
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	bool VulkanBase::CreateCommandBuffers(std::vector<VkCommandBuffer>& buffers)
+	{
+		VkCommandBufferAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocInfo.commandPool = _command_pool;
+		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		allocInfo.commandBufferCount = MAX_FRAMES_IN_FLIGHT;
+
+		buffers.resize(MAX_FRAMES_IN_FLIGHT);
+		if (VkResult result = vkAllocateCommandBuffers(_device, &allocInfo, buffers.data()))
+		{
+			INVENT_LOG_ERROR(std::format(" [ VulkanBase ] Failed to allocate command buffers! Error code: {}\n", int32_t(result)));
+			return false;
+		}
+
+		return false;
 	}
 
 	VkRenderPass VulkanBase::CreateRenderPass(std::vector<VkAttachmentDescription>& attachments,
@@ -1836,9 +1901,12 @@ namespace INVENT
 
 	bool VulkanBase::_create_bindless_descriptor_pool()
 	{
+		_current_descriptor_count = std::min(MAX_BINDLESS_TEXTURES, _max_hardware_textures);
+		INVENT_LOG_INFO(std::format("[ VulkanBase ] Current descriptor count : {} \n", _current_descriptor_count));
+
 		VkDescriptorPoolSize poolSizes[1];
 		poolSizes[0].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		poolSizes[0].descriptorCount = std::min(MAX_BINDLESS_TEXTURES, _max_hardware_textures);
+		poolSizes[0].descriptorCount = _current_descriptor_count;
 
 		VkDescriptorPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -1870,7 +1938,7 @@ namespace INVENT
 		vkGetPhysicalDeviceProperties2(_physical_device, &deviceProps2);
 
 		_max_hardware_textures = indexingProps.maxPerStageDescriptorUpdateAfterBindSampledImages;
-	
+		
 	}
 
 	bool VulkanBase::_create_global_pipeline_layout()
@@ -1915,7 +1983,7 @@ namespace INVENT
 		VkDescriptorSetLayoutBinding textureListLayoutBinding{};
 		textureListLayoutBinding.binding = 2;
 		textureListLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-		textureListLayoutBinding.descriptorCount = std::min(MAX_BINDLESS_TEXTURES, _max_hardware_textures);
+		textureListLayoutBinding.descriptorCount = _current_descriptor_count;
 		textureListLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 		textureListLayoutBinding.pImmutableSamplers = nullptr;
 		std::vector<VkDescriptorSetLayoutBinding> set1Bindings = {
@@ -1938,10 +2006,24 @@ namespace INVENT
 		};
 		auto set2Layout = CreateDescriptorSetLayout(set2Bindings);
 
+		// Set3 UI vertex ssbo
+		// binding 0 : ssbo
+		VkDescriptorSetLayoutBinding UISSBOLayoutBinding{};
+		UISSBOLayoutBinding.binding = 0;
+		UISSBOLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		UISSBOLayoutBinding.descriptorCount = 1;
+		UISSBOLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+		UISSBOLayoutBinding.pImmutableSamplers = nullptr;
+		std::vector<VkDescriptorSetLayoutBinding> set3Bindings = {
+			UISSBOLayoutBinding
+		};
+		auto set3Layout = CreateDescriptorSetLayout(set3Bindings);
+
 		_descriptor_set_layouts = {
 			set0Layout,
 			set1Layout,
-			set2Layout
+			set2Layout,
+			set3Layout
 		};
 
 		// 配置全域 Push Constants (用來傳遞當前繪製的 MeshID 與頂點偏移)
@@ -1952,7 +2034,7 @@ namespace INVENT
 
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		pipelineLayoutInfo.setLayoutCount = 3;
+		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(_descriptor_set_layouts.size());
 		pipelineLayoutInfo.pSetLayouts = _descriptor_set_layouts.data();
 		pipelineLayoutInfo.pushConstantRangeCount = 1;
 		pipelineLayoutInfo.pPushConstantRanges = &pushRange;
@@ -1968,13 +2050,11 @@ namespace INVENT
 
 	bool VulkanBase::_alloca_global_bindless_descriptor_set()
 	{
-		uint32_t descriptorCount = std::min(MAX_BINDLESS_TEXTURES, _max_hardware_textures);
-
 		// 1. 設置變長度陣列的實際分配數量
 		VkDescriptorSetVariableDescriptorCountAllocateInfo variableCountInfo{};
 		variableCountInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO;
 		variableCountInfo.descriptorSetCount = 1;
-		variableCountInfo.pDescriptorCounts = &descriptorCount;
+		variableCountInfo.pDescriptorCounts = &_current_descriptor_count;
 
 		// 2. 填充常規的 Allocate 資訊
 		VkDescriptorSetAllocateInfo allocInfo{};
@@ -1989,6 +2069,8 @@ namespace INVENT
 			INVENT_LOG_ERROR(std::format("ERROR : [ VulkanBase ] Failed to create global descriptor set! Error code: {}\n", int32_t(result)));
 			return false;
 		}
+
+		// white texture is 0
 
 		return true;
 	}
@@ -2072,3 +2154,6 @@ namespace INVENT
 
 
 }
+
+
+#endif // USE_VULKAN
