@@ -7,7 +7,8 @@ namespace INVENT
 {
 	struct IVulkanTexture2D
 	{
-
+		VkImageView ImageView = VK_NULL_HANDLE;
+		uint32_t SlotId = 0;
 
 	};
 

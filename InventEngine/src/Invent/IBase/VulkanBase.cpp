@@ -22,8 +22,6 @@ namespace INVENT
 	constexpr uint32_t ShadowMapSizeY = 2048;
 
 	constexpr uint32_t MAX_BINDLESS_TEXTURES = 200000;
-	// 最大材质数量，pc最大一般大于 50,000,000个 (4GB内存)
-	constexpr uint32_t MAX_MATERIAL_COUNT = 200000;
 
 	// layers
 	static std::vector<const char*> validationLayers;
@@ -269,21 +267,19 @@ namespace INVENT
 		vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data());
 
 		// 选择显卡
-		std::string deviceNmae;
-		auto isDeviceSuitable = [this, &deviceNmae](VkPhysicalDevice device)->bool {
+		auto isDeviceSuitable = [this](VkPhysicalDevice device)->bool {
 			VkPhysicalDeviceProperties deviceProperties;
 			VkPhysicalDeviceFeatures deviceFeatures;
 			vkGetPhysicalDeviceProperties(device, &deviceProperties);
 			vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
 
 			_queue_family_indices = _find_queue_families(device);
+			_physical_device_properties = deviceProperties;
 
 			auto swapChainAdequate = [this, device]()->bool {
 				_swap_chain_support = _query_swap_chain_support(device);
 				return !_swap_chain_support.Formats.empty() && !_swap_chain_support.PresentModes.empty();
 				};
-
-			deviceNmae = deviceProperties.deviceName;
 
 			return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
 				&& deviceFeatures.geometryShader
@@ -311,7 +307,7 @@ namespace INVENT
 
 		_find_max_hardware_textures();
 
-		INVENT_LOG_INFO(std::format("[ VulkanBase ] device name : {} \n", deviceNmae));
+		INVENT_LOG_INFO(std::format("[ VulkanBase ] device name : {} \n", _physical_device_properties.deviceName));
 		INVENT_LOG_INFO(std::format("[ VulkanBase ] device maximum number of sampled image descriptors : {} \n", _max_hardware_textures));
 
 		return true;

@@ -82,6 +82,7 @@
     <ClInclude Include="src\VulkanMemoryAllocator\vk_mem_alloc.h" />
     <ClInclude Include="src\VulkanMemoryAllocator\VmaUsage.h" />
     <ClInclude Include="src\Invent\IBase\VulkanBase.h" />
+    <ClInclude Include="src\Invent\IBase\VulkanGlobalMaterialManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Invent\ITools\IBitArray.cpp">
@@ -206,6 +207,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Invent\IBase\VulkanBase.cpp" />
+    <ClCompile Include="src\Invent\IBase\VulkanGlobalMaterialManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md">

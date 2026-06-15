@@ -191,6 +191,7 @@ namespace INVENT
 
 		VkDevice GetDevice() const { return _device; }
 		VkSwapchainKHR GetSwapChain() const { return _swap_chain; }
+		const VkPhysicalDeviceProperties& GetPhysicalDeviceProperties() const { return _physical_device_properties; }
 
 		bool Version_1_3_OrHigher() const { return _api_version >= VK_API_VERSION_1_3; }
 		bool Version_1_2_OrHigher() const { return _api_version >= VK_API_VERSION_1_2; }
@@ -268,6 +269,7 @@ namespace INVENT
 		VkRenderPass _render_pass_active_offscreen_levels = VK_NULL_HANDLE;
 
 		VkPhysicalDeviceDescriptorIndexingFeaturesEXT _enabled_indexing_features = {};
+		VkPhysicalDeviceProperties _physical_device_properties = {};
 
 		std::vector<VkImage> _swap_chain_images;
 		std::vector<VkImageView> _swap_chain_image_views;
