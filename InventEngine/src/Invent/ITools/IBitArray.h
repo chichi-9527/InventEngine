@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <array>
+#include <vector>
 #include <utility>
 #include <bit>
 
@@ -61,8 +62,8 @@ namespace INVENT
 		~IBitArray() = default;
 		IBitArray(const IBitArray&) = delete;
 		IBitArray(IBitArray&&) noexcept = delete;
-		void operator=(const IBitArray&) = delete;
-		void operator=(IBitArray&&) noexcept = delete;
+		IBitArray& operator=(const IBitArray&) = delete;
+		IBitArray& operator=(IBitArray&&) noexcept = delete;
 
 		const IBitSet64& operator[](size_t n) const
 		{
@@ -84,7 +85,7 @@ namespace INVENT
 		/// <summary>
 		/// 查找并返回第一个值为0的位的位置。
 		/// </summary>
-		/// <returns>std::pair<size_t, size_t>，第一个元素为包含该位的数组索引（arr_idx），第二个元素为该数组内的位索引（bit_idx）。若未找到零位，返回 { arraySize, 64 }</returns>
+		/// <returns>第一个元素为包含该位的数组索引（arr_idx），第二个元素为该数组内的位索引（bit_idx）。若未找到零位，返回 { arraySize, 64 }</returns>
 		std::pair<size_t, size_t> FindFirstZero() const
 		{
 			for (size_t arr_idx = 0; arr_idx < Size; ++arr_idx)
@@ -113,6 +114,80 @@ namespace INVENT
 
 	private:
 		std::array<IBitSet64, Size> _array = {};
+	};
+
+	class IBitVector
+	{
+	public:
+		explicit IBitVector(size_t size = 0) : _vector(size, IBitSet64{}) {}
+		~IBitVector() = default;
+		IBitVector(const IBitVector&) = delete;
+		IBitVector(IBitVector&&) noexcept = delete;
+		IBitVector& operator=(const IBitVector&) = delete;
+		IBitVector& operator=(IBitVector&&) noexcept = delete;
+
+		const IBitSet64& operator[](size_t n) const
+		{
+			return _vector[n];
+		}
+
+		IBitSet64& operator[](size_t n)
+		{
+			return _vector[n];
+		}
+
+		template<bool V>
+		void SetValue(size_t arr_index, size_t bit_index)
+		{
+			if (arr_index >= _vector.size()) return;
+			_vector[arr_index].SetValue<V>(bit_index);
+		}
+
+		/// <summary>
+		/// 查找并返回第一个值为0的位的位置。
+		/// </summary>
+		/// <returns>第一个元素为包含该位的数组索引（arr_idx），第二个元素为该数组内的位索引（bit_idx）。若未找到零位，返回 { vectorSize, 64 }</returns>
+		std::pair<size_t, size_t> FindFirstZero() const
+		{
+			const size_t vec_size = _vector.size();
+
+			for (size_t arr_idx = 0; arr_idx < vec_size; ++arr_idx)
+			{
+				size_t bit_idx = _vector[arr_idx].FindFirstZeroBit();
+
+				if (bit_idx < 64)
+				{
+					return { arr_idx, bit_idx };
+				}
+			}
+
+			return { vec_size, 64 };
+		}
+
+		void Resize(size_t new_size)
+		{
+			_vector.resize(new_size, IBitSet64{});
+		}
+
+		void Clear() noexcept
+		{
+			_vector.clear();
+		}
+
+		size_t ArrSize() const noexcept
+		{
+			return _vector.size();
+		}
+
+		size_t BitCount() const noexcept
+		{
+			return _vector.size() * 64;
+		}
+
+	private:
+
+		std::vector<IBitSet64> _vector;
+
 	};
 
 }
