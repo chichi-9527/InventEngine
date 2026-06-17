@@ -1224,6 +1224,79 @@ namespace INVENT
 		return false;
 	}
 
+	int VulkanBase::ResizeBindlessDescriptorPoolAndGobalSet()
+	{
+		if (_current_descriptor_count == _max_hardware_textures)
+		{
+			return -1;
+		}
+		uint32_t newDescriptorCount = std::min(_current_descriptor_count * 2, _max_hardware_textures);
+		INVENT_LOG_INFO(std::format("[ VulkanBase ] Resize current descriptor count : {} \n", newDescriptorCount));
+
+		VkDescriptorPoolSize poolSizes[1];
+		poolSizes[0].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		poolSizes[0].descriptorCount = newDescriptorCount;
+
+		VkDescriptorPoolCreateInfo poolInfo{};
+		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		poolInfo.pNext = nullptr;
+		poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT;
+		poolInfo.maxSets = 1;
+		poolInfo.poolSizeCount = 1;
+		poolInfo.pPoolSizes = poolSizes;
+
+		VkDescriptorPool newPool;
+		if (VkResult result = vkCreateDescriptorPool(_device, &poolInfo, nullptr, &newPool))
+		{
+			INVENT_LOG_ERROR(std::format("ERROR : [ VulkanBase ] [ ResizeBindlessDescriptorPool ] Failed to create descriptor pool! Error code: {}\n", int32_t(result)));
+			return -2;
+		}
+
+		VkDescriptorSetVariableDescriptorCountAllocateInfo variableCountInfo{};
+		variableCountInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO;
+		variableCountInfo.descriptorSetCount = 1;
+		variableCountInfo.pDescriptorCounts = &newDescriptorCount;
+
+		VkDescriptorSetAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocInfo.descriptorPool = newPool;
+		allocInfo.descriptorSetCount = 1;
+		allocInfo.pSetLayouts = &_descriptor_set_layouts[1]; // set1Layout (Bindless)
+		allocInfo.pNext = &variableCountInfo;
+
+		VkDescriptorSet newDescriptorSet;
+		if (VkResult result = vkAllocateDescriptorSets(_device, &allocInfo, &newDescriptorSet))
+		{
+			INVENT_LOG_ERROR(std::format("ERROR : [ VulkanBase ] [ ResizeBindlessDescriptorPool ] Failed to create global descriptor set! Error code: {}\n", int32_t(result)));
+			return -2;
+		}
+
+		VkCopyDescriptorSet copyInfo{};
+		copyInfo.sType = VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET;
+		copyInfo.pNext = nullptr;
+		copyInfo.srcSet = _global_bindless_descriptor_set;
+		copyInfo.srcBinding = 2;             // 你的 Bindless 綁定點
+		copyInfo.srcArrayElement = 0;
+		copyInfo.dstSet = newDescriptorSet;
+		copyInfo.dstBinding = 2;             // 新集的綁定點
+		copyInfo.dstArrayElement = 0;
+		copyInfo.descriptorCount = _current_descriptor_count; // 複製舊有的數量
+
+		vkUpdateDescriptorSets(_device, 0, nullptr, 1, &copyInfo);
+
+		if (_bindless_descriptor_pool != VK_NULL_HANDLE)
+		{
+			// 注意：確保 GPU 此時沒有在使用舊的 descriptor set！
+			vkDestroyDescriptorPool(_device, _bindless_descriptor_pool, nullptr);
+		}
+
+		_bindless_descriptor_pool = newPool;
+		_global_bindless_descriptor_set = newDescriptorSet;
+		_current_descriptor_count = newDescriptorCount;
+
+		return 0;
+	}
+
 	VkRenderPass VulkanBase::CreateRenderPass(std::vector<VkAttachmentDescription>& attachments,
 		std::vector<Subpass>& subpasses, 
 		std::vector<VkSubpassDependency>& dependencies)
@@ -1386,6 +1459,29 @@ namespace INVENT
 		uint32_t layer_count)
 	{
 		return _create_image_view(image, format, aspect_flags, view_type, mip_levels, base_array_layer, layer_count);
+	}
+
+	void VulkanBase::DestroyImageView(VkImageView image_view)
+	{
+		if (image_view != VK_NULL_HANDLE)
+		{
+			vkDestroyImageView(_device, image_view, nullptr);
+		}
+	}
+
+	bool VulkanBase::UseVmaMapMemory(VkBuffer buffer, void*& data)
+	{
+		if (VkResult result = vmaMapMemory(vmaAllocator, MapBufferAllocation[buffer], &data))
+		{
+			INVENT_LOG_ERROR(" [ VulkanBase ] use vma map memory error! \n");
+			return false;
+		}
+		return true;
+	}
+
+	void VulkanBase::UseVmaUnmapMemory(VkBuffer buffer)
+	{
+		vmaUnmapMemory(vmaAllocator, MapBufferAllocation[buffer]);
 	}
 
 	bool VulkanBase::RequestOffscreenLevels(const std::vector<void*>& required_levels)

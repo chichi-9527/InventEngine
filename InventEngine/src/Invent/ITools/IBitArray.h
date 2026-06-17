@@ -5,10 +5,17 @@
 #include <array>
 #include <vector>
 #include <utility>
+#include <concepts>
+#include <functional>
 #include <bit>
+#include <algorithm>
+#include <stdexcept>
+#include <limits>
 
 namespace INVENT
 {
+	constexpr std::size_t MaxSizeTValue = std::numeric_limits<std::size_t>::max();
+
 	struct IBitSet64
 	{
 		std::uint64_t Data = 0;
@@ -26,6 +33,11 @@ namespace INVENT
 		IBitSet64& operator=(T) = delete;
 
 		bool operator[](size_t n) const
+		{
+			return (Data & (std::uint64_t{ 1 } << n)) != 0;
+		}
+
+		bool At(size_t n) const
 		{
 			if (n >= 64)return false;
 			return (Data & (std::uint64_t{ 1 } << n));
@@ -54,6 +66,7 @@ namespace INVENT
 		
 	};
 
+	// 只能设置 IBitSet64 的数量，无法设置具体位数
 	template<size_t Size>
 	class IBitArray
 	{
@@ -69,10 +82,18 @@ namespace INVENT
 		{
 			return _array[n];
 		}
+		const IBitSet64& At(size_t n) const
+		{
+			return _array.at(n);
+		}
 
 		IBitSet64& operator[](size_t n)
 		{
 			return _array[n];
+		}
+		IBitSet64& At(size_t n)
+		{
+			return _array.at(n);
 		}
 
 		template<bool V>
@@ -85,7 +106,7 @@ namespace INVENT
 		/// <summary>
 		/// 查找并返回第一个值为0的位的位置。
 		/// </summary>
-		/// <returns>第一个元素为包含该位的数组索引（arr_idx），第二个元素为该数组内的位索引（bit_idx）。若未找到零位，返回 { arraySize, 64 }</returns>
+		/// <returns>第一个元素为包含该位的数组索引（arr_idx），第二个元素为该数组内的位索引（bit_idx）。若未找到零位，返回 { MaxSizeTValue, 64 }</returns>
 		std::pair<size_t, size_t> FindFirstZero() const
 		{
 			for (size_t arr_idx = 0; arr_idx < Size; ++arr_idx)
@@ -98,7 +119,32 @@ namespace INVENT
 				}
 			}
 
-			return { Size, 64 };
+			return { MaxSizeTValue, 64 };
+		}
+
+		template<typename Func>
+		requires std::invocable<Func, size_t, bool>
+		void ForEach(Func&& func) const
+		{
+			size_t index = 0;
+			for (const auto& bitSet : _array)
+			{
+				std::uint64_t data = bitSet.Data;
+
+				for (size_t i = 0; i < 64; ++i)
+				{
+					bool bitValue = (data & std::uint64_t{ 1 }) != 0;
+					std::invoke(std::forward<Func>(func), index, bitValue);
+
+					data >>= 1;
+					++index;
+				}
+			}
+		}
+
+		void ResetBitToZero()
+		{
+			_array.fill(IBitSet64{ 0 });
 		}
 
 		constexpr size_t ArrSize() const
@@ -130,10 +176,14 @@ namespace INVENT
 		{
 			return _vector[n];
 		}
+		const IBitSet64& At(size_t n) const
+		{
+			return _vector.at(n);
+		}
 
 		IBitSet64& operator[](size_t n)
 		{
-			return _vector[n];
+			return _vector.at(n);
 		}
 
 		template<bool V>
@@ -145,8 +195,9 @@ namespace INVENT
 
 		/// <summary>
 		/// 查找并返回第一个值为0的位的位置。
+		/// 若设置了具体位数（即 bit count 不等于 ArrSize*64）会找至截止位置
 		/// </summary>
-		/// <returns>第一个元素为包含该位的数组索引（arr_idx），第二个元素为该数组内的位索引（bit_idx）。若未找到零位，返回 { vectorSize, 64 }</returns>
+		/// <returns>第一个元素为包含该位的数组索引（arr_idx），第二个元素为该数组内的位索引（bit_idx）。若未找到零位，返回 { MaxSizeTValue, 64 }</returns>
 		std::pair<size_t, size_t> FindFirstZero() const
 		{
 			const size_t vec_size = _vector.size();
@@ -155,18 +206,51 @@ namespace INVENT
 			{
 				size_t bit_idx = _vector[arr_idx].FindFirstZeroBit();
 
-				if (bit_idx < 64)
+				if (bit_idx < 64 && (arr_idx * 64 + bit_idx) < _bit_count)
 				{
 					return { arr_idx, bit_idx };
 				}
 			}
 
-			return { vec_size, 64 };
+			return { MaxSizeTValue, 64 };
+		}
+
+		// 虽支持设置具体位数，但此循环依然会循环所有具体存在的位，即使它不应使用
+		template<typename Func>
+		requires std::invocable<Func, size_t, bool>
+		void ForEach(Func&& func) const
+		{
+			size_t index = 0;
+			for (const auto& bitSet : _vector)
+			{
+				std::uint64_t data = bitSet.Data;
+
+				for (size_t i = 0; i < 64; ++i)
+				{
+					bool bitValue = (data & std::uint64_t{ 1 }) != 0;
+					std::invoke(std::forward<Func>(func), index, bitValue);
+
+					data >>= 1;
+					++index;
+				}
+			}
 		}
 
 		void Resize(size_t new_size)
 		{
 			_vector.resize(new_size, IBitSet64{});
+			_bit_count = new_size * 64;
+		}
+
+		void ResizeBitCount(size_t new_size)
+		{
+			_vector.resize((new_size + 63) / 64, IBitSet64{});
+			_bit_count = new_size;
+		}
+
+		void ResetBitToZero()
+		{
+			std::fill(_vector.begin(), _vector.end(), IBitSet64{ 0 });
 		}
 
 		void Clear() noexcept
@@ -181,13 +265,13 @@ namespace INVENT
 
 		size_t BitCount() const noexcept
 		{
-			return _vector.size() * 64;
+			return _bit_count;
 		}
 
 	private:
 
 		std::vector<IBitSet64> _vector;
-
+		size_t _bit_count = 0;
 	};
 
 }

@@ -130,6 +130,11 @@ namespace INVENT
 			std::vector<VkSemaphore>& acquireSemaphores,
 			std::vector<VkSemaphore>& submitSemaphores);
 		bool CreateCommandBuffers(std::vector<VkCommandBuffer>& buffers);
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns>0: success; -1: _current size == _max_hardware_textures; -2: error</returns>
+		int ResizeBindlessDescriptorPoolAndGobalSet();
 
 		// vulkan < 1.3 tools
 
@@ -174,6 +179,9 @@ namespace INVENT
 			uint32_t mip_levels = 1,
 			uint32_t base_array_layer = 0,
 			uint32_t layer_count = 1);
+		void DestroyImageView(VkImageView image_view);
+		bool UseVmaMapMemory(VkBuffer buffer, void*& data);
+		void UseVmaUnmapMemory(VkBuffer buffer);
 
 		// offscreen levels
 
@@ -192,6 +200,7 @@ namespace INVENT
 		VkDevice GetDevice() const { return _device; }
 		VkSwapchainKHR GetSwapChain() const { return _swap_chain; }
 		const VkPhysicalDeviceProperties& GetPhysicalDeviceProperties() const { return _physical_device_properties; }
+		uint32_t GetCurrentBindlessDescriptorCount() const { return _current_descriptor_count; }
 
 		bool Version_1_3_OrHigher() const { return _api_version >= VK_API_VERSION_1_3; }
 		bool Version_1_2_OrHigher() const { return _api_version >= VK_API_VERSION_1_2; }

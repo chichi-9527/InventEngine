@@ -422,6 +422,9 @@
     <ClCompile Include="src\Invent\IBase\VulkanGlobalMaterialManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\Invent\IMemPool\mempool_test.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md" />

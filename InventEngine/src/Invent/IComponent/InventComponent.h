@@ -92,7 +92,7 @@ namespace INVENT
 			int r_idx = _read_index_##Name.load(std::memory_order_relaxed); \
 			int w_idx = 1 - r_idx; \
 			_##Name[w_idx] = _##Name[r_idx]; \
-			std::forward<Func>(modify_func)(_##Name[w_idx]); \
+			std::invoke(std::forward<Func>(modify_func),_##Name[w_idx]); \
 			_read_index_##Name.store(w_idx, std::memory_order_release); \
 		}
 				
