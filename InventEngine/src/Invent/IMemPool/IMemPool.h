@@ -1,6 +1,26 @@
 ﻿#ifndef _IMEMPOOL_
 #define _IMEMPOOL_
 
+
+/*
+* 
+* 关于分配器
+* 当使用自定义指针作为 point 让 STL 使用时，由于其底层实现问题会在某些库中产生错误，所以尽量使用原生指针
+* 如 std unordered_map 将在 _Unchecked_const_iterator _Insert_before = _Bucket_hi; 空指针异常
+* 根据 Xiaomi MiMo Ai 说明：
+* 根因：Microsoft STL 的 unordered_map 内部使用 pointer 类型来定义 bucket 数组元素和节点的 _Next 指针。
+* 当 pointer 是 IUserPtr（24字节胖指针）时，STL 的内存布局假设被破坏，导致 rehash 时空指针异常。改用原生指针即可解决。
+* 
+* 若要让 STL 使用 IUserPtr<T> 请在此文件前定义 
+* #define INVENT_MEMORY_POOL_USE_IUSERPTR_IN_STL
+* 必须在使用上述宏时同时使用 INVENT_MEMPOOL_IMPLEMENTATION （stb模式）以便产生错误
+* 
+* 目前可用 STL 库（已验证）：
+* std::map
+* 
+*/
+
+
 #include <cstdint>
 #include <span>
 #include <vector>
@@ -39,6 +59,8 @@ namespace INVENT
 	{
 	public:
 		using elementType = T;
+		using value_type = std::remove_cv_t<T>;
+		using difference_type = std::ptrdiff_t;
 
 		IUserPtr() = default;
 		IUserPtr(std::nullptr_t)
@@ -100,11 +122,16 @@ namespace INVENT
 		IMemPool* _pool = nullptr;
 
 	};
+
+#ifdef INVENT_MEMORY_POOL_USE_IUSERPTR_IN_STL
+
 	template<>
 	class IUserPtr<void>
 	{
 	public:
 		using elementType = void;
+		using value_type = void;
+		using difference_type = std::ptrdiff_t;
 
 		IUserPtr() = default;
 		IUserPtr(std::nullptr_t)
@@ -167,6 +194,8 @@ namespace INVENT
 	{
 	public:
 		using elementType = void;
+		using value_type = void;
+		using difference_type = std::ptrdiff_t;
 
 		IUserPtr() = default;
 		IUserPtr(std::nullptr_t)
@@ -225,7 +254,12 @@ namespace INVENT
 
 	};
 
+#endif // INVENT_MEMORY_POOL_USE_IUSERPTR_IN_STL
+
+
 }
+
+#ifdef INVENT_MEMORY_POOL_USE_IUSERPTR_IN_STL
 
 // 特化 std::pointer_traits
 namespace std
@@ -269,6 +303,9 @@ namespace std
 	};
 
 }
+
+#endif // INVENT_MEMORY_POOL_USE_IUSERPTR_IN_STL
+
 
 namespace INVENT
 {
@@ -1474,25 +1511,8 @@ namespace INVENT
 		return reinterpret_cast<T*>(_pool->ResolveGeneralPtr(_used_node_index));
 	}
 
-	inline void* IUserPtr<void>::get() const
-	{
-		if (_used_node_index == UINT32_MAX)
-		{
-			return _ptr;
-		}
-		return _pool->ResolveGeneralPtr(_used_node_index);
-	}
 
-	inline const void* IUserPtr<const void>::get() const
-	{
-		if (_used_node_index == UINT32_MAX)
-		{
-			return _ptr;
-		}
-		return _pool->ResolveGeneralPtr(_used_node_index);
-	}
-
-
+#ifdef INVENT_MEMORY_POOL_USE_IUSERPTR_IN_STL
 
 	template<typename T>
 	class IMemPoolAllocator
@@ -1554,7 +1574,10 @@ namespace INVENT
 		IMemPool* _pool;
 	};
 
+#endif // INVENT_MEMORY_POOL_USE_IUSERPTR_IN_STL
 
+	
+	// 当分配小于等于 1024 字节时使用内存池分配，否则将使用默认分配器
 	template<typename T>
 	class IMemPoolAllocatorOnlyFixedBlock
 	{
@@ -1591,11 +1614,11 @@ namespace INVENT
 
 			if (n > 0 && (n * sizeof(T) > 1024))
 			{
-				throw std::bad_alloc();
+				return std::allocator<T>{}.allocate(n);
 			}
 
 			if (_pool && n > 0)
-				return _pool->Allocate<T>((uint32_t)n).get();
+				return _pool->Allocate<T>(static_cast<uint32_t>(n)).get();
 			return nullptr;
 		}
 		/// <summary>
@@ -1605,9 +1628,17 @@ namespace INVENT
 		/// <param name="n"> : T count </param>
 		void deallocate(T* p, std::size_t n) noexcept
 		{
-			IUserPtr<T> ptr(p);
-			if (_pool)
-				_pool->Deallocate<T>(ptr, (uint32_t)n);
+			if (!p) return;
+			if (n > 0 && (n * sizeof(T) > 1024))
+			{
+				std::allocator<T>{}.deallocate(p, n);
+			}
+			else
+			{
+				IUserPtr<T> ptr(p);
+				if (_pool)
+					_pool->Deallocate<T>(ptr, static_cast<uint32_t>(n));
+			}
 		}
 
 		template <typename U>
@@ -1621,9 +1652,32 @@ namespace INVENT
 	};
 
 
+#ifdef INVENT_MEMPOOL_IMPLEMENTATION
 
 
+#ifdef INVENT_MEMORY_POOL_USE_IUSERPTR_IN_STL
 
+	inline void* IUserPtr<void>::get() const
+	{
+		if (_used_node_index == UINT32_MAX)
+		{
+			return _ptr;
+		}
+		return _pool->ResolveGeneralPtr(_used_node_index);
+	}
+
+	inline const void* IUserPtr<const void>::get() const
+	{
+		if (_used_node_index == UINT32_MAX)
+		{
+			return _ptr;
+		}
+		return _pool->ResolveGeneralPtr(_used_node_index);
+	}
+
+#endif // INVENT_MEMORY_POOL_USE_IUSERPTR_IN_STL
+
+#endif // INVENT_MEMPOOL_IMPLEMENTATION
 
 }
 
