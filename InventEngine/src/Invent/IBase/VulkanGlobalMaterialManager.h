@@ -18,23 +18,52 @@ namespace INVENT
 	// 32 bit
 	enum IMaterialTextureReadyFlags : std::uint32_t
 	{
+		ReadyBitAllNotReady = 0,
 		ReadyBitDeffuse = 1 << 0,
-		ReadyBitNormal = 1 << 1
+		ReadyBitNormal = 1 << 1,
+		ReadyBitSpecular = 1 << 2,
+		ReadyBitEmission = 1 << 3,
+		ReadyBitAo = 1 << 4,
+		ReadyBitOpacity = 1 << 5,
+		ReadyBitRoughness = 1 << 6,
+		ReadyBitClearCoat = 1 << 7
+	};
+
+	enum IMaterialAttributeFlag : std::uint32_t
+	{
+		UnDefined = 0,
+		Metal = 1,
+		NonMetal = 2,
+		Water = 3
 	};
 
 	// 32 位对齐
 	struct IMaterialData
 	{
-		uint32_t diffuseTextureId = 0;
-		uint32_t normalTextureId = 0;
-		uint32_t specularTextureId = 0;
-		uint32_t emissionTextureId = 0;
+		// 
+		uint32_t DiffuseTextureId = 0;
+		// 法线贴图
+		uint32_t NormalTextureId = 0;
+		// 镜面反射贴图
+		uint32_t SpecularTextureId = 0;
+		// 自发光
+		uint32_t EmissionTextureId = 0;
+		// 环境遮挡
+		uint32_t AoTextureId = 0;
+		// 不透明度
+		uint32_t OpacityTextureId = 0;
+		// 粗糙度
+		uint32_t RoughnessTextureId = 0;
+		// 透明涂层
+		uint32_t ClearCoatTextureId = 0;
 
-		uint32_t shadowMapTextureId = 0;
-		uint32_t blendMode = 0;
+		// 材质属性 IMaterialAttributeFlag
+		uint32_t MaterialAttribute = IMaterialAttributeFlag::UnDefined;
+		// 贴图标记（是否准备好）
+		uint32_t textureReadyFlags = IMaterialTextureReadyFlags::ReadyBitAllNotReady;
 
-		uint32_t textureReadyFlags = 0;
-		uint32_t padding = 0;
+		// 
+		uint32_t padding[6] = {};
 	};
 
 
@@ -46,52 +75,9 @@ namespace INVENT
 
 		static VulkanGlobalMaterialManager& Instance();
 
-		struct MaterialHandle
-		{
-			size_t BitSetIndex = MaxSizeTValue;
-			// BitSet 中的索引(0~63)
-			size_t BitIndex = 64;
+		using MaterialHandle = IHandle;
 
-			MaterialHandle() = default;
-			MaterialHandle(const std::pair<size_t, size_t>& v)
-				: BitSetIndex(v.first)
-				, BitIndex(v.second)
-			{}
-			MaterialHandle(const MaterialHandle&) = default;
-			MaterialHandle(MaterialHandle&&) noexcept = default;
-
-			MaterialHandle& operator=(const std::pair<size_t, size_t>& v)
-			{
-				BitSetIndex = v.first;
-				BitIndex = v.second;
-				return *this;
-			}
-			MaterialHandle& operator=(const MaterialHandle&) = default;
-			MaterialHandle& operator=(MaterialHandle&&) noexcept = default;
-
-			friend bool operator==(const MaterialHandle& handle, const std::pair<size_t, size_t>& v)
-			{
-				return handle.BitSetIndex == v.first &&
-					handle.BitIndex == v.second;
-			}
-			friend bool operator==(const MaterialHandle& handle1, const MaterialHandle& handle2)
-			{
-				return handle1.BitSetIndex == handle2.BitSetIndex &&
-					handle1.BitIndex == handle2.BitIndex;
-			}
-
-			size_t GetMaterialIndex() const noexcept
-			{
-				return BitSetIndex * 64 + BitIndex;
-			}
-
-			bool IsVaild() const noexcept
-			{
-				return BitSetIndex != MaxSizeTValue &&
-					BitIndex < 64;
-			}
-		};
-
+		MaterialHandle AlocateHandle();
 		MaterialHandle AddMaterial(const IMaterialData& data);
 		void UpdateMaterial(const MaterialHandle& handle, const IMaterialData& data);
 		void DestroyMaterial(const MaterialHandle& handle);

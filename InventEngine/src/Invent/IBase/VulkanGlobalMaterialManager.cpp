@@ -54,12 +54,22 @@ namespace INVENT
 		return m;
 	}
 
+	VulkanGlobalMaterialManager::MaterialHandle VulkanGlobalMaterialManager::AlocateHandle()
+	{
+		MaterialHandle handle = _bit_vector_used.FindFirstZero();
+		if (!handle.IsVaild())
+			return MaterialHandle();
+		_bit_vector_dirty.SetValue<true>(handle.BitSetIndex, handle.BitIndex);
+		_bit_vector_used.SetValue<true>(handle.BitSetIndex, handle.BitIndex);
+		return handle;
+	}
+
 	VulkanGlobalMaterialManager::MaterialHandle VulkanGlobalMaterialManager::AddMaterial(const IMaterialData& data)
 	{
 		MaterialHandle handle = _bit_vector_used.FindFirstZero();
 		if (!handle.IsVaild())
 			return MaterialHandle();
-		_materials[handle.GetMaterialIndex()] = data;
+		_materials[handle.GetRealIndex()] = data;
 		_bit_vector_dirty.SetValue<true>(handle.BitSetIndex, handle.BitIndex);
 		_bit_vector_used.SetValue<true>(handle.BitSetIndex, handle.BitIndex);
 		return handle;
@@ -68,16 +78,16 @@ namespace INVENT
 	void VulkanGlobalMaterialManager::UpdateMaterial(const MaterialHandle& handle, const IMaterialData& data)
 	{
 		if (!handle.IsVaild() ||
-			handle.GetMaterialIndex() >= static_cast<size_t>(_current_material_count))
+			handle.GetRealIndex() >= static_cast<size_t>(_current_material_count))
 			return;
-		_materials[handle.GetMaterialIndex()] = data;
+		_materials[handle.GetRealIndex()] = data;
 		_bit_vector_dirty.SetValue<true>(handle.BitSetIndex, handle.BitIndex);
 	}
 
 	void VulkanGlobalMaterialManager::DestroyMaterial(const MaterialHandle& handle)
 	{
 		if (!handle.IsVaild() ||
-			handle.GetMaterialIndex() >= static_cast<size_t>(_current_material_count))
+			handle.GetRealIndex() >= static_cast<size_t>(_current_material_count))
 			return;
 		_bit_vector_used.SetValue<false>(handle.BitSetIndex, handle.BitIndex);
 	}
@@ -85,7 +95,7 @@ namespace INVENT
 	bool VulkanGlobalMaterialManager::IsUsed(const MaterialHandle& handle) const
 	{
 		if (!handle.IsVaild() ||
-			handle.GetMaterialIndex() >= static_cast<size_t>(_current_material_count))
+			handle.GetRealIndex() >= static_cast<size_t>(_current_material_count))
 			return false;
 		return _bit_vector_used[handle.BitSetIndex][handle.BitIndex];
 	}

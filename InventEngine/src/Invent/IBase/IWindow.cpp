@@ -5,6 +5,7 @@
 #include "Invent/2D/2DComponent/Invent2DAnimationComponent.h"
 
 #include "Invent/IEngine.h"
+#include "Invent/IEngineTools.h"
 #include "IGameInstance.h"
 #include "Invent/ThreadPool/IThreadPool.h"
 #include "IRenderThread.h"
@@ -41,6 +42,7 @@ namespace INVENT
 		UI::IDrawString::Init("./Assets/TTF/VictorMono-Bold-2.otf");
 		UI::IDrawString::Init({ "./Assets/TTF/huawencaiyun.ttf", "./Assets/TTF/huawenfangsong.ttf" });
 
+		IEngineTools::Instance().Init();
 		ICollisionPresets::Init();
 		AnimationManagement::Start();
 		IEngine::InstancePtr()->GetMainScene()->Begin();
@@ -54,6 +56,7 @@ namespace INVENT
 		IEngine::InstancePtr()->GetGameInstance()->End();
 		IEngine::InstancePtr()->GetMainScene()->End();
 		AnimationManagement::Shutdown();
+		IEngineTools::Instance().Clear();
 		
 	}
 

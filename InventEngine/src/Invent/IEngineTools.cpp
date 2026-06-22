@@ -1,6 +1,9 @@
 ﻿#include <IEpch.h>
 #include "IEngineTools.h"
 
+#include "ThreadPool/IThreadPool.h"
+#include "IMemPool/IMemPool.h"
+
 #include <filesystem>
 
 static auto RunPath = std::filesystem::current_path().string();
@@ -8,7 +11,9 @@ static auto RunPath = std::filesystem::current_path().string();
 namespace INVENT
 {
 	IEngineTools::IEngineTools()
-	{}
+	{
+		
+	}
 	IEngineTools::~IEngineTools()
 	{}
 
@@ -38,6 +43,41 @@ namespace INVENT
 	{
 		static IEngineTools et;
 		return et;
+	}
+
+	void IEngineTools::Init()
+	{
+		_init_threadpools();
+	}
+	void IEngineTools::Clear()
+	{
+		_clear_threadpools();
+	}
+
+	void IEngineTools::_init_threadpools()
+	{
+		_work_thread_pool = new IThreadPool(2, 1);
+		_work_thread_pool->Start();
+	}
+
+	void IEngineTools::_clear_threadpools()
+	{
+		if (_work_thread_pool)
+		{
+			_work_thread_pool->Shutdown();
+			delete _work_thread_pool;
+			_work_thread_pool = nullptr;
+		}
+	}
+
+	void IEngineTools::_init_mem_pools()
+	{
+		_gobal_memory_pool = IMemPool::CreatePool();
+	}
+
+	void IEngineTools::_clear_mem_pools()
+	{
+		IMemPool::DestroyPool(_gobal_memory_pool);
 	}
 
 	

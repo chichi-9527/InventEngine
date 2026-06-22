@@ -1,7 +1,7 @@
 ﻿#include "IEpch.h"
 #include "ITexture.h"
 
-#include "Invent/IEngine.h"
+#include "Invent/IEngineTools.h"
 #include "Invent/IBase/IWindow.h"
 #include "Invent/ThreadPool/IThreadPool.h"
 
@@ -347,7 +347,7 @@ namespace INVENT
 			_textrues[name] = { nullptr, id };
 		}
 
-		IEngine::InstancePtr()->GetWorkThreadPool()->Submit(0, [this, flag_true_if_should_flip, tex_break_width_num, tex_break_height_num, id](const std::string& Name, const std::string& Path) {
+		IEngineTools::Instance().GetWorkThreadPool()->Submit(0, [this, flag_true_if_should_flip, tex_break_width_num, tex_break_height_num, id](const std::string& Name, const std::string& Path) {
 			auto texture = new ITexture2D(Name, Path, flag_true_if_should_flip, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
 			std::lock_guard<std::mutex> lock(_mutex);
 			if (_vector_textrues.size() <= id)
@@ -377,7 +377,7 @@ namespace INVENT
 			_textrues[name] = { nullptr, id };
 		}
 
-		IEngine::InstancePtr()->GetWorkThreadPool()->Submit(0, [this, tex_break_width_num, tex_break_height_num, id](const std::string& Name, const CharCharacter& Path) {
+		IEngineTools::Instance().GetWorkThreadPool()->Submit(0, [this, tex_break_width_num, tex_break_height_num, id](const std::string& Name, const CharCharacter& Path) {
 			auto texture = new ITexture2D(Name, Path, ITexture2D::_UInt2(tex_break_width_num, tex_break_height_num));
 			std::lock_guard<std::mutex> lock(_mutex);
 			_vector_textrues[id] = (ITextureBase*)texture;

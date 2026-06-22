@@ -1,82 +1,71 @@
 ﻿#ifndef _IVULKANTEXTURE_
 #define _IVULKANTEXTURE_
 
+#ifdef USE_VULKAN
+
 #include "Invent/ITools/IBitArray.h"
 #include <vulkan/vulkan.h>
 
+#include <string>
+
 namespace INVENT
 {
-	struct IVulkanTexture2DHandle
-	{
-		VkImageView ImageView = VK_NULL_HANDLE;
-		VkImage Image = VK_NULL_HANDLE;
-		size_t BitSetIndex = MaxSizeTValue;
-		size_t BitIndex = 64;
-
-		IVulkanTexture2DHandle() = default;
-		IVulkanTexture2DHandle(const std::pair<size_t, size_t>& v)
-			: BitSetIndex(v.first)
-			, BitIndex(v.second)
-		{}
-		IVulkanTexture2DHandle(const std::pair<size_t, size_t>& v, VkImageView image_view, VkImage image)
-			: BitSetIndex(v.first)
-			, BitIndex(v.second)
-			, ImageView(image_view)
-			, Image(image)
-		{}
-		IVulkanTexture2DHandle(const IVulkanTexture2DHandle&) = default;
-		IVulkanTexture2DHandle(IVulkanTexture2DHandle&&) noexcept = default;
-
-		IVulkanTexture2DHandle& operator=(const std::pair<size_t, size_t>& v)
-		{
-			BitSetIndex = v.first;
-			BitIndex = v.second;
-			ImageView = VK_NULL_HANDLE;
-			Image = VK_NULL_HANDLE;
-			return *this;
-		}
-		IVulkanTexture2DHandle& operator=(const IVulkanTexture2DHandle&) = default;
-		IVulkanTexture2DHandle& operator=(IVulkanTexture2DHandle&&) noexcept = default;
-
-		friend bool operator==(const IVulkanTexture2DHandle& handle, const std::pair<size_t, size_t>& v)
-		{
-			return handle.BitSetIndex == v.first &&
-				handle.BitIndex == v.second;
-		}
-		friend bool operator==(const IVulkanTexture2DHandle& handle1, const IVulkanTexture2DHandle& handle2)
-		{
-			return handle1.BitSetIndex == handle2.BitSetIndex &&
-				handle1.BitIndex == handle2.BitIndex &&
-				handle1.Image == handle2.Image &&
-				handle1.ImageView == handle2.ImageView;
-		}
-
-		size_t GetTextureIndex() const noexcept
-		{
-			return BitSetIndex * 64 + BitIndex;
-		}
-
-		bool IsVaild() const noexcept
-		{
-			return BitSetIndex != MaxSizeTValue &&
-				BitIndex < 64;
-		}
-	};
-
-
+	
 	class IVulkanTexture2DManagement
 	{
-		IVulkanTexture2DManagement() = default;
+		struct IVulkanTexture2DHandle
+		{
+			VkImageView ImageView = VK_NULL_HANDLE;
+			VkImage Image = VK_NULL_HANDLE;
+			
+			bool IsVaild() const noexcept
+			{
+				return Image != VK_NULL_HANDLE &&
+					ImageView != VK_NULL_HANDLE;
+			}
+		};
+
+
+		IVulkanTexture2DManagement();
 	public:
+		~IVulkanTexture2DManagement();
+
+		using Texture2DHandle = IHandle;
+
 		static IVulkanTexture2DManagement& Instance();
+		void Clear();
 
+		Texture2DHandle AllocateTextureHandle();
+		Texture2DHandle AddTexture2D(const std::string& path);
+		void UpateTexture2D(const Texture2DHandle& hanlde, const std::string& path);
+		Texture2DHandle AddTexture2D(VkImage image, VkImageView image_view);
+		// 自动销毁 VkImage 与 VkImageView
+		void UpateTexture2D(const Texture2DHandle& hanlde, VkImage image, VkImageView image_view);
+		// 不自动销毁 VkImage 与 VkImageView
+		void UpateTexture2DWithoutDestory(const Texture2DHandle& hanlde, VkImage image, VkImageView image_view);
 
+		bool IsTextureReady(const Texture2DHandle& handle) const;
+		bool IsVaild() const { return _is_vaild; }
+		
+		const IVulkanTexture2DHandle& GetVulkanTextureHanlde(const Texture2DHandle& handle) const;
+		IVulkanTexture2DHandle& GetVulkanTextureHanlde(const Texture2DHandle& handle);
 
 	private:
+		void _init_default_image();
+		
+		void _update_texture_count();
 
+	private:
+		std::vector<IVulkanTexture2DHandle> _textures;
+		IBitVector _bit_vector_used;
+		IBitVector _bit_vector_vaild;
+
+		bool _is_vaild = false;
 
 	};
 
 }
+
+#endif // USE_VULKAN
 
 #endif // !_IVULKANTEXTURE_

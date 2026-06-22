@@ -2,7 +2,7 @@
 #include "IBaseLevel.h"
 #include "IBaseActor.h"
 
-#include "Invent/IEngine.h"
+#include "Invent/IEngineTools.h"
 #include "Invent/IBase/IActor.h"
 
 namespace INVENT
@@ -131,12 +131,12 @@ namespace INVENT
 
 	IThreadPool* IBaseLevel::_get_engine_work_thread_pool()
 	{
-		return IEngine::InstancePtr()->GetWorkThreadPool();
+		return IEngineTools::Instance().GetWorkThreadPool();
 	}
 
 	void IBaseLevel::_recalculate_actors_position()
 	{
-		IEngine::InstancePtr()->GetWorkThreadPool()->Submit(0, [this]() {
+		IEngineTools::Instance().GetWorkThreadPool()->Submit(0, [this]() {
 			for (auto& actor : _all_actors)
 			{
 				actor->SetWorldPosition(actor->GetWorldPosition() + _position);

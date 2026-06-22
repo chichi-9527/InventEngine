@@ -15,10 +15,9 @@ namespace INVENT
 
 	IEngine::IEngine()
 		: _threadpool(nullptr)
-		, _work_thread_pool(new IThreadPool)
 	{
 		_main_scene = IScene::CreateInstancePtr();
-		_work_thread_pool->Start();
+		
 	}
 
 	IEngine::~IEngine()
@@ -29,12 +28,7 @@ namespace INVENT
 			delete _threadpool;
 			_threadpool = nullptr;
 		}
-		if (_work_thread_pool)
-		{
-			_work_thread_pool->Shutdown();
-			delete _work_thread_pool;
-			_work_thread_pool = nullptr;
-		}
+		
 		
 	}
 

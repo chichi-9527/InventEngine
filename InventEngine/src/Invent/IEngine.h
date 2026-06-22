@@ -66,7 +66,6 @@ namespace INVENT
 		void ShutdownThreadPool();
 
 		IThreadPool* GetThreadPool() const { return _threadpool; }
-		IThreadPool* GetWorkThreadPool() const { return _work_thread_pool; }
 
 		std::shared_ptr<IRenderThread> GetRenderThreadPtr();
 
@@ -77,7 +76,7 @@ namespace INVENT
 		std::shared_ptr<IScene> _main_scene;
 
 		IThreadPool* _threadpool;
-		IThreadPool* _work_thread_pool;
+		
 	};
 }
 

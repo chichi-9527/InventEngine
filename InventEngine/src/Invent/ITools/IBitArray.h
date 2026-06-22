@@ -215,7 +215,9 @@ namespace INVENT
 			return { MaxSizeTValue, 64 };
 		}
 
+		// Func : void(size_t index, bool bit_value)
 		// 虽支持设置具体位数，但此循环依然会循环所有具体存在的位，即使它不应使用
+		// 但不应使用的位总是 0 ，即第二个参数 bit_value 总是 false
 		template<typename Func>
 		requires std::invocable<Func, size_t, bool>
 		void ForEach(Func&& func) const
@@ -272,6 +274,53 @@ namespace INVENT
 
 		std::vector<IBitSet64> _vector;
 		size_t _bit_count = 0;
+	};
+
+
+	struct IHandle
+	{
+		size_t BitSetIndex = MaxSizeTValue;
+		// BitSet 中的索引(0~63)
+		size_t BitIndex = 64;
+
+		IHandle() = default;
+		IHandle(const std::pair<size_t, size_t>& v)
+			: BitSetIndex(v.first)
+			, BitIndex(v.second)
+		{}
+		IHandle(const IHandle&) = default;
+		IHandle(IHandle&&) noexcept = default;
+
+		IHandle& operator=(const std::pair<size_t, size_t>& v)
+		{
+			BitSetIndex = v.first;
+			BitIndex = v.second;
+			return *this;
+		}
+		IHandle& operator=(const IHandle&) = default;
+		IHandle& operator=(IHandle&&) noexcept = default;
+
+		friend bool operator==(const IHandle& handle, const std::pair<size_t, size_t>& v)
+		{
+			return handle.BitSetIndex == v.first &&
+				handle.BitIndex == v.second;
+		}
+		friend bool operator==(const IHandle& handle1, const IHandle& handle2)
+		{
+			return handle1.BitSetIndex == handle2.BitSetIndex &&
+				handle1.BitIndex == handle2.BitIndex;
+		}
+
+		size_t GetRealIndex() const noexcept
+		{
+			return BitSetIndex * 64 + BitIndex;
+		}
+
+		bool IsVaild() const noexcept
+		{
+			return BitSetIndex != MaxSizeTValue &&
+				BitIndex < 64;
+		}
 	};
 
 }

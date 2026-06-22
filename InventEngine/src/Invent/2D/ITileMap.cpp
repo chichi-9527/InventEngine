@@ -2,6 +2,7 @@
 #include "ITileMap.h"
 
 #include "Invent/IEngine.h"
+#include "Invent/IEngineTools.h"
 #include "Invent/ThreadPool/IThreadPool.h"
 
 namespace INVENT
@@ -18,7 +19,7 @@ namespace INVENT
 
 	void ITileMap::DynamicInit(const std::vector<TileSpriteTextureColorInit>& inits)
 	{
-		INVENT::IEngine::InstancePtr()->GetWorkThreadPool()->Submit(0, [this](const std::vector<TileSpriteTextureColorInit>& Inits) {
+		INVENT::IEngineTools::Instance().GetWorkThreadPool()->Submit(0, [this](const std::vector<TileSpriteTextureColorInit>& Inits) {
 			if (Inits.size() != this->_sprites.size())
 			{
 				INVENT_LOG_ERROR("A tile map init size is error");
