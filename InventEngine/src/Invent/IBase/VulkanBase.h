@@ -135,6 +135,8 @@ namespace INVENT
 		/// </summary>
 		/// <returns>0: success; -1: _current size == _max_hardware_textures; -2: error</returns>
 		int ResizeBindlessDescriptorPoolAndGobalSet();
+		VkCommandBuffer BeginSingleTimeCommands();
+		void EndSingleTimeCommands(VkCommandBuffer command_buffer);
 
 		// vulkan < 1.3 tools
 

@@ -16,6 +16,56 @@ namespace INVENT
 {
 	constexpr std::size_t MaxSizeTValue = std::numeric_limits<std::size_t>::max();
 
+	struct IHandle
+	{
+		size_t BitSetIndex = MaxSizeTValue;
+		// BitSet 中的索引(0~63)
+		size_t BitIndex = 64;
+
+		IHandle() = default;
+		constexpr IHandle(size_t n) noexcept
+			: BitSetIndex(n / 64)
+			, BitIndex(n % 64)
+		{}
+		IHandle(const std::pair<size_t, size_t>& v)
+			: BitSetIndex(v.first)
+			, BitIndex(v.second)
+		{}
+		IHandle(const IHandle&) = default;
+		IHandle(IHandle&&) noexcept = default;
+
+		IHandle& operator=(const std::pair<size_t, size_t>& v)
+		{
+			BitSetIndex = v.first;
+			BitIndex = v.second;
+			return *this;
+		}
+		IHandle& operator=(const IHandle&) = default;
+		IHandle& operator=(IHandle&&) noexcept = default;
+
+		friend bool operator==(const IHandle& handle, const std::pair<size_t, size_t>& v)
+		{
+			return handle.BitSetIndex == v.first &&
+				handle.BitIndex == v.second;
+		}
+		friend bool operator==(const IHandle& handle1, const IHandle& handle2)
+		{
+			return handle1.BitSetIndex == handle2.BitSetIndex &&
+				handle1.BitIndex == handle2.BitIndex;
+		}
+
+		size_t GetRealIndex() const noexcept
+		{
+			return BitSetIndex * 64 + BitIndex;
+		}
+
+		bool IsVaild() const noexcept
+		{
+			return BitSetIndex != MaxSizeTValue &&
+				BitIndex < 64;
+		}
+	};
+
 	struct IBitSet64
 	{
 		std::uint64_t Data = 0;
@@ -101,6 +151,11 @@ namespace INVENT
 		{
 			if (arr_index >= Size) return;
 			_array[arr_index].template SetValue<V>(bit_index);
+		}
+		template<bool V>
+		void SetValue(IHandle h)
+		{
+			this->SetValue<V>(h.BitSetIndex, h.BitIndex);
 		}
 
 		/// <summary>
@@ -192,6 +247,11 @@ namespace INVENT
 			if (arr_index >= _vector.size()) return;
 			_vector[arr_index].SetValue<V>(bit_index);
 		}
+		template<bool V>
+		void SetValue(IHandle h)
+		{
+			this->SetValue<V>(h.BitSetIndex, h.BitIndex);
+		}
 
 		/// <summary>
 		/// 查找并返回第一个值为0的位的位置。
@@ -274,53 +334,6 @@ namespace INVENT
 
 		std::vector<IBitSet64> _vector;
 		size_t _bit_count = 0;
-	};
-
-
-	struct IHandle
-	{
-		size_t BitSetIndex = MaxSizeTValue;
-		// BitSet 中的索引(0~63)
-		size_t BitIndex = 64;
-
-		IHandle() = default;
-		IHandle(const std::pair<size_t, size_t>& v)
-			: BitSetIndex(v.first)
-			, BitIndex(v.second)
-		{}
-		IHandle(const IHandle&) = default;
-		IHandle(IHandle&&) noexcept = default;
-
-		IHandle& operator=(const std::pair<size_t, size_t>& v)
-		{
-			BitSetIndex = v.first;
-			BitIndex = v.second;
-			return *this;
-		}
-		IHandle& operator=(const IHandle&) = default;
-		IHandle& operator=(IHandle&&) noexcept = default;
-
-		friend bool operator==(const IHandle& handle, const std::pair<size_t, size_t>& v)
-		{
-			return handle.BitSetIndex == v.first &&
-				handle.BitIndex == v.second;
-		}
-		friend bool operator==(const IHandle& handle1, const IHandle& handle2)
-		{
-			return handle1.BitSetIndex == handle2.BitSetIndex &&
-				handle1.BitIndex == handle2.BitIndex;
-		}
-
-		size_t GetRealIndex() const noexcept
-		{
-			return BitSetIndex * 64 + BitIndex;
-		}
-
-		bool IsVaild() const noexcept
-		{
-			return BitSetIndex != MaxSizeTValue &&
-				BitIndex < 64;
-		}
 	};
 
 }

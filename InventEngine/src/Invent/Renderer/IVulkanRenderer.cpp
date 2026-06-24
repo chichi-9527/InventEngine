@@ -3,9 +3,8 @@
 
 #ifdef USE_VULKAN
 
-
-
 #include "Invent/IBase/VulkanBase.h"
+#include "Invent/ITexture/IVulkanTexture.h"
 
 #define CREATE_VERTEX_SHADER(x) auto x##VertexShader = VulkanBase::Base().CreateShaderMoudle(x##VertexShaderPath)
 #define DESTROY_VERTEX_SHADER(x) VulkanBase::Base().DestroyShaderMoudle(x##VertexShader); x##VertexShader = VK_NULL_HANDLE
@@ -32,6 +31,10 @@ namespace INVENT
 	constexpr const char* PostprocessFragmentShaderPath = "";
 	constexpr const char* UIVertexShaderPath = "";
 	constexpr const char* UIFragmentShaderPath = "";
+
+	constexpr IVulkanTexture2DManagement::Texture2DHandle WhiteHandle = IVulkanTexture2DManagement::GetWhitePixel();
+	constexpr IVulkanTexture2DManagement::Texture2DHandle BlackHandle = IVulkanTexture2DManagement::GetBlackPixel();
+	constexpr IVulkanTexture2DManagement::Texture2DHandle NormalHandle = IVulkanTexture2DManagement::GetNormalPixel();
 
 	static uint32_t ImageIndex = 0;
 

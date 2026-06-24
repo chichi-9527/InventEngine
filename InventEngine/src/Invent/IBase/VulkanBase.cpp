@@ -334,6 +334,11 @@ namespace INVENT
 		feat11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
 		feat11.shaderDrawParameters = VK_TRUE;
 
+		VkPhysicalDeviceSynchronization2Features featSynchronization2{};
+		featSynchronization2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES;
+		featSynchronization2.synchronization2 = VK_TRUE;
+		featSynchronization2.pNext = nullptr;
+
 		VkPhysicalDeviceVulkan12Features feat12{};
 		feat12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
 		feat12.descriptorBindingPartiallyBound = VK_TRUE;
@@ -343,7 +348,13 @@ namespace INVENT
 
 		if (Version_1_2_OrHigher())
 		{
+			if (Version_1_3_OrHigher())
+			{
+				feat12.pNext = &featSynchronization2;
+			}
+
 			feat11.pNext = &feat12;
+
 		}
 		else
 		{
@@ -1295,6 +1306,41 @@ namespace INVENT
 		_current_descriptor_count = newDescriptorCount;
 
 		return 0;
+	}
+
+	VkCommandBuffer VulkanBase::BeginSingleTimeCommands()
+	{
+		VkCommandBufferAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		allocInfo.commandPool = _command_pool;
+		allocInfo.commandBufferCount = 1;
+
+		VkCommandBuffer commandBuffer;
+		vkAllocateCommandBuffers(_device, &allocInfo, &commandBuffer);
+
+		VkCommandBufferBeginInfo beginInfo{};
+		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+		vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+		return commandBuffer;
+	}
+
+	void VulkanBase::EndSingleTimeCommands(VkCommandBuffer command_buffer)
+	{
+		vkEndCommandBuffer(command_buffer);
+
+		VkSubmitInfo submitInfo{};
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &command_buffer;
+
+		vkQueueSubmit(_graphics_queue, 1, &submitInfo, VK_NULL_HANDLE);
+		vkQueueWaitIdle(_graphics_queue);
+
+		vkFreeCommandBuffers(_device, _command_pool, 1, &command_buffer);
 	}
 
 	VkRenderPass VulkanBase::CreateRenderPass(std::vector<VkAttachmentDescription>& attachments,
